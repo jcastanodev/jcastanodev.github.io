@@ -3,51 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>jcastanodev</title>
+    <title>jcastanodev - links</title>
     <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body class="bg-gray-100 relative h-full" style="background-color: #353230;">
+<body class="w-full h-full overflow-x-auto min-w-80 overflow-y-auto" style="background-color: #353230; min-width: 290px;">
     <header class="bg-white shadow" style="background-color: #5d5854;">
-        <div class="container mx-auto p-2 flex items-center">
+        <div class="container max-w-lg md:max-w-7xl mx-auto p-2 flex items-center">
             <img src="./assets/icon-white.png" alt="icon" class="w-12 mr-4">
             <h1 class="text-2xl font-bold text-white">Jcastano Dev</h1>
         </div>
     </header>
-
-    <main class="container mx-auto py-8">
-        <section id="presentation">
-            <div class="flex px-8">
-                <div class="w-1/3 relative">
-                    <div class="w-full h-full absolute top-0 left-0 rounded-full" style="background-image: url('./assets/profile.jpg'); background-position: center; background-size: cover; background-repeat: no-repeat; filter: blur(8px); -webkit-filter: blur(8px);"></div>
-                    <div class="p-1">
-                        <img src="./assets/profile.gif" alt="profile" class="rounded-full w-full" style="filter: blur(0px); -webkit-filter: blur(0px);">
+    <main class="w-full h-full p-2">
+        <section id="presentation" class="container max-w-7xl mx-auto">
+            <div class="flex flex-wrap justify-center w-full">
+                <div class="border border-white rounded-lg p-6 max-w-lg md:max-w-sm lg:max-w-lg" style="box-shadow: #a9a4a0 0px 0px 10px 0px;">
+                    <div class="flex px-8 z-0 relative">
+                        <div class="w-full relative">
+                            <div class="w-full h-full absolute top-0 left-0 rounded-full" style="background-image: url('./assets/profile.jpg'); background-position: center; background-size: cover; background-repeat: no-repeat; filter: blur(8px); -webkit-filter: blur(8px);"></div>
+                            <div class="p-1">
+                                <img src="./assets/profile.gif" alt="profile" class="rounded-full w-full" style="filter: blur(0px); -webkit-filter: blur(0px);">
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-10 left-0 w-full">
+                            <span class="text-4xl font-bold text-gray-300 bg-white bg-opacity-25 rounded-lg">Juan Castaño</span>
+                            <h1 class="text-3xl text-white mt-1">@jcastanodev</h1>
+                        </div>
+                    </div>
+                    <div class="rounded-lg p-2 mt-16 w-full" style="background-color: #a9a4a0;">
+                        <p class="text-gray-800">Software Developer - Node | React | Vue | Angular | Flutter | RoR | Laravel | Symfony | SpringBoot</p>
+                    </div>
+                    <div class="mt-8">
+                        <ul>
+                            <li>
+                                <a target="_blank" href="mailto:jcastanodev@gmail.com" class="text-white hover:underline">
+                                    <i class="fas fa-envelope text-white mr-4"></i>jcastanodev@gmail.com
+                                </a>
+                            </li>
+                            <li class="mt-2">
+                                <a target="_blank" href="tel:+573234889823" class="text-white hover:underline">
+                                    <i class="fa-solid fa-phone text-white mr-4"></i>3234889823
+                                </a>
+                            </li>
+                            <li class="mt-2">
+                                <a target="_blank" href="https://jcastanodev.github.io/" class="text-white hover:underline">
+                                    <i class="fas fa-globe text-white mr-4"></i>Web
+                                </a>
+                            </li>
+                            <li class="mt-2">
+                                <a target="_blank" href="https://www.facebook.com/jcastanodev" class="text-white hover:underline">
+                                    <i class="fab fa-facebook-f text-white mr-4"></i>Facebook
+                                </a>
+                            </li>
+                            <li class="mt-2">
+                                <a target="_blank" href="https://www.instagram.com/jcastanodev" class="text-white hover:underline">
+                                    <i class="fab fa-instagram text-white mr-4"></i>Instagram
+                                </a>
+                            </li>
+                            <li class="mt-2">
+                                <a target="_blank" href="https://x.com/jcastano97" class="text-white hover:underline">
+                                    <i class="fab fa-twitter text-white mr-4"></i>X
+                                </a>
+                            </li>
+                            <li class="mt-2">
+                                <a target="_blank" href="www.linkedin.com/in/jcastanodev" class="text-white hover:underline">
+                                    <i class="fab fa-linkedin-in text-white mr-4"></i>LinkedIn
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                <div class="w-2/3 my-auto pl-8">
-                    <h2 class="text-3xl font-bold text-white text-center">¡Hola! Soy Juan Camilo Castaño</h2>
+                <div class="my-auto max-w-lg md:max-w-max py-8 md:px-4 lg:pl-8 w-full md:flex-1">
+                    <h2 class="text-3xl font-bold text-white">¡Hola! Soy Juan Camilo Castaño</h2>
                     <p class="text-white mt-4">
                         Un apasionado desarrollador de software senior con más de <b>6 años de experiencia</b> creando soluciones innovadoras en el mundo tecnológico. A lo largo de mi trayectoria, he tenido la oportunidad de colaborar con diversas empresas del sector, aportando mi experiencia y conocimientos para impulsar su crecimiento. Me encanta mantenerme a la vanguardia de la tecnología y explorar nuevas formas de resolver problemas, lo que me permite ofrecer soluciones creativas y eficientes.
                     </p>
-                    <h3 class="text-xl text-white mt-4 text-center">¡Bienvenido a mi espacio digital!</h3>
+                    <h3 class="text-xl text-white mt-4">¡Bienvenido a mi espacio digital!</h3>
                 </div>
             </div>
         </section>
-        <section id="portafolio" class="rounded-lg shadow p-6 mt-12" style="background-color: #a9a4a0;">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Portafolio</h2>
-            <p class="text-gray-600">...</p>
-        </section>
     </main>
-
-    <footer class="text-white mt-8 absolute bottom-0 left-0 right-0" style="background-color: #5d5854;">
-        <div class="relative">
-            <div class="absolute top-0 text-center w-full">
-                <a href="./linktree.html" target="_blank">@jcastanodev</a>
-            </div>
-            <div class="text-right">
-                <p>&copy;2024</p>
-            </div>
-        </div>
-    </footer>
 </body>
 </html>
