@@ -7,12 +7,21 @@
     <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="w-full h-full overflow-x-auto min-w-80 overflow-y-auto flex flex-col" style="background-color: #353230; min-width: 290px;">
     <header class="bg-white shadow" style="background-color: #5d5854;">
-        <div class="container max-w-lg md:max-w-7xl mx-auto p-2 flex items-center">
-            <img src="./assets/icon-white.png" alt="icon" class="w-12 mr-4">
-            <h1 class="text-2xl font-bold text-white">Jcastano Dev</h1>
+        <div class="container max-w-lg md:max-w-7xl mx-auto p-2 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="./assets/icon-white.png" alt="icon" class="w-12 mr-4">
+                <h1 class="text-2xl font-bold text-white">Jcastano Dev</h1>
+            </div>
+            <div>
+                <select id="language-select" class="text-white border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" style="background-color: #353230;">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                </select>
+            </div>
         </div>
     </header>
     <main class="w-full flex-1 p-2">
@@ -32,7 +41,7 @@
                         </div>
                     </div>
                     <div class="rounded-lg p-2 mt-16 w-full" style="background-color: #a9a4a0;">
-                        <p class="text-gray-800">Software Developer - Node | React | Vue | Angular | Flutter | RoR | Laravel | Symfony | SpringBoot</p>
+                        <p class="text-gray-800"><span data-i18n="software-developer">Software Developer</span> - Node | React | Vue | Angular | Flutter | RoR | Laravel | Symfony | SpringBoot</p>
                     </div>
                     <div class="mt-8">
                         <ul>
@@ -75,15 +84,15 @@
                     </div>
                 </div>
                 <div class="my-auto max-w-lg md:max-w-max py-8 md:px-4 lg:pl-8 w-full md:flex-1">
-                    <h2 class="text-3xl font-bold text-white">¡Hola! Soy Juan Camilo Castaño</h2>
-                    <p class="text-white mt-4">
-                        Un apasionado desarrollador de software senior con más de <b>6 años de experiencia</b> creando soluciones innovadoras en el mundo tecnológico. A lo largo de mi trayectoria, he tenido la oportunidad de colaborar con diversas empresas del sector, aportando mi experiencia y conocimientos para impulsar su crecimiento. Me encanta mantenerme a la vanguardia de la tecnología y explorar nuevas formas de resolver problemas, lo que me permite ofrecer soluciones creativas y eficientes.
+                    <h2 class="text-3xl font-bold text-white" data-i18n="hello">Hello! I'm Juan Camilo Castaño</h2>
+                    <p class="text-white mt-4" data-i18n="presentation">
+                        A passionate senior software developer with over <b>6 years of experience</b> creating innovative solutions in the technology world. Throughout my career, I have had the opportunity to collaborate with various companies in the sector, contributing my experience and knowledge to promote their growth. I love staying on the cutting edge of technology and exploring new ways of solving problems, allowing me to offer creative and efficient solutions.
                     </p>
-                    <h3 class="text-xl text-white mt-4">¡Bienvenido a mi espacio digital!</h3>
+                    <h3 class="text-xl text-white mt-4" data-i18n="welcome">Welcome to my digital space!</h3>
                     <div class="mt-10">
-                        <span class="text-white font-bold text-3xl">
-                            Projects:
-                        </span>
+                        <span class="text-white font-bold text-3xl" data-i18n="projects">
+                            projects
+                        </span>:
                         <div class="flex flex-wrap gap-2 mt-4 justify-between">
                             <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-pointer">
                                 <span class="text-white font-bold text-xl text-nowrap">Smoking Log</span>
@@ -100,7 +109,7 @@
                                 <span class="text-white font-bold text-xl text-nowrap">Web Maps</span>
                             </div>
                             <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-pointer">
-                                <span class="text-white font-bold text-xl text-nowrap">Others</span>
+                                <span class="text-white font-bold text-xl text-nowrap" data-i18n="others">Others</span>
                             </div>
                         </div>
                     </div>
@@ -108,5 +117,36 @@
             </div>
         </section>
     </main>
+    <script>
+        const languageSelect = document.getElementById('language-select');
+
+        let currentLanguage = localStorage.getItem('language') ?? 'en';
+        languageSelect.value = currentLanguage;
+
+        function loadLanguage(lang) {
+            localStorage.setItem('language', lang);
+            fetch(`./lang/${lang}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    currentLanguage = lang;
+                    updateText(data);
+                });
+        }
+
+        function updateText(data) {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                element.innerHTML = data[key];
+            });
+        }
+
+        languageSelect.addEventListener('change', () => {
+            loadLanguage(languageSelect.value);
+        });
+
+        // Load the default language on page load
+        loadLanguage(currentLanguage);
+    </script>
 </body>
 </html>
