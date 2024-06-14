@@ -1,2 +1,3 @@
 # jcastanodev.github.io
-Home page... (Working on it)
+- npx tailwindcss -i ./index.css -o ./tailwind.css --watch
+- http-server

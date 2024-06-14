@@ -5,82 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>jcastanodev</title>
     <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="./tailwind.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body class="w-full h-full overflow-x-auto min-w-80 overflow-y-auto flex flex-col" style="background-color: #353230; min-width: 290px;">
-    <header class="bg-white shadow" style="background-color: #5d5854;">
+<body class="w-full h-full overflow-x-auto min-w-80 overflow-y-auto flex flex-col bg-black" style="min-width: 310px;">
+    <header class="shadow" style="background-image: url('./assets/banner.png'); background-size: 650px; background-repeat: repeat;">
         <div class="container max-w-lg md:max-w-7xl mx-auto p-2 flex justify-between items-center">
             <div class="flex items-center">
-                <img src="./assets/icon-white.png" alt="icon" class="w-12 mr-4">
-                <h1 class="text-2xl font-bold text-white">Jcastano Dev</h1>
+                <a href="https://jcastanodev.github.io/">
+                    <img src="./assets/icon-black.png" alt="icon" class="w-12 mr-4 bg-white rounded-full p-1">
+                </a>
             </div>
             <div>
-                <select id="language-select" class="text-white border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" style="background-color: #353230;">
+                <select id="language-select" class="text-black bg-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="en">English</option>
                     <option value="es">Español</option>
                 </select>
             </div>
         </div>
     </header>
-    <main class="w-full flex-1 p-2">
-        <section id="presentation" class="container max-w-7xl mx-auto">
+    <main class="w-full flex-1 p-2 flex">
+        <section id="presentation" class="container max-w-7xl mx-auto my-auto">
             <div class="flex flex-wrap justify-center w-full">
-                <div class="border border-white rounded-lg p-6 max-w-lg md:max-w-sm lg:max-w-lg" style="box-shadow: #a9a4a0 0px 0px 10px 0px;">
+                <div class="border border-black rounded-lg p-6 max-w-lg md:max-w-sm lg:max-w-lg" style="background-color: #ffffff; box-shadow: #a9a4a0 0px 0px 10px 0px;">
                     <div class="flex px-8 z-0 relative">
                         <div class="w-full relative">
-                            <div class="w-full h-full absolute top-0 left-0 rounded-full" style="background-image: url('./assets/profile.jpg'); background-position: center; background-size: cover; background-repeat: no-repeat; filter: blur(8px); -webkit-filter: blur(8px);"></div>
-                            <div class="p-1">
-                                <img src="./assets/profile.gif" alt="profile" class="rounded-full w-full" style="filter: blur(0px); -webkit-filter: blur(0px);">
+                            <div class="w-full h-full absolute top-0 left-0 rounded-full" style="background-image: url('./assets/profile.jpg'); background-position: center; background-size: cover; background-repeat: no-repeat; filter: blur(8px); -webkit-filter: blur(8px);">
+                            </div>
+                            <div class="p-1 relative">
+                                <img id="profile-image" src="./assets/profile2.gif" alt="profile" class="rounded-full w-full" style="filter: blur(0px); -webkit-filter: blur(0px);">
+                                <div id="shuffle-button" class="absolute bottom-0 left-0 right-0 top-0 flex rounded-full cursor-pointer bg-black bg-opacity-25 opacity-0 hover:opacity-100">
+                                    <span class="mx-auto my-auto text-white border border-white rounded-lg p-2" style="background-color: transparent;"><span data-i18n="shuffle">Shuffle</span><i class="fa-solid fa-shuffle text-white ml-2"></i></span>
+                                </div>
                             </div>
                         </div>
-                        <div class="absolute -bottom-10 left-0 w-full">
-                            <span class="text-4xl font-bold text-gray-300 bg-white bg-opacity-25 rounded-lg">Juan Castaño</span>
-                            <h1 class="text-3xl text-white mt-1">@jcastanodev</h1>
+                        <div class="absolute -bottom-10 left-0 w-full flex flex-col">
+                            <span class="text-4xl font-bold bg-white bg-opacity-75 rounded-tl-lg rounded-tr-lg rounded-br-lg px-2 w-fit" style="color: #353230;">Juan Castaño</span>
+                            <span class="text-3xl text-white bg-white bg-opacity-75 rounded-b-lg w-fit px-2 pb-1" style="color: #353230;">@jcastanodev</span>
                         </div>
                     </div>
-                    <div class="rounded-lg p-2 mt-16 w-full" style="background-color: #a9a4a0;">
-                        <p class="text-gray-800"><span data-i18n="software-developer">Software Developer</span> - Node | React | Vue | Angular | Flutter | RoR | Laravel | Symfony | SpringBoot</p>
-                    </div>
-                    <div class="mt-8">
-                        <ul>
-                            <li>
-                                <a target="_blank" href="mailto:jcastanodev@gmail.com" class="text-white hover:underline">
-                                    <i class="fas fa-envelope text-white mr-4"></i>jcastanodev@gmail.com
-                                </a>
-                            </li>
-                            <li class="mt-2">
-                                <a target="_blank" href="tel:+573234889823" class="text-white hover:underline">
-                                    <i class="fa-solid fa-phone text-white mr-4"></i>3234889823
-                                </a>
-                            </li>
-                            <li class="mt-2">
-                                <a target="_blank" href="https://jcastanodev.github.io/" class="text-white hover:underline">
-                                    <i class="fas fa-globe text-white mr-4"></i>Web
-                                </a>
-                            </li>
-                            <li class="mt-2">
-                                <a target="_blank" href="https://www.facebook.com/jcastanodev" class="text-white hover:underline">
-                                    <i class="fab fa-facebook-f text-white mr-4"></i>Facebook
-                                </a>
-                            </li>
-                            <li class="mt-2">
-                                <a target="_blank" href="https://www.instagram.com/jcastanodev" class="text-white hover:underline">
-                                    <i class="fab fa-instagram text-white mr-4"></i>Instagram
-                                </a>
-                            </li>
-                            <li class="mt-2">
-                                <a target="_blank" href="https://x.com/jcastanodev" class="text-white hover:underline">
-                                    <i class="fab fa-twitter text-white mr-4"></i>X (Twitter)
-                                </a>
-                            </li>
-                            <li class="mt-2">
-                                <a target="_blank" href="https://www.linkedin.com/in/jcastanodev" class="text-white hover:underline">
-                                    <i class="fab fa-linkedin-in text-white mr-4"></i>LinkedIn
-                                </a>
-                            </li>
-                        </ul>
+                    <div class="rounded-lg w-full p-2 mt-12 text-lg text-black">
+                        <div class="bg-gray-200 rounded-lg p-2 -mx-2 font-semibold"><span data-i18n="software-developer">Software Developer</span> - Node | React | Vue | Angular | Flutter | RoR | Laravel | Symfony | SpringBoot</div>
+                        <div class="mt-4">
+                            <ul>
+                                <li>
+                                    <a target="_blank" href="mailto:jcastanodev@gmail.com" class="hover:underline">
+                                        <span>
+                                            <i class="fas fa-envelope mr-4"></i>jcastanodev@gmail.com
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="mt-2 flex">
+                                    <a target="_blank" href="tel:+573226037451" class="hover:underline">
+                                        <i class="fa-solid fa-phone"></i>
+                                    </a>
+                                    <span class="mx-2">|</span>
+                                    <a target="_blank" href="https://wa.me/573226037451" class="hover:underline">
+                                        <i class="fa-brands fa-whatsapp mr-4"></i>3226037451
+                                    </a>
+                                </li>
+                                <li class="mt-2">
+                                    <a target="_blank" href="https://jcastanodev.github.io/" class="hover:underline">
+                                        <i class="fas fa-globe mr-4"></i>Web
+                                    </a>
+                                </li>
+                                <li class="mt-2">
+                                    <a target="_blank" href="https://www.facebook.com/jcastanodev" class="hover:underline">
+                                        <i class="fab fa-facebook-f mr-4"></i>Facebook
+                                    </a>
+                                </li>
+                                <li class="mt-2">
+                                    <a target="_blank" href="https://www.instagram.com/jcastanodev" class="hover:underline">
+                                        <i class="fab fa-instagram mr-4"></i>Instagram
+                                    </a>
+                                </li>
+                                <li class="mt-2">
+                                    <a target="_blank" href="https://x.com/jcastanodev" class="hover:underline">
+                                        <i class="fab fa-twitter mr-4"></i>X (Twitter)
+                                    </a>
+                                </li>
+                                <li class="mt-2">
+                                    <a target="_blank" href="https://www.linkedin.com/in/jcastanodev" class="hover:underline">
+                                        <i class="fab fa-linkedin-in mr-4"></i>LinkedIn
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="my-auto max-w-lg md:max-w-max py-8 md:px-4 lg:pl-8 w-full md:flex-1">
@@ -94,21 +104,23 @@
                             projects
                         </span>:
                         <div class="flex flex-wrap gap-2 mt-4 justify-between">
-                            <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-pointer">
-                                <span class="text-white font-bold text-xl text-nowrap">Smoking Log</span>
-                            </div>
-                            <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-pointer">
-                                <span class="text-white font-bold text-xl text-nowrap">App ERP</span>
-                            </div>
-                            <a target="_blank" href="https://code-ai-journey.vercel.app/">
-                                <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-pointer">
-                                    <span class="text-white font-bold text-xl text-nowrap">Code AI Journey</span>
+                            <a target="_blank" href="https://code-ai-journey.vercel.app/" class="flex-auto">
+                                <div class="text-center bg-white rounded-lg p-4 cursor-pointer">
+                                    <span class="text-black font-bold text-xl text-nowrap">Code AI Journey</span>
                                 </div>
                             </a>
-                            <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-pointer">
+                            <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-not-allowed">
+                                <span class="text-white font-bold text-xl text-nowrap">App ERP</span>
+                            </div>
+                            <a href="#" class="flex-auto">
+                                <div class="text-center border border-white rounded-lg p-4 cursor-not-allowed">
+                                    <span class="text-white font-bold text-xl text-nowrap">Smoking Log</span>
+                                </div>
+                            </a>
+                            <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-not-allowed">
                                 <span class="text-white font-bold text-xl text-nowrap">Web Maps</span>
                             </div>
-                            <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-pointer">
+                            <div class="flex-auto text-center border border-white rounded-lg p-4 cursor-not-allowed">
                                 <span class="text-white font-bold text-xl text-nowrap" data-i18n="others">Others</span>
                             </div>
                         </div>
@@ -117,36 +129,6 @@
             </div>
         </section>
     </main>
-    <script>
-        const languageSelect = document.getElementById('language-select');
-
-        let currentLanguage = localStorage.getItem('language') ?? 'en';
-        languageSelect.value = currentLanguage;
-
-        function loadLanguage(lang) {
-            localStorage.setItem('language', lang);
-            fetch(`./lang/${lang}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    currentLanguage = lang;
-                    updateText(data);
-                });
-        }
-
-        function updateText(data) {
-            const elements = document.querySelectorAll('[data-i18n]');
-            elements.forEach(element => {
-                const key = element.getAttribute('data-i18n');
-                element.innerHTML = data[key];
-            });
-        }
-
-        languageSelect.addEventListener('change', () => {
-            loadLanguage(languageSelect.value);
-        });
-
-        // Load the default language on page load
-        loadLanguage(currentLanguage);
-    </script>
+    <script src="./index.js"></script>
 </body>
 </html>
