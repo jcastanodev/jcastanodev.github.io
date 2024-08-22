@@ -5,7 +5,7 @@ languageSelect.value = currentLanguage;
 
 function loadLanguage(lang) {
     localStorage.setItem('language', lang);
-    fetch(`./lang/${lang}.json`)
+    fetch(`./lang/${lang}.json?t=${Date.now()}`)
         .then(response => response.json())
         .then(data => {
             currentLanguage = lang;
