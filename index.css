@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.text-gradient {
+    background-image: linear-gradient(to right, #f2cc6f, #7B68EE, #3498db, #2ecc71, #f0642c, #f2cc6f, #f2cc6f, #7B68EE, #3498db, #2ecc71, #f0642c, #f2cc6f);
+    color: transparent;
+    background-clip: text;
+    background-size: 300%;
+    animation: color 6s linear infinite;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+@keyframes color {
+    from {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    to {
+        background-position: 0% 50%;
+    }
+}

@@ -1,9 +1,12 @@
 {
-    "hello": "¡Hola! Soy Juan Camilo Castaño",
-    "presentation": "Un apasionado desarrollador de software senior con más de <b>6 años de experiencia</b> creando soluciones innovadoras en el mundo tecnológico. A lo largo de mi trayectoria, he tenido la oportunidad de colaborar con diversas empresas del sector, aportando mi experiencia y conocimientos para impulsar su crecimiento. Me encanta mantenerme a la vanguardia de la tecnología y explorar nuevas formas de resolver problemas, lo que me permite ofrecer soluciones creativas y eficientes.",
-    "welcome": "¡Bienvenido a mi espacio digital!",
-    "projects": "Proyectos",
-    "software-developer": "Desarrollador de Software",
-    "others": "Otros",
-    "shuffle": "Rotar"
+  "hello": "¡Hola! Soy Juan Camilo Castaño",
+  "show-more": "Ver más",
+  "show-less": "Ver menos",
+  "short-presentation": "Desarrollador full-stack con **7 años de experiencia** en soluciones tecnológicas innovadoras para sectores como banca y marketing digital. **Experto en Kotlin, JavaScript y Java,** liderando equipos en arquitecturas modernas y optimizando el rendimiento de aplicaciones. Busco nuevos desafíos en empresas disruptivas.",
+  "presentation": "Desarrollador de software full-stack con **7 años de experiencia** en la creación de soluciones tecnológicas innovadoras para sectores altamente regulados como banca y pagos o sectores como marketing digital, inteligencia artificial y consultoría de software. Experto en **Kotlin, JavaScript y Java,** con un profundo conocimiento de frameworks como **Kotlin Multiplatform, React y Spring Boot.**\n\nHe **liderado equipos multidisciplinarios** en la implementación de arquitecturas de microservicios y serverless computing, optimizando el rendimiento y escalabilidad de las aplicaciones. Mi experiencia en la resolución de problemas complejos me permitió desarrollar características que no comprometieran el rendimiento del backend y delegando cargas al lado del cliente, realizando optimizaciones en el cliente que permitieron **reducir tiempos de carga en hasta un 50%.**\n\nPoseo sólidas habilidades en **DevOps, incluyendo CI/CD, Docker y Kubernetes.** al igual que en **diseño de software, buenas prácticas de desarrollo y metodologías ágiles.** Soy un apasionado de las nuevas tecnologías y me mantengo actualizado en las últimas tendencias del mercado. Busco nuevos desafíos en empresas innovadoras donde pueda aplicar mis conocimientos para crear productos de alta calidad.",
+  "welcome": "¡Bienvenido a mi espacio digital!",
+  "projects": "Proyectos",
+  "software-developer": "Desarrollador de Software",
+  "others": "Otros",
+  "next": "Siguiente"
 }

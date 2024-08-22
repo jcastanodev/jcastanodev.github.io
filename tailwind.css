@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.4.4 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.10 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -664,6 +664,10 @@ video {
   margin-top: 1rem;
 }
 
+.block {
+  display: block;
+}
+
 .flex {
   display: flex;
 }
@@ -923,6 +927,31 @@ video {
 
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.text-gradient {
+  background-image: linear-gradient(to right, #f2cc6f, #7B68EE, #3498db, #2ecc71, #f0642c, #f2cc6f, #f2cc6f, #7B68EE, #3498db, #2ecc71, #f0642c, #f2cc6f);
+  color: transparent;
+  -webkit-background-clip: text;
+          background-clip: text;
+  background-size: 300%;
+  animation: color 6s linear infinite;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+@keyframes color {
+  from {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  to {
+    background-position: 0% 50%;
+  }
 }
 
 .hover\:underline:hover {

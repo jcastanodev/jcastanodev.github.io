@@ -1,3 +1,4 @@
 # jcastanodev.github.io
+
 - npx tailwindcss -i ./index.css -o ./tailwind.css --watch
-- http-server
+- browser-sync start --server --files "_.html, _.css, \*.js"

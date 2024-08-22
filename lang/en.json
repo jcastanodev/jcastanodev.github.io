@@ -1,9 +1,12 @@
 {
-    "hello": "Hello! I'm Juan Camilo Castaño",
-    "presentation": "A passionate senior software developer with over <b>6 years of experience</b> creating innovative solutions in the technology world. Throughout my career, I have had the opportunity to collaborate with various companies in the sector, contributing my experience and knowledge to promote their growth. I love staying on the cutting edge of technology and exploring new ways of solving problems, allowing me to offer creative and efficient solutions.",
-    "welcome": "Welcome to my digital space!",
-    "projects": "Projects",
-    "software-developer": "Software Developer",
-    "others": "Others",
-    "shuffle": "Shuffle"
+  "hello": "Hello! I'm Juan Camilo Castaño",
+  "show-more": "Show more",
+  "show-less": "Show less",
+  "short-presentation": "Full-stack developer with **7 years of experience** in innovative technological solutions for sectors such as banking and digital marketing. **Expert in Kotlin, JavaScript and Java**, leading teams in modern architectures and optimizing application performance. Looking for new challenges in disruptive companies.",
+  "presentation": "Full-stack software developer with **7 years of experience** creating innovative technological solutions for highly regulated sectors such as banking and payments or sectors such as digital marketing, artificial intelligence and software consulting. Expert in **Kotlin, JavaScript and Java,** with a deep knowledge of frameworks such as **Kotlin Multiplatform, React and Spring Boot.**\n\nI have **led multidisciplinary teams** in the implementation of microservices architectures and serverless computing, optimizing application performance and scalability. My experience solving complex problems allowed me to develop features that did not compromise backend performance and delegating loads to the client-side, performing optimizations on the client that **allowed to reduce load times by up to 50%.**\n\nI have strong skills in **DevOps, including CI/CD, Docker, and Kubernetes,** as well as in **software design, good development practices, and agile methodologies.** I am passionate about new technologies and I stay up to date with the latest market trends. I am looking for new challenges in innovative companies where I can apply my knowledge to create high-quality products.",
+  "welcome": "¡Welcome to my digital space!",
+  "projects": "Projects",
+  "software-developer": "Software Developer",
+  "others": "Others",
+  "next": "Next"
 }

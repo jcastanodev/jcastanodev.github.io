@@ -1,140 +1,314 @@
 <!DOCTYPE html>
-<html lang="en" style="height: 100%;">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en" style="height: 100%">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>jcastanodev</title>
-    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
-    <link href="./tailwind.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body class="flex flex-col w-full h-full overflow-x-auto overflow-y-auto bg-black min-w-80" style="min-width: 310px;">
-    <header class="shadow" style="background-image: url('./assets/banner.png'); background-size: 650px; background-repeat: repeat;">
-        <div class="container flex items-center justify-between max-w-lg p-2 mx-auto md:max-w-7xl">
-            <div class="flex items-center">
-                <a href="https://jcastanodev.github.io/">
-                    <img src="./assets/icon-black.png" alt="icon" class="w-12 p-1 mr-4 bg-white rounded-full">
-                </a>
-            </div>
-            <div>
-                <select id="language-select" class="px-3 py-2 text-black bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                </select>
-            </div>
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+    <link href="./tailwind.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body
+    class="flex flex-col w-full h-full overflow-x-auto overflow-y-auto bg-black min-w-80"
+    style="min-width: 310px"
+  >
+    <header
+      class="shadow"
+      style="
+        background-image: url('./assets/banner.png');
+        background-size: 650px;
+        background-repeat: repeat;
+      "
+    >
+      <div
+        class="container flex items-center justify-between max-w-lg p-2 mx-auto md:max-w-7xl"
+      >
+        <div class="flex items-center">
+          <a href="https://jcastanodev.github.io/">
+            <img
+              src="./assets/icon-black.png"
+              alt="icon"
+              class="w-12 p-1 mr-4 bg-white rounded-full"
+            />
+          </a>
         </div>
+        <div>
+          <select
+            id="language-select"
+            class="px-3 py-2 text-black bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+        </div>
+      </div>
     </header>
     <main class="flex flex-1 w-full p-2">
-        <section id="presentation" class="container mx-auto my-auto max-w-7xl">
-            <div class="flex flex-wrap justify-center w-full">
-                <div class="max-w-lg p-6 border border-black rounded-lg md:max-w-sm lg:max-w-lg" style="background-color: #ffffff; box-shadow: #a9a4a0 0px 0px 10px 0px;">
-                    <div class="relative z-0 flex px-8">
-                        <div class="relative w-full">
-                            <div class="absolute top-0 left-0 w-full h-full rounded-full" style="background-image: url('./assets/profile.jpg'); background-position: center; background-size: cover; background-repeat: no-repeat; filter: blur(8px); -webkit-filter: blur(8px);">
-                            </div>
-                            <div class="relative p-1">
-                                <img src="./assets/profile1.gif" alt="profile1" class="hidden">
-                                <img src="./assets/profile2.gif" alt="profile2" class="hidden">
-                                <img src="./assets/profile3.gif" alt="profile3" class="hidden">
-                                <img id="profile-image" src="./assets/profile.jpg" alt="profile" class="w-full rounded-full" style="filter: blur(0px); -webkit-filter: blur(0px);">
-                                <div id="shuffle-button" class="absolute top-0 bottom-0 left-0 right-0 flex bg-black bg-opacity-25 rounded-full opacity-0 cursor-pointer hover:opacity-100">
-                                    <span class="p-2 mx-auto my-auto text-white border border-white rounded-lg" style="background-color: transparent;">
-                                        <span data-i18n="shuffle">Shuffle</span>
-                                        <i class="ml-2 text-white fa-solid fa-shuffle"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="absolute left-0 flex flex-col w-full -bottom-10">
-                            <span class="px-2 text-4xl font-bold bg-white bg-opacity-75 rounded-tl-lg rounded-tr-lg rounded-br-lg w-fit" style="color: #353230;">Juan Castaño</span>
-                            <span class="px-2 pb-1 text-3xl text-white bg-white bg-opacity-75 rounded-b-lg w-fit" style="color: #353230;">@jcastanodev</span>
-                        </div>
-                    </div>
-                    <div class="w-full p-2 mt-12 text-lg text-black rounded-lg">
-                        <div class="p-2 -mx-2 font-semibold bg-gray-200 rounded-lg"><span data-i18n="software-developer">Software Developer</span> - Node | React | Vue | Angular | Flutter | RoR | Laravel | Symfony | SpringBoot</div>
-                        <div class="mt-4">
-                            <ul>
-                                <li>
-                                    <a target="_blank" href="mailto:jcastanodev@gmail.com" class="hover:underline">
-                                        <span>
-                                            <i class="mr-4 fas fa-envelope"></i>jcastanodev@gmail.com
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="flex mt-2">
-                                    <a target="_blank" href="tel:+573226037451" class="hover:underline">
-                                        <i class="fa-solid fa-phone"></i>
-                                    </a>
-                                    <span class="mx-2">|</span>
-                                    <a target="_blank" href="https://wa.me/573226037451" class="hover:underline">
-                                        <i class="mr-4 fa-brands fa-whatsapp"></i>3226037451
-                                    </a>
-                                </li>
-                                <li class="mt-2">
-                                    <a target="_blank" href="https://jcastanodev.github.io/" class="hover:underline">
-                                        <i class="mr-4 fas fa-globe"></i>Web
-                                    </a>
-                                </li>
-                                <li class="mt-2">
-                                    <a target="_blank" href="https://www.facebook.com/jcastanodev" class="hover:underline">
-                                        <i class="mr-4 fab fa-facebook-f"></i>Facebook
-                                    </a>
-                                </li>
-                                <li class="mt-2">
-                                    <a target="_blank" href="https://www.instagram.com/jcastanodev" class="hover:underline">
-                                        <i class="mr-4 fab fa-instagram"></i>Instagram
-                                    </a>
-                                </li>
-                                <li class="mt-2">
-                                    <a target="_blank" href="https://x.com/jcastanodev" class="hover:underline">
-                                        <i class="mr-4 fab fa-twitter"></i>X (Twitter)
-                                    </a>
-                                </li>
-                                <li class="mt-2">
-                                    <a target="_blank" href="https://www.linkedin.com/in/jcastanodev" class="hover:underline">
-                                        <i class="mr-4 fab fa-linkedin-in"></i>LinkedIn
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+      <section id="presentation" class="container mx-auto my-auto max-w-7xl">
+        <div class="flex flex-wrap justify-center w-full">
+          <div
+            class="max-w-lg p-6 border border-black rounded-lg md:max-w-sm lg:max-w-lg"
+            style="
+              background-color: #ffffff;
+              box-shadow: #a9a4a0 0px 0px 10px 0px;
+            "
+          >
+            <div class="relative z-0 flex px-8">
+              <div class="relative w-full">
+                <div
+                  class="absolute top-0 left-0 w-full h-full rounded-full"
+                  style="
+                    background-image: url('./assets/profile.jpg');
+                    background-position: center;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    filter: blur(8px);
+                    -webkit-filter: blur(8px);
+                  "
+                ></div>
+                <div class="relative p-1">
+                  <img
+                    id="profile-image"
+                    src="./assets/profile2.gif"
+                    alt="profile"
+                    class="w-full rounded-full"
+                    style="filter: blur(0px); -webkit-filter: blur(0px)"
+                  />
+                  <div
+                    id="next-profile-image-button"
+                    class="absolute top-0 bottom-0 left-0 right-0 flex bg-black bg-opacity-25 rounded-full opacity-0 cursor-pointer hover:opacity-100"
+                  >
+                    <span
+                      class="p-2 mx-auto my-auto text-white border border-white rounded-lg"
+                      style="background-color: transparent"
+                      ><span data-i18n="next">Next</span
+                      ><i class="ml-2 text-white fa-solid fa-shuffle"></i
+                    ></span>
+                  </div>
                 </div>
-                <div class="w-full max-w-lg py-8 my-auto md:max-w-max md:px-4 lg:pl-8 md:flex-1">
-                    <h2 class="text-3xl font-bold text-white" data-i18n="hello">Hello! I'm Juan Camilo Castaño</h2>
-                    <p class="mt-4 text-white" data-i18n="presentation">
-                        A passionate senior software developer with over <b>6 years of experience</b> creating innovative solutions in the technology world. Throughout my career, I have had the opportunity to collaborate with various companies in the sector, contributing my experience and knowledge to promote their growth. I love staying on the cutting edge of technology and exploring new ways of solving problems, allowing me to offer creative and efficient solutions.
-                    </p>
-                    <h3 class="mt-4 text-xl text-white" data-i18n="welcome">Welcome to my digital space!</h3>
-                    <div class="mt-10">
-                        <span class="text-3xl font-bold text-white" data-i18n="projects">
-                            projects
-                        </span>:
-                        <div class="flex flex-wrap justify-between gap-2 mt-4">
-                            <a target="_blank" href="https://code-ai-journey.vercel.app/" class="flex-auto">
-                                <div class="p-4 text-center bg-white rounded-lg cursor-pointer">
-                                    <span class="text-xl font-bold text-black text-nowrap">Code AI Journey</span>
-                                </div>
-                            </a>
-                            <div class="flex-auto p-4 text-center border border-white rounded-lg cursor-not-allowed">
-                                <span class="text-xl font-bold text-white text-nowrap">App ERP</span>
-                            </div>
-                            <a href="#" class="flex-auto">
-                                <div class="p-4 text-center border border-white rounded-lg cursor-not-allowed">
-                                    <span class="text-xl font-bold text-white text-nowrap">Smoking Log</span>
-                                </div>
-                            </a>
-                            <div class="flex-auto p-4 text-center border border-white rounded-lg cursor-not-allowed">
-                                <span class="text-xl font-bold text-white text-nowrap">Web Maps</span>
-                            </div>
-                            <div class="flex-auto p-4 text-center border border-white rounded-lg cursor-not-allowed">
-                                <span class="text-xl font-bold text-white text-nowrap" data-i18n="others">Others</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </div>
+              <div class="absolute left-0 flex flex-col w-full -bottom-10">
+                <span
+                  class="px-2 text-4xl font-bold bg-white bg-opacity-75 rounded-tl-lg rounded-tr-lg rounded-br-lg w-fit"
+                  style="color: #353230"
+                  >Juan Castaño</span
+                >
+                <span
+                  class="px-2 pb-1 text-3xl text-white bg-white bg-opacity-75 rounded-b-lg w-fit"
+                  style="color: #353230"
+                  >@jcastanodev</span
+                >
+              </div>
             </div>
-        </section>
+            <div class="w-full p-2 mt-12 text-lg text-black rounded-lg">
+              <div class="p-2 -mx-2 font-semibold bg-gray-200 rounded-lg">
+                <span data-i18n="software-developer">Software Developer</span> -
+                Node | React | Vue | Angular | Flutter | RoR | Laravel | Symfony
+                | SpringBoot
+              </div>
+              <div class="mt-4">
+                <ul>
+                  <li>
+                    <a
+                      target="_blank"
+                      href="mailto:jcastanodev@gmail.com"
+                      class="hover:underline"
+                    >
+                      <span>
+                        <i class="mr-4 fas fa-envelope"></i
+                        >jcastanodev@gmail.com
+                      </span>
+                    </a>
+                  </li>
+                  <li class="flex mt-2">
+                    <a
+                      target="_blank"
+                      href="tel:+573226037451"
+                      class="hover:underline"
+                    >
+                      <i class="fa-solid fa-phone"></i>
+                    </a>
+                    <span class="mx-2">|</span>
+                    <a
+                      target="_blank"
+                      href="https://wa.me/573226037451"
+                      class="hover:underline"
+                    >
+                      <i class="mr-4 fa-brands fa-whatsapp"></i>3226037451
+                    </a>
+                  </li>
+                  <li class="mt-2">
+                    <a
+                      target="_blank"
+                      href="https://jcastanodev.github.io/"
+                      class="hover:underline"
+                    >
+                      <i class="mr-4 fas fa-globe"></i>Web
+                    </a>
+                  </li>
+                  <li class="mt-2">
+                    <a
+                      target="_blank"
+                      href="https://www.facebook.com/jcastanodev"
+                      class="hover:underline"
+                    >
+                      <i class="mr-4 fab fa-facebook-f"></i>Facebook
+                    </a>
+                  </li>
+                  <li class="mt-2">
+                    <a
+                      target="_blank"
+                      href="https://www.instagram.com/jcastanodev"
+                      class="hover:underline"
+                    >
+                      <i class="mr-4 fab fa-instagram"></i>Instagram
+                    </a>
+                  </li>
+                  <li class="mt-2">
+                    <a
+                      target="_blank"
+                      href="https://x.com/jcastanodev"
+                      class="hover:underline"
+                    >
+                      <i class="mr-4 fab fa-twitter"></i>X (Twitter)
+                    </a>
+                  </li>
+                  <li class="mt-2">
+                    <a
+                      target="_blank"
+                      href="https://www.linkedin.com/in/jcastanodev"
+                      class="hover:underline"
+                    >
+                      <i class="mr-4 fab fa-linkedin-in"></i>LinkedIn
+                    </a>
+                  </li>
+                  <li class="mt-2">
+                    <a
+                      target="_blank"
+                      href="https://github.com/jcastanodev"
+                      class="hover:underline"
+                    >
+                      <i class="mr-4 fa-brands fa-github"></i>GitHub
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div
+            class="w-full max-w-lg py-8 my-auto md:max-w-max md:px-4 lg:pl-8 md:flex-1"
+          >
+            <div class="flex">
+              <h2 class="text-3xl font-bold text-white" data-i18n="hello">
+                Hello! I'm Juan Camilo Castaño
+              </h2>
+            </div>
+            <span
+              id="short-presentation-text"
+              data-i18n="short-presentation"
+              class="hidden"
+            ></span>
+            <span
+              id="full-presentation-text"
+              data-i18n="presentation"
+              class="hidden"
+            ></span>
+            <p
+              id="presentation-text"
+              class="mt-4 text-white"
+              data-i18n="short-presentation"
+              style="white-space: pre-wrap"
+            >
+              Full-stack developer with 7+ years of experience in innovative
+              technological solutions for sectors such as banking and digital
+              marketing. Expert in Kotlin, JavaScript and Java, leading teams in
+              modern architectures and optimizing application performance.
+              Looking for new challenges in disruptive companies.
+            </p>
+            <div class="text-center">
+              <button
+                class="p-1 text-white border border-white rounded-lg text-nowrap"
+                id="show-more-less-button"
+              >
+                <span id="show-more-label-button" data-i18n="show-more"
+                  >Show more</span
+                >
+                <span
+                  id="show-less-label-button"
+                  data-i18n="show-less"
+                  style="display: none"
+                  >Show less</span
+                >
+              </button>
+            </div>
+            <h3
+              class="mt-10 text-xl text-center text-gradient"
+              data-i18n="welcome"
+            >
+              Welcome to my digital space!
+            </h3>
+            <div class="mt-10">
+              <span class="text-3xl font-bold text-white" data-i18n="projects">
+                projects </span
+              >:
+              <div class="flex flex-wrap justify-between gap-2 mt-4">
+                <a
+                  target="_blank"
+                  href="https://code-ai-journey.vercel.app/"
+                  class="flex-auto"
+                >
+                  <div
+                    class="p-4 text-center bg-white rounded-lg cursor-pointer"
+                  >
+                    <span class="text-xl font-bold text-black text-nowrap"
+                      >Code AI Journey</span
+                    >
+                  </div>
+                </a>
+                <div
+                  class="flex-auto p-4 text-center border border-white rounded-lg cursor-not-allowed"
+                >
+                  <span class="text-xl font-bold text-white text-nowrap"
+                    >App ERP</span
+                  >
+                </div>
+                <a href="#" class="flex-auto">
+                  <div
+                    class="p-4 text-center border border-white rounded-lg cursor-not-allowed"
+                  >
+                    <span class="text-xl font-bold text-white text-nowrap"
+                      >Smoking Log</span
+                    >
+                  </div>
+                </a>
+                <div
+                  class="flex-auto p-4 text-center border border-white rounded-lg cursor-not-allowed"
+                >
+                  <span class="text-xl font-bold text-white text-nowrap"
+                    >Web Maps</span
+                  >
+                </div>
+                <div
+                  class="flex-auto p-4 text-center border border-white rounded-lg cursor-not-allowed"
+                >
+                  <span
+                    class="text-xl font-bold text-white text-nowrap"
+                    data-i18n="others"
+                    >Others</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
     <script src="./index.js"></script>
-</body>
+  </body>
 </html>
