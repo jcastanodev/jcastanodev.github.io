@@ -1,0 +1,152 @@
+{
+  "sunflower": {
+    "name": {
+      "spanish": "Girasol",
+      "english": "Sunflower"
+    },
+    "description": {
+      "spanish": "Símbolo de adoración, admiración y lealtad. En el amor, representa un amor apasionado y duradero.",
+      "english": "Symbol of adoration, admiration, and loyalty. In love, it represents a passionate and enduring love."
+    },
+    "dedication": {
+      "spanish": "Para ti, girasol de mi corazón, eres el sol que ilumina mi vida. Tu amor ardiente me llena de alegría y esperanza.",
+      "english": "For you, sunflower of my heart, you are the sun that illuminates my life. Your burning love fills me with joy and hope."
+    },
+    "prompt": "A vibrant sunflower with a large, golden head and dark brown center, standing tall in a field of wheat."
+  },
+  "daffodil": {
+    "name": {
+      "spanish": "Narciso",
+      "english": "Daffodil"
+    },
+    "description": {
+      "spanish": "Representa la nueva vida, la esperanza y el renacimiento. En el amor, simboliza el comienzo de una nueva relación.",
+      "english": "Represents new life, hope, and rebirth. In love, it symbolizes the beginning of a new relationship."
+    },
+    "dedication": {
+      "spanish": "Narciso, eres la promesa de un nuevo amanecer en mi vida. Tu belleza delicada me llena de esperanza y amor.",
+      "english": "Daffodil, you are the promise of a new dawn in my life. Your delicate beauty fills me with hope and love."
+    },
+    "prompt": "A cheerful daffodil with a bright yellow trumpet-shaped flower and long, green leaves, blooming in a spring meadow."
+  },
+  "buttercup": {
+    "name": {
+      "spanish": "Ranúnculo",
+      "english": "Buttercup"
+    },
+    "description": {
+      "spanish": "Simboliza la alegría, la inocencia y la belleza. En el amor, representa un amor infantil y puro.",
+      "english": "Symbolizes joy, innocence, and beauty. In love, it represents a childish and pure love."
+    },
+    "dedication": {
+      "spanish": "Ranúnculo, eres la chispa de alegría que ilumina mi día. Tu inocencia me llena de amor y felicidad.",
+      "english": "Buttercup, you are the spark of joy that illuminates my day. Your innocence fills me with love and happiness."
+    },
+    "prompt": "A field of shimmering buttercups with small, golden flowers and delicate green leaves, swaying gently in the breeze."
+  },
+  "dandelion": {
+    "name": {
+      "spanish": "Diente de león",
+      "english": "Dandelion"
+    },
+    "description": {
+      "spanish": "Representa la libertad, la esperanza y la alegría. En el amor, simboliza un amor libre y despreocupado.",
+      "english": "Represents freedom, hope, and joy. In love, it symbolizes a free and carefree love."
+    },
+    "dedication": {
+      "spanish": "Diente de león, eres la libertad que anhela mi alma. Tu alegría despreocupada me llena de amor y esperanza.",
+      "english": "Dandelion, you are the freedom my soul craves. Your carefree joy fills me with love and hope."
+    },
+    "prompt": "A fluffy dandelion with a bright yellow flower head that has gone to seed, dispersing its seeds in the wind."
+  },
+  "forsythia": {
+    "name": {
+      "spanish": "Forsythia",
+      "english": "Forsythia"
+    },
+    "description": {
+      "spanish": "Simboliza la amistad, la esperanza y la llegada de la primavera. En el amor, representa un amor duradero y lleno de esperanza.",
+      "english": "Symbolizes friendship, hope, and the arrival of spring. In love, it represents a lasting and hopeful love."
+    },
+    "dedication": {
+      "spanish": "Forsythia, eres la esperanza que renueva mi corazón. Tu belleza radiante me llena de amor y alegría.",
+      "english": "Forsythia, you are the hope that renews my heart. Your radiant beauty fills me with love and joy."
+    },
+    "prompt": "A flowering forsythia bush with a cascade of bright yellow blossoms, covering its branches before the leaves emerge."
+  },
+  "coreopsis": {
+    "name": {
+      "spanish": "Coreopsis",
+      "english": "Coreopsis"
+    },
+    "description": {
+      "spanish": "Representa la alegría, la belleza y la admiración. En el amor, simboliza un amor lleno de admiración y respeto.",
+      "english": "Represents joy, beauty, and admiration. In love, it symbolizes a love filled with admiration and respect."
+    },
+    "dedication": {
+      "spanish": "Coreopsis, eres la estrella que ilumina mi camino. Tu admiración silenciosa me llena de amor y respeto.",
+      "english": "Coreopsis, you are the star that illuminates my path. Your silent admiration fills me with love and respect."
+    },
+    "prompt": "A cluster of coreopsis flowers with vibrant yellow petals and dark brown centers, attracting butterflies and bees."
+  },
+  "black-eyed-susan": {
+    "name": {
+      "spanish": "Rudbeckia",
+      "english": "Black-eyed Susan"
+    },
+    "description": {
+      "spanish": "Simboliza la justicia, la lealtad y la confianza. En el amor, representa un amor fuerte y duradero.",
+      "english": "Symbolizes justice, loyalty, and trust. In love, it represents a strong and lasting love."
+    },
+    "dedication": {
+      "spanish": "Rudbeckia, eres la lealtad que siempre me acompaña. Tu amor inquebrantable me llena de confianza y seguridad.",
+      "english": "Black-eyed Susan, you are the loyalty that always accompanies me. Your unwavering love fills me with trust and security."
+    },
+    "prompt": "A black-eyed Susan with a bright yellow petal ring surrounding a dark brown center, growing in a wildflower meadow."
+  },
+  "yellow-rose": {
+    "name": {
+      "spanish": "Rosa amarilla",
+      "english": "Yellow Rose"
+    },
+    "description": {
+      "spanish": "Representa la amistad, la alegría y la esperanza. En el amor, simboliza un amor platónico o un amor que está floreciendo.",
+      "english": "Represents friendship, joy, and hope. In love, it symbolizes a platonic love or a love that is blossoming."
+    },
+    "dedication": {
+      "spanish": "Rosa amarilla, eres la esperanza que ilumina mi futuro. Tu amor naciente me llena de ilusión y alegría.",
+      "english": "Yellow Rose, you are the hope that illuminates my future. Your nascent love fills me with excitement and joy."
+    },
+    "prompt": "A single yellow rose with velvety petals and a long, thorny stem, standing in a vase of water."
+  },
+  "yellow-tulip": {
+    "name": {
+      "spanish": "Tulipán amarillo",
+      "english": "Yellow Tulip"
+    },
+    "description": {
+      "spanish": "Simboliza la esperanza, la felicidad y el amor perfecto. En el amor, representa un amor ideal y lleno de felicidad.",
+      "english": "Symbolizes hope, happiness, and perfect love. In love, it represents an ideal and joyful love."
+    },
+    "dedication": {
+      "spanish": "Tulipán amarillo, eres la felicidad que anhelo en mi vida. Tu amor ideal me llena de paz y satisfacción.",
+      "english": "Yellow Tulip, you are the happiness I long for in my life. Your ideal love fills me with peace and satisfaction."
+    },
+    "prompt": "A field of yellow tulips with tall, slender stems and cup-shaped flowers, blooming in the spring."
+  },
+  "yellow-hibiscus": {
+    "name": {
+      "spanish": "Hibisco amarillo",
+      "english": "Yellow Hibiscus"
+    },
+    "description": {
+      "spanish": "Representa la belleza, la pasión y la riqueza. En el amor, simboliza un amor intenso y apasionado.",
+      "english": "Represents beauty, passion, and wealth. In love, it symbolizes an intense and passionate love."
+    },
+    "dedication": {
+      "spanish": "Hibisco amarillo, eres la pasión que arde en mi corazón. Tu amor intenso me llena de deseo y emoción.",
+      "english": "Yellow Hibiscus, you are the passion that burns in my heart. Your intense love fills me with desire and excitement."
+    },
+    "prompt": "A tropical yellow hibiscus flower with large, delicate petals and a long, slender stamen, growing on a lush green plant."
+  }
+}

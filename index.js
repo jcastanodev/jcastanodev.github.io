@@ -1,33 +1,3 @@
-const languageSelect = document.getElementById('language-select');
-
-let currentLanguage = localStorage.getItem('language') ?? 'en';
-languageSelect.value = currentLanguage;
-
-function loadLanguage(lang) {
-    localStorage.setItem('language', lang);
-    fetch(`./lang/${lang}.json?t=${Date.now()}`)
-        .then(response => response.json())
-        .then(data => {
-            currentLanguage = lang;
-            updateText(data);
-        });
-}
-
-function updateText(data) {
-    const elements = document.querySelectorAll('[data-i18n]');
-    elements.forEach(element => {
-        const key = element.getAttribute('data-i18n');
-        element.innerHTML = markdownToHtmlForBold(data[key]) ?? element.innerHTML;
-    });
-}
-
-languageSelect.addEventListener('change', () => {
-    loadLanguage(languageSelect.value);
-});
-
-// Load the default language on page load
-loadLanguage(currentLanguage);
-
 // next profile image
 const nextProfileImageButton = document.getElementById('next-profile-image-button');
 nextProfileImageButton.addEventListener('click', nextProfileImage);
@@ -119,12 +89,4 @@ function getRandomLetter() {
   const randomCharCode = Math.floor(Math.random() * (max - min + 1)) + min;
 
   return String.fromCharCode(randomCharCode);
-}
-
-function markdownToHtmlForBold(text) {
-    while(text.match(/\*\*(.*?)\*\*/g) != null) {
-        text = text.replace("**", "<b>");
-        text = text.replace("**", "</b>");
-    }
-    return text;
 }

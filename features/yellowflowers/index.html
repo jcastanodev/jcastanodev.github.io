@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yellow Flowers</title>
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+    <link href="../../tailwind.css?v=1" rel="stylesheet" />
+  </head>
+  <body
+    class="flex flex-col w-full h-full overflow-x-auto overflow-y-auto bg-black min-w-80"
+    style="min-width: 310px"
+  >
+    <header class="shadow">
+      <div
+        class="container flex items-center justify-between max-w-lg p-2 mx-auto md:max-w-7xl"
+      >
+        <div class="flex items-center">
+          <a href="https://jcastanodev.github.io/">
+            <img src="./assets/favicon.png" alt="icon" class="w-12 mr-4" />
+          </a>
+        </div>
+        <div>
+          <select
+            id="language-select"
+            class="px-3 py-2 text-black bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+        </div>
+      </div>
+    </header>
+    <main class="flex flex-1 w-full p-2">
+      <section id="presentation" class="container mx-auto my-auto max-w-7xl">
+        <div class="flex flex-wrap justify-center w-full">
+          <div class="w-full text-center text-white">
+            <h1 class="text-4xl font-bold" data-i18n="yellow-flowers">
+              Yellow Flowers
+            </h1>
+            <p
+              class="w-4/5 mx-auto mt-4 text-lg md:w-1/2"
+              data-i18n="description"
+            >
+              On September 21, the world turns yellow. A sea of ​​flowers
+              brightens our days, celebrating friendship and hope. It is as if
+              nature itself gives us a warm hug, reminding us of the beauty of
+              connecting with others.
+            </p>
+          </div>
+          <div class="flex items-center justify-center w-full p-2 mt-4 sm:p-4">
+            <div
+              class="relative flex-1 overflow-hidden rounded-lg"
+              style="max-width: 1024px; max-height: 30rem"
+            >
+              <img src="./assets/BlackEyedSusan.jpeg" class="invisible" />
+              <div class="absolute top-0 bottom-0 left-0 right-0">
+                <div style="width: 100%; height: 100%" data-simple-slider>
+                  <img src="./assets/BlackEyedSusan.jpeg" />
+                  <img src="./assets/Buttercup.jpeg" />
+                  <img src="./assets/Coreopsis.jpeg" />
+                  <img src="./assets/Daffodil.jpeg" />
+                  <img src="./assets/Dandelion.jpeg" />
+                  <img src="./assets/Forsythia.jpeg" />
+                  <img src="./assets/Sunflower.jpeg" />
+                  <img src="./assets/YellowHibiscus.jpeg" />
+                  <img src="./assets/YellowRose.jpeg" />
+                  <img src="./assets/YellowTulip.jpeg" />
+                </div>
+              </div>
+            </div>
+            <a
+              href="/features/yellowflowers/list.html"
+              class="flex items-center h-full p-2 ml-4 rounded-lg cursor-pointer whitespace-nowrap"
+              style="
+                background-color: #facc15;
+                box-shadow: #ffffff 0px 0px 10px 0px;
+              "
+            >
+              <span class="font-bold whitespace-nowrap" data-i18n="show-flowers"
+                >Ver flores</span
+              >
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="https://rawgit.com/ruyadorno/simple-slider/master/dist/simpleslider.min.js"></script>
+    <script>
+      simpleslider.getSlider();
+    </script>
+    <script src="../../lang.js"></script>
+  </body>
+  <style>
+    @view-transition {
+      navigation: auto;
+    }
+  </style>
+</html>
