@@ -6,7 +6,7 @@ async function getPosts() {
         const posts = await response.json();
         postContainer.innerHTML = posts.map(getPostCard).join('');
     } catch {
-        postContainer.innerHTML = '<div><img src="../../assets/error.png" alt="error"><p class="text-2xl mt-2 text-center">Oops!, Something went wrong...</p></div>'
+        postContainer.innerHTML = '<div><img src="../../assets/error.png" alt="error" class="mx-auto"><p class="text-2xl mt-2 text-center">Oops!, Something went wrong...</p></div>'
     }
 }
 

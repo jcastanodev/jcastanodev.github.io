@@ -5,12 +5,16 @@ languageSelect.value = currentLanguage;
 
 function loadLanguage(lang) {
     localStorage.setItem('language', lang);
-    fetch(`./lang/${lang}.json?t=${Date.now()}`)
-        .then(response => response.json())
-        .then(data => {
-            currentLanguage = lang;
-            updateText(data);
-        });
+    try {
+        fetch(`./lang/${lang}.json?t=${Date.now()}`)
+            .then(response => response.json())
+            .then(data => {
+                currentLanguage = lang;
+                updateText(data);
+            });
+    } catch {
+        console.error('Error loading language file');
+    }
 }
 
 function updateText(data) {
