@@ -34,13 +34,15 @@ window.onload = async () => {
   // load stored chat
   let chatHistory = [];
   try {
-    chatHistory = JSON.parse(localStorage.getItem("chat-history"));
-    chatHistory.forEach((message) => {
-      addMessage(message.content, message.role, false);
-    });
-    const historyPost = localStorage.getItem("history-post");
-    currentPost.innerHTML = historyPost;
-    currentPostEdit.value = historyPost;
+    if (localStorage.getItem("chat-history") !== null) {
+      chatHistory = JSON.parse(localStorage.getItem("chat-history"));
+      chatHistory.forEach((message) => {
+        addMessage(message.content, message.role, false);
+      });
+      const historyPost = localStorage.getItem("history-post") ?? "";
+      currentPost.innerHTML = historyPost;
+      currentPostEdit.value = historyPost;
+    }
   } catch {
     localStorage.setItem("chat-history", JSON.stringify([]));
     localStorage.setItem("history-post", "");
