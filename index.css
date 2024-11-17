@@ -12,16 +12,78 @@
     font-weight: 700;
 }
 
+.bg-gradient {
+    background-image: linear-gradient(45deg, #f2cc6f, #7B68EE, #3498db, #2ecc71, #f0642c, #f2cc6f, #f2cc6f, #7B68EE, #3498db, #2ecc71, #f0642c, #f2cc6f);
+    background-size: 1200%;
+    animation: color 10s linear infinite;
+}
+
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block; /* If you want dots under the hoverable text */
+    margin: 0;
+}
+  
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: auto;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px 15px;
+    border-radius: 6px;
+  
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+  
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+    text-wrap: nowrap;
+}
+  
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+  
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
 @keyframes color {
     from {
-        background-position: 0% 50%;
+        background-position: 0% 0%;
+    }
+
+    25% {
+        background-position: 100% 0%;
     }
 
     50% {
-        background-position: 100% 50%;
+        background-position: 0% 100%;
+    }
+
+    75% {
+        background-position: 100% 100%;
     }
 
     to {
-        background-position: 0% 50%;
+        background-position: 0% 0%;
     }
 }
