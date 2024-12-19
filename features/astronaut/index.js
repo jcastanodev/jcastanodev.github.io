@@ -122,9 +122,6 @@ const nextPosition = (e) => {
 const setSlide = () => {
     const nextSlide = document.getElementById(`slide-${slideSwitcher ? 2 : 1}`);
     nextSlide.style.zIndex = 10;
-    console.log(nextSlide.childNodes[0].childNodes);
-    console.log(nextSlide);
-    console.log(nextSlide.children[0].children[0]);
     nextSlide.children[0].children[0].innerHTML = `"${slides[slide - 1].quote}"`;
     nextSlide.children[0].children[1].innerHTML = `- ${slides[slide - 1].author}`;
     if (slides[slide - 1].image) {
@@ -138,7 +135,6 @@ const setSlide = () => {
 
 window.onload = async () => {
     const urlQueryParam = new URLSearchParams(window.location.search).get('q');
-    console.log(urlQueryParam);
     if (urlQueryParam) {
         slide = parseInt(urlQueryParam) > 0 && parseInt(urlQueryParam) <= slides.length ? parseInt(urlQueryParam) : 1;
     } else {
