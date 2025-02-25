@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcription Tool</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        #microphone-icon {
+            font-size: 8em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #start-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <i id="microphone-icon" class="fas fa-microphone"></i>
+        <button id="start-button">Start Recording</button>
+        <script>
+            let recording = false;
+            const startButton = document.getElementById('start-button');
+            const microphoneIcon = document.getElementById('microphone-icon');
+
+            startButton.addEventListener('click', () => {
+                if (!recording) {
+                    //Start recording logic here
+                    recording = true;
+                    startButton.textContent = 'Stop Recording';
+                    microphoneIcon.classList.add('fa-microphone-slash');
+                } else {
+                    //Stop recording logic here
+                    recording = false;
+                    startButton.textContent = 'Start Recording';
+                    microphoneIcon.classList.remove('fa-microphone-slash');
+                }
+            });
+
+            window.onload = () => {
+                if (navigator.mediaDevices) {
+                    console.log("getUserMedia supported.");
+
+                    const constraints = { audio: true };
+                    let chunks = [];
+
+                    navigator.mediaDevices
+                    .getUserMedia(constraints)
+                    .then((stream) => {
+                        const mediaRecorder = new MediaRecorder(stream);
+
+                        record.onclick = () => {
+                        mediaRecorder.start();
+                        console.log(mediaRecorder.state);
+                        console.log("recorder started");
+                        record.style.background = "red";
+                        record.style.color = "black";
+                        };
+
+                        stop.onclick = () => {
+                        mediaRecorder.stop();
+                        console.log(mediaRecorder.state);
+                        console.log("recorder stopped");
+                        record.style.background = "";
+                        record.style.color = "";
+                        };
+
+                        mediaRecorder.onstop = (e) => {
+                        console.log("data available after MediaRecorder.stop() called.");
+
+                        const clipName = prompt("Enter a name for your sound clip");
+
+                        const clipContainer = document.createElement("article");
+                        const clipLabel = document.createElement("p");
+                        const audio = document.createElement("audio");
+                        const deleteButton = document.createElement("button");
+                        const mainContainer = document.querySelector("body");
+
+                        clipContainer.classList.add("clip");
+                        audio.setAttribute("controls", "");
+                        deleteButton.textContent = "Delete";
+                        clipLabel.textContent = clipName;
+
+                        clipContainer.appendChild(audio);
+                        clipContainer.appendChild(clipLabel);
+                        clipContainer.appendChild(deleteButton);
+                        mainContainer.appendChild(clipContainer);
+
+                        audio.controls = true;
+                        const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+                        chunks = [];
+                        const audioURL = URL.createObjectURL(blob);
+                        audio.src = audioURL;
+                        console.log("recorder stopped");
+
+                        deleteButton.onclick = (e) => {
+                            const evtTgt = e.target;
+                            evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+                        };
+                        };
+
+                        mediaRecorder.ondataavailable = (e) => {
+                        chunks.push(e.data);
+                        };
+                    })
+                    .catch((err) => {
+                        console.error(`The following error occurred: ${err}`);
+                    });
+                } else {
+                    console.error("getUserMedia not supported on your browser!");
+                }
+            }
+
+            const recorder = new MediaRecorder(new MediaStream());
+        </script>
+
+    </div>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+</html>
