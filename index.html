@@ -64,8 +64,8 @@
   </header>
   <main class="flex flex-1 w-full p-2">
     <section id="presentation" class="container mx-auto my-auto max-w-7xl">
-      <div class="flex flex-wrap justify-center w-full">
-        <div class="max-w-lg p-6 border border-black rounded-lg md:max-w-sm lg:max-w-lg" style="
+      <div class="flex flex-start gap-4 flex-wrap justify-center w-full">
+        <div class="h-fit max-w-lg p-6 border border-black rounded-lg md:max-w-sm lg:max-w-lg" style="
               background-color: #ffffff;
               box-shadow: #a9a4a0 0px 0px 10px 0px;
             ">
@@ -100,7 +100,7 @@
                 style="color: #353230">@jcastanodev</span>
             </div>
           </div>
-          <div class="w-full p-2 mt-12 text-lg text-black rounded-lg">
+          <div class="w-full px-2 pt-2 mt-14 text-lg text-black rounded-lg">
             <div class="p-2 -mx-2 font-semibold bg-gray-200 rounded-lg">
               <span data-i18n="software-developer">Desarrollador de Software Full-Stack</span><br />
               <span class="text-gray-700">
@@ -160,12 +160,10 @@
             </div>
           </div>
         </div>
-        <div class="w-full max-w-lg py-8 my-auto md:max-w-max md:px-4 lg:pl-8 md:flex-1">
-          <div class="flex">
-            <h2 class="text-3xl font-bold text-white" data-i18n="hello">
-              ¡Hola! Soy Juan Camilo Castaño
-            </h2>
-          </div>
+        <div class="w-full max-w-lg my-auto md:max-w-max md:flex-1">
+          <h2 class="text-3xl text-center font-bold text-white" data-i18n="hello">
+            ¡Hola! Soy Juan Camilo Castaño
+          </h2>
           <span id="short-presentation-text" data-i18n="short-presentation" class="hidden"></span>
           <span id="full-presentation-text" data-i18n="presentation" class="hidden"></span>
           <p id="presentation-text" class="mt-4 text-white" data-i18n="short-presentation"
@@ -190,55 +188,103 @@
             <span class="text-3xl font-bold text-white" data-i18n="projects">
               Proyectos </span>:
             <div class="flex flex-wrap justify-between gap-2 mt-4">
-              <a href="https://trepi.co" target="_blank" class="flex-auto">
+              <a href="https://trepi.co" target="_blank" class="flex-auto transition-all hover:scale-105">
                 <div class="p-4 text-center bg-white rounded-lg cursor-pointer">
                   <span class="text-xl font-bold text-black text-nowrap">Trepi</span>
                 </div>
               </a>
-              <a href="https://trankipay.com" target="_blank" class="flex-auto">
+              <a href="https://trankipay.com" target="_blank" class="flex-auto transition-all hover:scale-105">
                 <div class="p-4 text-center bg-white rounded-lg cursor-pointer">
                   <span class="text-xl font-bold text-black text-nowrap">TrankiPay</span>
                 </div>
               </a>
-              <a href="/blog/" class="flex-auto">
+              <a href="/blog/" class="flex-auto transition-all hover:scale-105">
                 <div class="p-4 text-center bg-white rounded-lg cursor-pointer">
                   <span class="text-xl font-bold text-black text-nowrap">Blog</span>
                 </div>
               </a>
-              <a target="_blank" href="https://code-ai-journey.vercel.app/" class="flex-auto">
+              <a target="_blank" href="https://code-ai-journey.vercel.app/"
+                class="flex-auto transition-all hover:scale-105">
                 <div class="p-4 text-center bg-white rounded-lg cursor-pointer">
                   <span class="text-xl font-bold text-black text-nowrap">Code AI Journey</span>
                 </div>
               </a>
-              <a href="/features/astronaut/" class="flex-auto">
+              <a href="/features/astronaut/" class="flex-auto transition-all hover:scale-105">
                 <div class="p-4 text-center bg-white rounded-lg cursor-pointer">
                   <span class="text-xl font-bold text-black text-nowrap">Astronaut Slide</span>
                 </div>
               </a>
-              <a href="/features/yellowflowers/" class="flex-auto">
+              <a href="/features/yellowflowers/" class="flex-auto transition-all hover:scale-105">
                 <div class="p-4 text-center bg-white rounded-lg cursor-pointer">
                   <span class="text-xl font-bold text-black text-nowrap">Flores amarillas</span>
                 </div>
               </a>
-              <a href="/features/blog/" class="flex-auto">
+              <a href="/features/blog/" class="flex-auto transition-all hover:scale-105">
                 <div class="p-4 text-center bg-white rounded-lg cursor-pointer">
                   <span class="text-xl font-bold text-black text-nowrap">API (Blog)</span>
                 </div>
               </a>
-              <div class="flex-auto p-4 text-center border border-white rounded-lg cursor-not-allowed">
-                <span class="text-xl font-bold text-white text-nowrap">App ERP</span>
-              </div>
-              <a href="#" class="flex-auto">
-                <div class="p-4 text-center border border-white rounded-lg cursor-not-allowed">
+              <a href="https://github.com/jcastanodev/app-erp" target="_blank"
+                class="flex-auto transition-all hover:scale-105">
+                <div class="p-4 text-center border border-white rounded-lg">
+                  <span class="text-xl font-bold text-white text-nowrap">App ERP</span>
+                </div>
+              </a>
+              <a href="https://github.com/jcastanodev/smoking_log" target="_blank"
+                class="flex-auto transition-all hover:scale-105">
+                <div class="p-4 text-center border border-white rounded-lg">
                   <span class="text-xl font-bold text-white text-nowrap">Smoking Log</span>
                 </div>
               </a>
-              <div class="flex-auto p-4 text-center border border-white rounded-lg cursor-not-allowed">
-                <span class="text-xl font-bold text-white text-nowrap">Web Maps</span>
-              </div>
-              <div class="flex-auto p-4 text-center border border-white rounded-lg cursor-not-allowed">
-                <span class="text-xl font-bold text-white text-nowrap" data-i18n="others">Others</span>
-              </div>
+              <a href="https://github.com/jcastanodev" target="_blank" class="flex-auto transition-all hover:scale-105">
+                <div class="p-4 text-center border border-white rounded-lg">
+                  <span class="text-xl font-bold text-white text-nowrap" data-i18n="others">Others</span>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="mt-10">
+            <span class="text-3xl font-bold text-white" data-i18n="collaborations">
+              Colaboraciones </span>:
+            <div class="flex flex-wrap justify-between gap-2 mt-4">
+              <a href="https://pge.gob.ec" target="_blank" class="flex w-full transition-all hover:scale-105">
+                <div
+                  class="flex flex-col lg:flex-row p-2 gap-2 items-center bg-white rounded-lg cursor-pointer w-full overflow-hidden">
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP9_xUz4_4ms-PR2ZVag81WhtYsaPfFwcsuw&s"
+                    alt="logo pge" class="h-24 lg:pl-2 lg:pr-4" />
+                  <div class="flex-1 flex flex-col text-center">
+                    <h3 class="text-xl font-bold text-black">Procuraduría General del Estado | Ecuador</h3>
+                    <p data-i18n="pge-description">Sistema Informático Integrado de Gestión Interna para la Procuraduría
+                      General del Estado |
+                      Ecuador</p>
+                  </div>
+                </div>
+              </a>
+              <a href="https://www.voxqi.com/" target="_blank" class="flex w-full transition-all hover:scale-105">
+                <div
+                  class="flex flex-col lg:flex-row px-2 pb-2 lg:py-2 lg:gap-2 items-center bg-white rounded-lg cursor-pointer w-full overflow-hidden">
+                  <img src="https://www.voxqi.com/hosted/images/ac/de7664addc4e5fb94b238420610f94/qi-logo.png"
+                    alt="logo voxqi" class="h-24 lg:pl-10 lg:pr-11" />
+                  <div class="flex-1 flex flex-col text-center">
+                    <h3 class="text-xl font-bold text-black text-nowrap">VoxQI</h3>
+                    <p data-i18n="voxqi-description">Análisis de Sentimiento Social y Pruebas Creativas Predictivas
+                      impulsadas por IA</p>
+                  </div>
+                </div>
+              </a>
+              <a href="https://puntored.co/" target="_blank" class="flex w-full transition-all hover:scale-105">
+                <div
+                  class="flex flex-col lg:flex-row p-2 gap-2 items-center bg-white rounded-lg cursor-pointer w-full overflow-hidden">
+                  <img
+                    src="https://b2608939.smushcdn.com/2608939/wp-content/uploads/elementor/thumbs/Logo-Puntored-qg3eoxxawgq6592ydcbqdk9q6jsnwqptnv8im8ws76.png?lossy=2&strip=1&webp=1"
+                    alt="logo voxqi" class="h-18 lg:py-6" />
+                  <div class="flex-1 flex flex-col text-center">
+                    <h3 class="text-xl font-bold text-black text-nowrap">PuntoRed</h3>
+                    <p data-i18n="puntored-description">Plataforma de pagos que impulsa la inclusión financiera</p>
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
         </div>

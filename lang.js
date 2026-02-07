@@ -30,7 +30,8 @@ languageSelect.addEventListener('change', () => {
 });
 
 function markdownToHtmlForBold(text) {
-    while(text.match(/\*\*(.*?)\*\*/g) != null) {
+    if (!text) return text;
+    while (text.match(/\*\*(.*?)\*\*/g) != null) {
         text = text.replace("**", "<b>");
         text = text.replace("**", "</b>");
     }
