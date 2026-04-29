@@ -25,10 +25,32 @@
   wrapper.addEventListener('mouseenter', expand);
   wrapper.addEventListener('mouseleave', scheduleCollapse);
 
-  // Mobile tap toggle + double tap to open GitHub
+  // Desktop click → open GitHub (ignore synthetic click fired by mobile after touchend)
+  wrapper.addEventListener('click', function () {
+    if (Date.now() - lastTouchEnd < 500) return;
+    window.open('https://github.com/jcastanodev', '_blank');
+  });
+
+  // Mobile: track touch movement to distinguish tap from scroll
+  let touchMoved = false;
+  let touchStartTime = 0;
+  let lastTouchEnd = 0;
   let lastTap = 0;
-  wrapper.addEventListener('touchstart', function (e) {
-    e.preventDefault();
+  const TAP_MAX_MS = 250;
+
+  wrapper.addEventListener('touchstart', function () {
+    touchMoved = false;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  wrapper.addEventListener('touchmove', function () {
+    touchMoved = true;
+  }, { passive: true });
+
+  wrapper.addEventListener('touchend', function () {
+    lastTouchEnd = Date.now();
+    if (touchMoved || Date.now() - touchStartTime > TAP_MAX_MS) return;
+
     const now = Date.now();
     if (now - lastTap < 300) {
       window.open('https://github.com/jcastanodev', '_blank');
@@ -42,5 +64,5 @@
       }
     }
     lastTap = now;
-  }, { passive: false });
+  }, { passive: true });
 })();
