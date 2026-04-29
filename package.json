@@ -5,16 +5,14 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"tailwindcss -i ./index.css -o ./tailwind.css --watch\" \"browser-sync start --server --files '**/*.html, **/*.css, **/*.js'\"",
+    "build": "tailwindcss -i ./index.css -o ./tailwind.css --minify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "browser-sync": "^3.0.3",
-    "jcastanodev.github.io": "file:",
-    "tailwindcss": "^3.4.15"
-  },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.2.4",
+    "browser-sync": "^3.0.4",
     "concurrently": "^9.2.1"
   }
 }

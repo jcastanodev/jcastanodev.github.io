@@ -36,6 +36,13 @@
           <img src="../../assets/icon-black.png" alt="icon" class="w-12 p-1 mr-4 bg-white rounded-full" />
         </a>
       </div>
+      <div>
+        <select id="language-select"
+          class="px-3 py-2 text-black bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
     </div>
   </header>
   <main class="flex flex-1 w-full p-2">
@@ -43,7 +50,7 @@
       <div class="relative w-full my-auto overflow-hidden rounded-lg bg-white/10">
         <a href="/en/blog/my-own-project.html">
           <div class="flex-grow" style="background-image: url(../../assets/blog/2024-11-16-impostor-syndrome.png);">
-            <h1 class="p-4 text-3xl font-bold text-white" data-i18n="hello">
+            <h1 class="p-4 text-3xl font-bold text-white">
               15 years of coding: Thousands of lines of code and no project of your own?
             </h1>
             <div class="px-4 border-b border-white/50" style="padding-top: 5px;">
@@ -52,9 +59,9 @@
                   <span class="rounded-md bg-gradient" style="padding: 2px;">
                     <img src="../../assets/icons/ai-layout.png" alt="AI-layout" style="width: 25px;">
                   </span>
-                  Layer
+                  <span data-i18n="ai-badge">Layer</span>
                 </div>
-                <span class="tooltiptext">Text AI-optimized</span>
+                <span class="tooltiptext" data-i18n="ai-badge-tooltip">Text AI-optimized</span>
               </div>
             </div>
           </div>
@@ -72,12 +79,16 @@
             these 15 years, most of my code production has been for clients, large and small, and not for myself.
           </p>
           <div class="flex">
-            <a href="/en/blog/my-own-project.html" class="text-white underline">Read more...</a>
+            <a href="/en/blog/my-own-project.html" class="text-white underline" data-i18n="read-more">Read more...</a>
             <div class="flex-grow"></div>
             <div class="text-white/50">16/11/2024</div>
           </div>
         </div>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/i18next@26/i18next.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@8/i18nextBrowserLanguageDetector.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@3/i18nextHttpBackend.min.js"></script>
+  <script src="/js/i18n.js"></script>
 </body>
 
 </html>
