@@ -5,6 +5,26 @@ const DAYS_BASE = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábad
 const todayIndex = (new Date().getDay() + 6) % 7;
 const DAYS = [...DAYS_BASE.slice(todayIndex), ...DAYS_BASE.slice(0, todayIndex)];
 
+// Helpers para fechas y semanas
+const getWeekNumber = (d) => {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+};
+
+const getWeekRange = () => {
+    const now = new Date();
+    const dayOfWeek = (now.getDay() + 6) % 7;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - dayOfWeek);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    const options = { month: 'short', day: 'numeric' };
+    return `${monday.toLocaleDateString('es-ES', options)} - ${sunday.toLocaleDateString('es-ES', options)}`;
+};
+
 /**
  * Componente de Calendario con gestión de tareas y Drag & Drop.
  */
@@ -34,10 +54,36 @@ function CalendarioTasks() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, task: null, day: null });
 
+    // Estado para la semana
+    const [currentWeekNumber] = useState(() => getWeekNumber(new Date()));
+    const [weekRange] = useState(() => getWeekRange());
+    const [newWeekModal, setNewWeekModal] = useState({ isOpen: false, pendingWeek: null, tasksToLoad: null });
+
     const [viewMode, setViewMode] = useState(() => {
         const hasTasks = Object.values(tasks).some(dayTasks => dayTasks.length > 0);
         return hasTasks ? 'visualize' : 'edit';
     });
+
+    // Estado para el modal de bienvenida
+    const [showWelcome, setShowWelcome] = useState(false);
+
+    useEffect(() => {
+        const welcomeSeen = localStorage.getItem('calendario_welcome_seen');
+        const hasData = localStorage.getItem('calendario_tasks_data');
+        if (!welcomeSeen && !hasData) {
+            setShowWelcome(true);
+        }
+    }, []);
+
+    // Verificar cambio de semana al iniciar
+    useEffect(() => {
+        const savedWeek = localStorage.getItem('calendario_week_number');
+        if (savedWeek && parseInt(savedWeek) !== currentWeekNumber) {
+            setNewWeekModal({ isOpen: true, pendingWeek: currentWeekNumber, tasksToLoad: tasks });
+        } else {
+            localStorage.setItem('calendario_week_number', currentWeekNumber);
+        }
+    }, []);
 
     // Seguimiento del cursor para el "Fantasma" de duplicación
     useEffect(() => {
@@ -96,6 +142,11 @@ function CalendarioTasks() {
         }));
     };
 
+    const handleCloseWelcome = () => {
+        setShowWelcome(false);
+        localStorage.setItem('calendario_welcome_seen', 'true');
+    };
+
     const confirmDelete = () => {
         const { task, day } = deleteModal;
         setTasks(prev => ({
@@ -103,6 +154,25 @@ function CalendarioTasks() {
             [day]: prev[day].filter(t => t.id !== task.id)
         }));
         setDeleteModal({ isOpen: false, task: null, day: null });
+    };
+
+    const handleNewWeekDecision = (shouldReset) => {
+        const { pendingWeek, tasksToLoad } = newWeekModal;
+
+        let finalTasks = tasksToLoad || tasks;
+        if (shouldReset) {
+            const resetTasks = {};
+            Object.keys(finalTasks).forEach(day => {
+                resetTasks[day] = finalTasks[day].map(t => ({ ...t, completed: false }));
+            });
+            finalTasks = resetTasks;
+        }
+
+        setTasks(finalTasks);
+        setInitialTasks(finalTasks);
+        localStorage.setItem('calendario_week_number', pendingWeek);
+        setNewWeekModal({ isOpen: false, pendingWeek: null, tasksToLoad: null });
+        setViewMode('visualize');
     };
 
     // Guardar automáticamente en localStorage ante cualquier cambio
@@ -182,9 +252,9 @@ function CalendarioTasks() {
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const seconds = String(now.getSeconds()).padStart(2, '0');
-        const fileName = `calendario_tareas_${year}${month}${day}_${hours}${minutes}${seconds}.json`;
+        const fileName = `calendario_tareas_week${currentWeekNumber}_${year}${month}${day}_${hours}${minutes}${seconds}.json`;
 
-        const dataStr = JSON.stringify(tasks, null, 2);
+        const dataStr = JSON.stringify({ tasks, weekNumber: currentWeekNumber }, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -203,10 +273,22 @@ function CalendarioTasks() {
         reader.onload = (event) => {
             try {
                 const json = JSON.parse(event.target.result);
-                // Validación simple de estructura
-                if (DAYS.every(day => Array.isArray(json[day]))) {
-                    setTasks(json);
-                    setInitialTasks(json); // Actualizamos la referencia al importar
+                const importedTasks = json.tasks || json; // Soporte para formato viejo y nuevo
+                const importedWeek = json.weekNumber || null;
+
+                // Validación simple
+                if (DAYS_BASE.every(day => Array.isArray(importedTasks[day]))) {
+                    if (importedWeek && importedWeek !== currentWeekNumber) {
+                        setNewWeekModal({
+                            isOpen: true,
+                            pendingWeek: currentWeekNumber,
+                            tasksToLoad: importedTasks
+                        });
+                    } else {
+                        setTasks(importedTasks);
+                        setInitialTasks(importedTasks);
+                        setViewMode('visualize');
+                    }
                 } else {
                     alert("Formato de archivo no válido.");
                 }
@@ -215,7 +297,6 @@ function CalendarioTasks() {
             }
         };
         reader.readAsText(file);
-        setViewMode('visualize');
     };
 
     return (
@@ -229,11 +310,11 @@ function CalendarioTasks() {
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg>
                         Cancelar {
-                            activeAction.mode === 'move' 
-                            ? 'Movimiento' 
-                            : activeAction.mode === 'duplicate' 
-                                ? 'Duplicación' 
-                                : 'Duplicación Múltiple'
+                            activeAction.mode === 'move'
+                                ? 'Movimiento'
+                                : activeAction.mode === 'duplicate'
+                                    ? 'Duplicación'
+                                    : 'Duplicación Múltiple'
                         }
                     </button>
                 </div>
@@ -251,7 +332,10 @@ function CalendarioTasks() {
 
             <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-2xl font-bold tracking-tight text-white">Mi Calendario Semanal</h2>
+                    <div className="flex flex-col">
+                        <h2 className="text-2xl font-bold tracking-tight text-white leading-tight">Mi Calendario</h2>
+                        <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Sem {currentWeekNumber} ({weekRange})</span>
+                    </div>
                     <div className="flex flex-col gap-1">
                         {hasChanges && (
                             <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse">
@@ -304,6 +388,11 @@ function CalendarioTasks() {
                         >
                             <h3 className="text-center font-bold mb-4 text-zinc-400 uppercase tracking-widest text-xs border-b border-zinc-800 pb-3">
                                 {day}
+                                {viewMode === 'visualize' && tasks[day].length > 0 && (
+                                    <span className="ml-2 normal-case font-medium opacity-60 tracking-normal text-[10px]">
+                                        ({tasks[day].filter(t => t.completed).length}/{tasks[day].length})
+                                    </span>
+                                )}
                             </h3>
 
                             <div className="flex-1 space-y-3 mb-4">
@@ -379,6 +468,18 @@ function CalendarioTasks() {
                 onConfirm={confirmDelete}
                 title="Eliminar Tarea"
                 message={`¿Estás seguro de que deseas eliminar la tarea "${deleteModal.task?.name}"? Esta acción no se puede deshacer.`}
+            />
+
+            <NewWeekModal
+                isOpen={newWeekModal.isOpen}
+                weekInfo={newWeekModal.pendingWeek}
+                onConfirm={() => handleNewWeekDecision(true)}
+                onCancel={() => handleNewWeekDecision(false)}
+            />
+
+            <WelcomeModal
+                isOpen={showWelcome}
+                onClose={handleCloseWelcome}
             />
         </div >
     );
