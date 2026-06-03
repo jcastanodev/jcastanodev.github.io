@@ -57,7 +57,7 @@ function CalendarioTasks() {
             const newState = { ...prev };
 
             // Tarea a insertar (nueva si es duplicado, la misma si es mover)
-            const taskToInsert = mode === 'duplicate'
+            const taskToInsert = (mode === 'duplicate' || mode === 'duplicate-multiple')
                 ? {
                     id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                     name: task.name,
@@ -82,7 +82,9 @@ function CalendarioTasks() {
             return newState;
         });
 
-        setActiveAction(null);
+        if (mode !== 'duplicate-multiple') {
+            setActiveAction(null);
+        }
     };
 
     const toggleTaskCompletion = (day, taskId) => {
@@ -226,7 +228,13 @@ function CalendarioTasks() {
                         className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-2xl font-bold flex items-center gap-2 animate-bounce transition-all active:scale-95"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg>
-                        Cancelar {activeAction.mode === 'move' ? 'Movimiento' : 'Duplicación'}
+                        Cancelar {
+                            activeAction.mode === 'move' 
+                            ? 'Movimiento' 
+                            : activeAction.mode === 'duplicate' 
+                                ? 'Duplicación' 
+                                : 'Duplicación Múltiple'
+                        }
                     </button>
                 </div>
             )}
@@ -310,6 +318,7 @@ function CalendarioTasks() {
                                         onDrop={onDrop}
                                         onDelete={(t, d) => setDeleteModal({ isOpen: true, task: t, day: d })}
                                         onDuplicate={(t) => setActiveAction({ task: t, mode: 'duplicate' })}
+                                        onDuplicateMultiple={(t) => setActiveAction({ task: t, mode: 'duplicate-multiple' })}
                                         onMove={(t, d, i) => setActiveAction({ task: t, mode: 'move', sourceDay: d, sourceIndex: i })}
                                         viewMode={viewMode}
                                         onToggleCompletion={toggleTaskCompletion}

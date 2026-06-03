@@ -1,4 +1,4 @@
-const TaskCard = ({ task, day, index, onDragStart, onDragOver, onDrop, onDelete, onDuplicate, onMove, onSelectPosition, isGhost, ghostMode, viewMode, onToggleCompletion }) => {
+const TaskCard = ({ task, day, index, onDragStart, onDragOver, onDrop, onDelete, onDuplicate, onDuplicateMultiple, onMove, onSelectPosition, isGhost, ghostMode, viewMode, onToggleCompletion }) => {
     const [showMenu, setShowMenu] = React.useState(false);
     const menuRef = React.useRef(null);
 
@@ -69,6 +69,13 @@ const TaskCard = ({ task, day, index, onDragStart, onDragOver, onDrop, onDelete,
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
                                     Duplicar
                                 </button>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onDuplicateMultiple(task); setShowMenu(false); }}
+                                    className="w-full text-left px-3 py-2 text-xs hover:bg-zinc-800 flex items-center gap-2 transition-colors text-zinc-300 hover:text-white"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="10" height="10" x="11" y="11" rx="2" /><rect width="10" height="10" x="3" y="3" rx="2" /></svg>
+                                    Duplica múltiple
+                                </button>
                                 <div className="h-px bg-zinc-800 mx-2 my-1" />
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onDelete(task, day); setShowMenu(false); }}
@@ -85,7 +92,7 @@ const TaskCard = ({ task, day, index, onDragStart, onDragOver, onDrop, onDelete,
 
             {isGhost && (
                 <div className="absolute -top-2 -right-2 bg-blue-500 text-[10px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">
-                    {ghostMode === 'move' ? 'Moviendo' : 'Duplicando'}
+                    {ghostMode === 'move' ? 'Moviendo' : ghostMode === 'duplicate' ? 'Duplicando' : 'Duplicando múltiple'}
                 </div>
             )}
         </div>
