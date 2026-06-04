@@ -54,6 +54,9 @@ function CalendarioTasks() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, task: null, day: null });
 
+    // Estado para el modal de guardado
+    const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+
     // Estado para la semana
     const [currentWeekNumber] = useState(() => getWeekNumber(new Date()));
     const [weekRange] = useState(() => getWeekRange());
@@ -145,6 +148,16 @@ function CalendarioTasks() {
     const handleCloseWelcome = () => {
         setShowWelcome(false);
         localStorage.setItem('calendario_welcome_seen', 'true');
+    };
+
+    const handleSaveLocal = () => {
+        setInitialTasks(tasks);
+        setIsSaveModalOpen(false);
+    };
+
+    const handleSaveExport = () => {
+        exportToJson();
+        setIsSaveModalOpen(false);
     };
 
     const confirmDelete = () => {
@@ -367,7 +380,7 @@ function CalendarioTasks() {
                         <div className="flex gap-1">
                             {Object.values(tasks).some(dayTasks => dayTasks.length > 0) && (
                                 <button
-                                    onClick={exportToJson}
+                                    onClick={() => setIsSaveModalOpen(true)}
                                     className="md:hidden mx-auto px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all shadow-lg active:scale-95"
                                 >
                                     Guardar
@@ -383,7 +396,7 @@ function CalendarioTasks() {
                 <div className="hidden md:flex gap-3">
                     {Object.values(tasks).some(dayTasks => dayTasks.length > 0) && (
                         <button
-                            onClick={exportToJson}
+                            onClick={() => setIsSaveModalOpen(true)}
                             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all shadow-lg active:scale-95"
                         >
                             Guardar
@@ -530,6 +543,13 @@ function CalendarioTasks() {
                 weekInfo={newWeekModal.pendingWeek}
                 onConfirm={(clearExtras) => handleNewWeekDecision(true, clearExtras)}
                 onCancel={() => handleNewWeekDecision(false, false)}
+            />
+
+            <SaveModal
+                isOpen={isSaveModalOpen}
+                onClose={() => setIsSaveModalOpen(false)}
+                onSaveLocal={handleSaveLocal}
+                onSaveExport={handleSaveExport}
             />
 
             <WelcomeModal
