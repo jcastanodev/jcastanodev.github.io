@@ -156,14 +156,18 @@ function CalendarioTasks() {
         setDeleteModal({ isOpen: false, task: null, day: null });
     };
 
-    const handleNewWeekDecision = (shouldReset) => {
+    const handleNewWeekDecision = (shouldReset, clearExtras = false) => {
         const { pendingWeek, tasksToLoad } = newWeekModal;
 
         let finalTasks = tasksToLoad || tasks;
         if (shouldReset) {
             const resetTasks = {};
             Object.keys(finalTasks).forEach(day => {
-                resetTasks[day] = finalTasks[day].map(t => ({ ...t, completed: false }));
+                let dayTasks = finalTasks[day];
+                if (clearExtras) {
+                    dayTasks = dayTasks.filter(t => !t.isExtra);
+                }
+                resetTasks[day] = dayTasks.map(t => ({ ...t, completed: false }));
             });
             finalTasks = resetTasks;
         }
@@ -195,12 +199,20 @@ function CalendarioTasks() {
             id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             name: taskName,
             completed: false,
+            isExtra: viewMode === 'visualize'
         };
 
-        setTasks((prev) => ({
-            ...prev,
-            [day]: [...prev[day], newTask],
-        }));
+        setTasks((prev) => {
+            const dayTasks = [...prev[day]];
+            if (viewMode === 'edit') {
+                const firstExtra = dayTasks.findIndex(t => t.isExtra);
+                if (firstExtra !== -1) dayTasks.splice(firstExtra, 0, newTask);
+                else dayTasks.push(newTask);
+            } else {
+                dayTasks.push(newTask);
+            }
+            return { ...prev, [day]: dayTasks };
+        });
 
         setInputs((prev) => ({ ...prev, [day]: '' }));
     };
@@ -235,7 +247,16 @@ function CalendarioTasks() {
             const targetList = sourceDay === targetDay ? sourceList : [...newState[targetDay]];
 
             // Si targetIndex es null, se añade al final (drop en el área vacía)
-            const insertAt = targetIndex !== null ? targetIndex : targetList.length;
+            let insertAt = targetIndex;
+            if (insertAt === null) {
+                if (viewMode === 'edit') {
+                    const firstExtra = targetList.findIndex(t => t.isExtra);
+                    insertAt = firstExtra !== -1 ? firstExtra : targetList.length;
+                } else {
+                    insertAt = targetList.length;
+                }
+            }
+
             targetList.splice(insertAt, 0, task);
             newState[targetDay] = targetList;
 
@@ -396,49 +417,83 @@ function CalendarioTasks() {
                             </h3>
 
                             <div className="flex-1 space-y-3 mb-4">
-                                {tasks[day].map((task, idx) => (
-                                    <TaskCard
-                                        key={task.id}
-                                        task={task}
-                                        day={day}
-                                        index={idx}
-                                        onDragStart={onDragStart}
-                                        onDragOver={onDragOver}
-                                        onDrop={onDrop}
-                                        onDelete={(t, d) => setDeleteModal({ isOpen: true, task: t, day: d })}
-                                        onDuplicate={(t) => setActiveAction({ task: t, mode: 'duplicate' })}
-                                        onDuplicateMultiple={(t) => setActiveAction({ task: t, mode: 'duplicate-multiple' })}
-                                        onMove={(t, d, i) => setActiveAction({ task: t, mode: 'move', sourceDay: d, sourceIndex: i })}
-                                        viewMode={viewMode}
-                                        onToggleCompletion={toggleTaskCompletion}
-                                        onSelectPosition={(e) => {
-                                            if (activeAction) {
-                                                e.stopPropagation(); // Evita el clic del contenedor padre
-                                                handleColumnClick(day, idx);
-                                            }
-                                        }}
-                                    />
-                                ))}
+                                {tasks[day].map((task, idx) => {
+                                    if (task.isExtra && viewMode === 'edit') return null;
+                                    if (task.isExtra) return null; // Lo manejamos abajo
+                                    return (
+                                        <TaskCard
+                                            key={task.id}
+                                            task={task}
+                                            day={day}
+                                            index={idx}
+                                            onDragStart={onDragStart}
+                                            onDragOver={onDragOver}
+                                            onDrop={onDrop}
+                                            onDelete={(t, d) => setDeleteModal({ isOpen: true, task: t, day: d })}
+                                            onDuplicate={(t) => setActiveAction({ task: t, mode: 'duplicate' })}
+                                            onDuplicateMultiple={(t) => setActiveAction({ task: t, mode: 'duplicate-multiple' })}
+                                            onMove={(t, d, i) => setActiveAction({ task: t, mode: 'move', sourceDay: d, sourceIndex: i })}
+                                            viewMode={viewMode}
+                                            onToggleCompletion={toggleTaskCompletion}
+                                            onSelectPosition={(e) => {
+                                                if (activeAction) {
+                                                    e.stopPropagation();
+                                                    handleColumnClick(day, idx);
+                                                }
+                                            }}
+                                        />
+                                    );
+                                })}
                             </div>
 
-                            {viewMode === 'edit' && (
-                                <div className="mt-auto">
-                                    <input
-                                        type="text"
-                                        placeholder="Nueva tarea..."
-                                        value={inputs[day] || ''}
-                                        onChange={(e) => setInputs({ ...inputs, [day]: e.target.value })}
-                                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors mb-2 text-zinc-200 placeholder-zinc-600"
-                                        onKeyDown={(e) => e.key === 'Enter' && addTask(day)}
-                                    />
-                                    <button
-                                        onClick={() => addTask(day)}
-                                        className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-1.5 rounded-lg text-xs font-bold transition-all transform active:scale-95"
-                                    >
-                                        Añadir
-                                    </button>
+                            {viewMode === 'visualize' && (
+                                <div className="flex items-center gap-2 mb-4">
+                                    <hr className="border-t border-zinc-800 flex-1" />
+                                    <span className="text-xs text-zinc-500 font-medium">Extra</span>
+                                    <hr className="border-t border-zinc-800 flex-1" />
                                 </div>
                             )}
+                            <div className="flex-1 space-y-3 mb-4">
+                                {viewMode === 'visualize' && tasks[day].map((task, idx) => {
+                                    if (!task.isExtra) return null;
+                                    return (
+                                        <ExtraTaskCard
+                                            key={task.id}
+                                            task={task}
+                                            day={day}
+                                            index={idx}
+                                            onDragStart={onDragStart}
+                                            onDragOver={onDragOver}
+                                            onDrop={onDrop}
+                                            onDelete={(t, d) => setDeleteModal({ isOpen: true, task: t, day: d })}
+                                            viewMode={viewMode}
+                                            onToggleCompletion={toggleTaskCompletion}
+                                            onSelectPosition={(e) => {
+                                                if (activeAction) {
+                                                    e.stopPropagation();
+                                                    handleColumnClick(day, idx);
+                                                }
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
+                            <div className="mt-auto">
+                                <input
+                                    type="text"
+                                    placeholder="Nueva tarea..."
+                                    value={inputs[day] || ''}
+                                    onChange={(e) => setInputs({ ...inputs, [day]: e.target.value })}
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors mb-2 text-zinc-200 placeholder-zinc-600"
+                                    onKeyDown={(e) => e.key === 'Enter' && addTask(day)}
+                                />
+                                <button
+                                    onClick={() => addTask(day)}
+                                    className="w-full bg-zinc-100 hover:bg-white text-zinc-900 py-1.5 rounded-lg text-xs font-bold transition-all transform active:scale-95"
+                                >
+                                    {viewMode === 'visualize' ? "Añadir extra" : "Añadir"}
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -473,8 +528,8 @@ function CalendarioTasks() {
             <NewWeekModal
                 isOpen={newWeekModal.isOpen}
                 weekInfo={newWeekModal.pendingWeek}
-                onConfirm={() => handleNewWeekDecision(true)}
-                onCancel={() => handleNewWeekDecision(false)}
+                onConfirm={(clearExtras) => handleNewWeekDecision(true, clearExtras)}
+                onCancel={() => handleNewWeekDecision(false, false)}
             />
 
             <WelcomeModal

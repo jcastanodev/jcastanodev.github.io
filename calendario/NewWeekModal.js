@@ -14,10 +14,16 @@ const NewWeekModal = ({ isOpen, onConfirm, onCancel, weekInfo }) => {
                 </p>
                 <div className="flex flex-col gap-3">
                     <button
-                        onClick={onConfirm}
+                        onClick={() => onConfirm(true)}
+                        className="w-full py-4 bg-red-600 text-white rounded-2xl text-sm font-black transition-all shadow-xl active:scale-95"
+                    >
+                        SÍ, LIMPIAR TODO (BORRAR EXTRAS)
+                    </button>
+                    <button
+                        onClick={() => onConfirm(false)}
                         className="w-full py-4 bg-white text-black rounded-2xl text-sm font-black transition-all shadow-xl active:scale-95"
                     >
-                        SÍ, INICIAR NUEVA SEMANA
+                        SÍ, REINICIAR PROGRESO (MANTENER EXTRAS)
                     </button>
                     <button
                         onClick={onCancel}
