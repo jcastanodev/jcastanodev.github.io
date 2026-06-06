@@ -46,6 +46,40 @@ function CalendarioTasks() {
         return tasks;
     });
 
+    // Estado para el historial de semanas anteriores
+    const [history, setHistory] = useState(() => {
+        const saved = localStorage.getItem('calendario_history_data');
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    // Estado para la semana
+    const [currentWeekNumber] = useState(() => getWeekNumber(new Date()));
+    const [weekRange] = useState(() => getWeekRange());
+
+    // Estado para navegar por el historial (null = semana actual)
+    const [viewingHistoryIndex, setViewingHistoryIndex] = useState(null);
+
+    // Tareas y metadatos que se muestran actualmente
+    const displayTasks = viewingHistoryIndex === null ? tasks : history[viewingHistoryIndex].tasks;
+    const displayWeek = viewingHistoryIndex === null ? currentWeekNumber : history[viewingHistoryIndex].weekNumber;
+    const displayRange = viewingHistoryIndex === null ? weekRange : history[viewingHistoryIndex].range;
+
+    // Helper para actualizar tareas sin importar si estamos en el presente o el pasado
+    const updateActiveTasks = (callback) => {
+        if (viewingHistoryIndex === null) {
+            setTasks(callback);
+        } else {
+            setHistory(prev => {
+                const newHistory = [...prev];
+                const entry = { ...newHistory[viewingHistoryIndex] };
+                const nextTasks = typeof callback === 'function' ? callback(entry.tasks) : callback;
+                entry.tasks = nextTasks;
+                newHistory[viewingHistoryIndex] = entry;
+                return newHistory;
+            });
+        }
+    };
+
     // Estado para los inputs de texto de cada columna.
     const [inputs, setInputs] = useState({});
 
@@ -57,10 +91,7 @@ function CalendarioTasks() {
     // Estado para el modal de guardado
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
-    // Estado para la semana
-    const [currentWeekNumber] = useState(() => getWeekNumber(new Date()));
-    const [weekRange] = useState(() => getWeekRange());
-    const [newWeekModal, setNewWeekModal] = useState({ isOpen: false, pendingWeek: null, tasksToLoad: null });
+    const [newWeekModal, setNewWeekModal] = useState({ isOpen: false, pendingWeek: null, tasksToLoad: null, sourceWeek: null });
 
     const [viewMode, setViewMode] = useState(() => {
         const hasTasks = Object.values(tasks).some(dayTasks => dayTasks.length > 0);
@@ -82,7 +113,12 @@ function CalendarioTasks() {
     useEffect(() => {
         const savedWeek = localStorage.getItem('calendario_week_number');
         if (savedWeek && parseInt(savedWeek) !== currentWeekNumber) {
-            setNewWeekModal({ isOpen: true, pendingWeek: currentWeekNumber, tasksToLoad: tasks });
+            setNewWeekModal({
+                isOpen: true,
+                pendingWeek: currentWeekNumber,
+                tasksToLoad: tasks,
+                sourceWeek: parseInt(savedWeek)
+            });
         } else {
             localStorage.setItem('calendario_week_number', currentWeekNumber);
         }
@@ -97,12 +133,28 @@ function CalendarioTasks() {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, [activeAction]);
 
+    const navigateBack = () => {
+        if (viewingHistoryIndex === null) {
+            if (history.length > 0) setViewingHistoryIndex(history.length - 1);
+        } else if (viewingHistoryIndex > 0) {
+            setViewingHistoryIndex(viewingHistoryIndex - 1);
+        }
+    };
+
+    const navigateForward = () => {
+        if (viewingHistoryIndex === history.length - 1) {
+            setViewingHistoryIndex(null);
+        } else if (viewingHistoryIndex !== null) {
+            setViewingHistoryIndex(viewingHistoryIndex + 1);
+        }
+    };
+
     const handleColumnClick = (day, targetIndex = null) => {
         if (!activeAction) return;
 
         const { task, mode, sourceDay, sourceIndex } = activeAction;
 
-        setTasks(prev => {
+        updateActiveTasks(prev => {
             const newState = { ...prev };
 
             // Tarea a insertar (nueva si es duplicado, la misma si es mover)
@@ -137,7 +189,7 @@ function CalendarioTasks() {
     };
 
     const toggleTaskCompletion = (day, taskId) => {
-        setTasks(prev => ({
+        updateActiveTasks(prev => ({
             ...prev,
             [day]: prev[day].map(t =>
                 t.id === taskId ? { ...t, completed: !t.completed } : t
@@ -162,7 +214,7 @@ function CalendarioTasks() {
 
     const confirmDelete = () => {
         const { task, day } = deleteModal;
-        setTasks(prev => ({
+        updateActiveTasks(prev => ({
             ...prev,
             [day]: prev[day].filter(t => t.id !== task.id)
         }));
@@ -170,8 +222,29 @@ function CalendarioTasks() {
     };
 
     const handleNewWeekDecision = (shouldReset, clearExtras = false) => {
-        const { pendingWeek, tasksToLoad } = newWeekModal;
+        const { pendingWeek, tasksToLoad, sourceWeek } = newWeekModal;
 
+        // 1. Identificar qué tareas y qué semana estamos archivando.
+        // Usamos 'tasksToLoad' ya que contiene el snapshot capturado al detectar el cambio.
+        const tasksToArchive = tasksToLoad || tasks;
+        const archivedWeek = sourceWeek;
+        const hasAnyTasks = Object.values(tasksToArchive).some(dayTasks => dayTasks.length > 0);
+
+        if (hasAnyTasks && archivedWeek && archivedWeek !== pendingWeek) {
+            const historyEntry = {
+                weekNumber: archivedWeek,
+                tasks: JSON.parse(JSON.stringify(tasksToArchive)), // Copia profunda
+                archivedAt: new Date().toISOString(),
+                range: weekRange // Conservamos el rango de fechas para el registro
+            };
+            setHistory(prev => {
+                // Evitar duplicados si la semana ya existe en el historial
+                if (prev.some(h => h.weekNumber === historyEntry.weekNumber)) return prev;
+                return [...prev, historyEntry];
+            });
+        }
+
+        // 2. Aplicar los cambios de la nueva semana
         let finalTasks = tasksToLoad || tasks;
         if (shouldReset) {
             const resetTasks = {};
@@ -187,8 +260,11 @@ function CalendarioTasks() {
 
         setTasks(finalTasks);
         setInitialTasks(finalTasks);
-        localStorage.setItem('calendario_week_number', pendingWeek);
-        setNewWeekModal({ isOpen: false, pendingWeek: null, tasksToLoad: null });
+        setViewingHistoryIndex(null);
+        if (pendingWeek) {
+            localStorage.setItem('calendario_week_number', pendingWeek);
+        }
+        setNewWeekModal({ isOpen: false, pendingWeek: null, tasksToLoad: null, sourceWeek: null });
         setViewMode('visualize');
     };
 
@@ -201,6 +277,11 @@ function CalendarioTasks() {
     useEffect(() => {
         localStorage.setItem('calendario_initial_tasks_data', JSON.stringify(initialTasks));
     }, [initialTasks]);
+
+    // Guardar automáticamente el historial
+    useEffect(() => {
+        localStorage.setItem('calendario_history_data', JSON.stringify(history));
+    }, [history]);
 
     const hasChanges = JSON.stringify(tasks) !== JSON.stringify(initialTasks);
 
@@ -215,7 +296,7 @@ function CalendarioTasks() {
             isExtra: viewMode === 'visualize'
         };
 
-        setTasks((prev) => {
+        updateActiveTasks((prev) => {
             const dayTasks = [...prev[day]];
             if (viewMode === 'edit') {
                 const firstExtra = dayTasks.findIndex(t => t.isExtra);
@@ -247,7 +328,7 @@ function CalendarioTasks() {
 
         const { task, sourceDay, index: sourceIndex } = JSON.parse(data);
 
-        setTasks((prev) => {
+        updateActiveTasks((prev) => {
             const newState = { ...prev };
 
             // 1. Eliminar de la fuente
@@ -288,7 +369,7 @@ function CalendarioTasks() {
         const seconds = String(now.getSeconds()).padStart(2, '0');
         const fileName = `calendario_tareas_week${currentWeekNumber}_${year}${month}${day}_${hours}${minutes}${seconds}.json`;
 
-        const dataStr = JSON.stringify({ tasks, weekNumber: currentWeekNumber }, null, 2);
+        const dataStr = JSON.stringify({ tasks, history, weekNumber: currentWeekNumber }, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -312,11 +393,25 @@ function CalendarioTasks() {
 
                 // Validación simple
                 if (DAYS_BASE.every(day => Array.isArray(importedTasks[day]))) {
+                    // Si el archivo trae historial, lo fusionamos con el actual sin borrar datos previos
+                    if (json.history && Array.isArray(json.history)) {
+                        setHistory(currentHistory => {
+                            const combined = [...currentHistory, ...json.history];
+                            // Eliminar duplicados exactos (misma semana y misma fecha de archivado)
+                            return combined.filter((item, index, self) =>
+                                index === self.findIndex((t) => (
+                                    t.weekNumber === item.weekNumber && t.archivedAt === item.archivedAt
+                                ))
+                            );
+                        });
+                    }
+
                     if (importedWeek && importedWeek !== currentWeekNumber) {
                         setNewWeekModal({
                             isOpen: true,
                             pendingWeek: currentWeekNumber,
-                            tasksToLoad: importedTasks
+                            tasksToLoad: importedTasks,
+                            sourceWeek: importedWeek
                         });
                     } else {
                         setTasks(importedTasks);
@@ -368,7 +463,21 @@ function CalendarioTasks() {
                 <div className="flex items-center gap-4">
                     <div className="flex flex-col">
                         <h2 className="text-2xl font-bold tracking-tight text-white leading-tight">Mi Calendario</h2>
-                        <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Sem {currentWeekNumber} ({weekRange})</span>
+                        <div className="flex items-center gap-2 mt-1">
+                            {((viewingHistoryIndex === null && history.length > 0) || viewingHistoryIndex > 0) && (
+                                <button onClick={navigateBack} className="p-1 hover:bg-zinc-800 rounded-full text-zinc-500 hover:text-white transition-colors" title="Semana anterior">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                                </button>
+                            )}
+                            <span className={`text-[10px] font-bold uppercase tracking-widest ${viewingHistoryIndex !== null ? 'text-blue-400' : 'text-zinc-500'}`}>
+                                {viewingHistoryIndex !== null && "Historial: "}Sem {displayWeek} ({displayRange})
+                            </span>
+                            {viewingHistoryIndex !== null && (
+                                <button onClick={navigateForward} className="p-1 hover:bg-zinc-800 rounded-full text-zinc-500 hover:text-white transition-colors" title="Semana siguiente">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                                </button>
+                            )}
+                        </div>
                     </div>
                     <div className="flex flex-col gap-1">
                         {hasChanges && (
@@ -422,15 +531,15 @@ function CalendarioTasks() {
                         >
                             <h3 className="text-center font-bold mb-4 text-zinc-400 uppercase tracking-widest text-xs border-b border-zinc-800 pb-3">
                                 {day}
-                                {viewMode === 'visualize' && tasks[day].length > 0 && (
+                                {viewMode === 'visualize' && displayTasks[day].length > 0 && (
                                     <span className="ml-2 normal-case font-medium opacity-60 tracking-normal text-[10px]">
-                                        ({tasks[day].filter(t => t.completed).length}/{tasks[day].length})
+                                        ({displayTasks[day].filter(t => t.completed).length}/{displayTasks[day].length})
                                     </span>
                                 )}
                             </h3>
 
                             <div className="flex-1 space-y-3 mb-4">
-                                {tasks[day].map((task, idx) => {
+                                {displayTasks[day].map((task, idx) => {
                                     if (task.isExtra && viewMode === 'edit') return null;
                                     if (task.isExtra) return null; // Lo manejamos abajo
                                     return (
@@ -467,7 +576,7 @@ function CalendarioTasks() {
                                 </div>
                             )}
                             <div className="flex-1 space-y-3 mb-4">
-                                {viewMode === 'visualize' && tasks[day].map((task, idx) => {
+                                {viewMode === 'visualize' && displayTasks[day].map((task, idx) => {
                                     if (!task.isExtra) return null;
                                     return (
                                         <ExtraTaskCard
