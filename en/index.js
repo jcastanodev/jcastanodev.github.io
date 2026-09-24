@@ -1,7 +1,7 @@
 // next profile image
 const nextProfileImageButton = document.getElementById('next-profile-image-button');
 nextProfileImageButton.addEventListener('click', nextProfileImage);
-const maxImageId = 3;
+const maxImageId = 4;
 let profileImageCount = Math.floor(Math.random() * maxImageId) + 1;
 document.getElementById("profile-image").src = "../assets/profile" + profileImageCount + ".gif";
 function nextProfileImage() {
