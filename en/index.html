@@ -23,7 +23,7 @@
   <meta name="twitter:image" content="https://jcastanodev.github.io/assets/profile.png">
   <link rel="shortcut icon" href="../assets/favicon.ico" type="image/x-icon" />
   <link href="../tailwind.css?v=2" rel="stylesheet" />
-  <link href="../css/trepi.css?v=1" rel="stylesheet" />
+  <link href="../css/trepi.css?v=3" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -185,45 +185,37 @@
           <div class="mt-10 trepi-section">
             <span class="text-3xl font-bold text-white">Trepi</span>:
             <p class="mt-4" data-i18n="trepi-intro">Your AI agent + MCP with Trepi: it supports your business or work and finds opportunities to grow it. Built for **businesses and freelancers**.</p>
-            <svg class="mt-4 trepi-diagram" viewBox="0 0 480 570" role="img" aria-label="Diagram: the client's AI agent connects through MCP to Trepi, which manages social media, ads, inbox, web, ecommerce and marketplace, and sends business opportunities back.">
-              <defs>
-                <linearGradient id="trepi-grad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#7B68EE" />
-                  <stop offset="1" stop-color="#3498db" />
-                </linearGradient>
-              </defs>
-              <path class="link" d="M240 80 V136" />
-              <path class="link" d="M240 204 V250" />
-              <path class="link" d="M240 340 V400" />
-              <path class="link link-back" d="M370 295 H440 V45 H340" />
-              <rect class="node" x="140" y="10" width="200" height="70" rx="16" />
-              <text x="240" y="43" font-size="18" font-weight="700" data-i18n="trepi-agent">Your AI agent</text>
-              <text class="t-sub" x="240" y="63" data-i18n="trepi-agent-sub">the one you already use</text>
-              <circle class="node pulse" cx="240" cy="170" r="34" />
-              <text x="240" y="176" font-size="18" font-weight="700">MCP</text>
-              <rect class="node-trepi pulse" x="110" y="250" width="260" height="90" rx="20" />
-              <text x="240" y="293" font-size="30" font-weight="800">Trepi</text>
-              <text class="t-sub" x="240" y="318" style="fill:#fff" data-i18n="trepi-trepi-sub">Businesses and freelancers</text>
-              <text class="t-sub" x="462" y="170" transform="rotate(90 462 170)" style="fill:#f2cc6f;font-size:13px;font-weight:700" data-i18n="trepi-opportunities">Opportunities</text>
-              <rect class="frame" x="10" y="400" width="460" height="150" rx="16" />
-          <rect class="chip" x="20" y="420" width="130" height="40" rx="12" style="animation-delay:0s" />
-          <text class="chip-label" x="85" y="445" data-i18n="trepi-social">Social</text>
-          <rect class="chip" x="175" y="420" width="130" height="40" rx="12" style="animation-delay:1s" />
-          <text class="chip-label" x="240" y="445">Ads</text>
-          <rect class="chip" x="330" y="420" width="130" height="40" rx="12" style="animation-delay:2s" />
-          <text class="chip-label" x="395" y="445">Inbox</text>
-          <rect class="chip" x="20" y="480" width="130" height="40" rx="12" style="animation-delay:3s" />
-          <text class="chip-label" x="85" y="505">Web</text>
-          <rect class="chip" x="175" y="480" width="130" height="40" rx="12" style="animation-delay:4s" />
-          <text class="chip-label" x="240" y="505">Ecommerce</text>
-          <rect class="chip" x="330" y="480" width="130" height="40" rx="12" style="animation-delay:5s" />
-          <text class="chip-label" x="395" y="505">Marketplace</text>
-              <circle class="dot dot-out" r="5" cx="0" cy="0" style="offset-path:path('M240 80 V136')" />
-              <circle class="dot dot-out" r="5" cx="0" cy="0" style="offset-path:path('M240 204 V250');animation-delay:.6s" />
-              <circle class="dot dot-out" r="5" cx="0" cy="0" style="offset-path:path('M240 340 V400');animation-delay:1.2s" />
-              <circle class="dot dot-back" r="6" cx="0" cy="0" style="offset-path:path('M370 295 H440 V45 H340')" />
-              <circle class="dot dot-back" r="6" cx="0" cy="0" style="offset-path:path('M370 295 H440 V45 H340');animation-delay:1.6s" />
-            </svg>
+            <div class="t3d-fit" role="img" aria-label="Diagram: the client's AI agent connects through MCP to Trepi, which manages social media, ads, inbox, web, ecommerce and marketplace, and sends business opportunities back.">
+              <div class="t3d-stage" aria-hidden="true">
+                <div class="t3d-sway"><div class="t3d-tilt">
+                  <div class="t3d-floor"></div>
+                  <svg class="t3d-back" viewBox="0 0 480 600">
+                    <path id="t3d-back-path" class="link" d="M370 295 H440 V45 H340" />
+                    <text x="462" y="170" transform="rotate(90 462 170)" data-i18n="trepi-opportunities">Opportunities</text>
+                    <circle class="pk" r="5" cx="0" cy="0" />
+                    <circle class="pk" r="5" cx="0" cy="0" />
+                  </svg>
+                  <div class="t3d-beam" style="left:240px;top:80px;height:56px"><i class="pk"></i></div>
+                  <div class="t3d-beam" style="left:240px;top:204px;height:46px"><i class="pk"></i></div>
+                  <div class="t3d-beam" style="left:240px;top:340px;height:60px"><i class="pk"></i></div>
+                  <div class="t3d-card t3d-agent"><i class="ex" style="--n:1"></i><i class="ex" style="--n:2"></i><i class="ex" style="--n:3"></i><i class="ex" style="--n:4"></i><i class="ex" style="--n:5"></i><i class="ex" style="--n:6"></i><div class="face"></div>
+                    <div class="txt"><div class="t3d-title" data-i18n="trepi-agent">Your AI agent</div><div class="t3d-sub" data-i18n="trepi-agent-sub">the one you already use</div></div>
+                  </div>
+                  <div class="t3d-ring"><i class="r3"></i><i class="r1"></i><i class="r2"></i><div class="core">MCP</div></div>
+                  <div class="t3d-card t3d-trepi"><i class="ex" style="--n:1"></i><i class="ex" style="--n:2"></i><i class="ex" style="--n:3"></i><i class="ex" style="--n:4"></i><i class="ex" style="--n:5"></i><i class="ex" style="--n:6"></i><div class="face"></div>
+                    <div class="txt"><div class="t3d-title">Trepi</div><div class="t3d-sub" data-i18n="trepi-trepi-sub">Businesses and freelancers</div></div>
+                  </div>
+                  <div class="t3d-plate"><div class="slab"></div>
+                  <div class="t3d-chip" style="left:20px;top:20px"><div class="in" data-i18n="trepi-social">Social</div></div>
+                  <div class="t3d-chip" style="left:165px;top:20px"><div class="in">Ads</div></div>
+                  <div class="t3d-chip" style="left:310px;top:20px"><div class="in">Inbox</div></div>
+                  <div class="t3d-chip" style="left:20px;top:80px"><div class="in">Web</div></div>
+                  <div class="t3d-chip" style="left:165px;top:80px"><div class="in">Ecommerce</div></div>
+                  <div class="t3d-chip" style="left:310px;top:80px"><div class="in">Marketplace</div></div>
+                  </div>
+                </div></div>
+              </div>
+            </div>
             <div class="mt-6 trepi-card">
               <h3 class="text-2xl font-bold text-white">Trepidantes</h3>
               <p class="mt-2" data-i18n="trepidantes-desc">A tool for freelancers: **invoice, plan, audit and complete tasks**. Very handy for anyone day to day, because we all need to track income and expenses, keep a to-do list, an agenda, contacts and social media.</p>
@@ -253,6 +245,10 @@
   <script src="./index.js?v=1"></script>
   <script src="../js/i18n.js"></script>
   <script src="../js/github-collapsable.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+  <script src="../js/trepi-3d.js?v=2"></script>
 </body>
 
-</html>
+</html>
