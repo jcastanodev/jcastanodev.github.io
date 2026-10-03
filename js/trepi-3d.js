@@ -245,7 +245,6 @@
   const openBtn = document.getElementById('trepi-open');
   if (!modal || !openBtn) return;
   const closeBtn = modal.querySelector('.trepi-close');
-  const root = document.documentElement;
   const animated = typeof gsap !== 'undefined' && !matchMedia('(prefers-reduced-motion: reduce)').matches;
   let origin = '50% 50%';
   let busy = false;
@@ -257,8 +256,8 @@
     if (busy || modal.open) return;
     const r = openBtn.getBoundingClientRect();
     origin = `${Math.round(r.left + r.width / 2)}px ${Math.round(r.top + r.height / 2)}px`;
-    root.classList.add('trepi-open');
     modal.showModal();
+    requestAnimationFrame(() => modal.classList.add('is-shown'));
     modal.querySelector('.trepi-modal-body').scrollTop = 0;
     if (!animated) { fire('trepi:open'); return; }
     busy = true;
@@ -272,12 +271,13 @@
 
   function close() {
     if (busy || !modal.open) return;
-    const done = () => { modal.close(); root.classList.remove('trepi-open'); fire('trepi:closed'); busy = false; openBtn.focus(); };
+    const done = () => { modal.classList.remove('is-shown'); modal.close(); fire('trepi:closed'); busy = false; openBtn.focus(); };
     if (!animated) { done(); return; }
     busy = true;
+    modal.classList.remove('is-shown'); // fade the backdrop together with the circle
     gsap.timeline({ onComplete: done })
       .to(content(), { autoAlpha: 0, y: 14, duration: 0.25, stagger: { each: 0.03, from: 'end' } })
-      .to(modal, { clipPath: `circle(0px at ${origin})`, duration: 0.6, ease: 'power3.inOut' }, 0.1);
+      .fromTo(modal, { clipPath: `circle(150vmax at ${origin})` }, { clipPath: `circle(0px at ${origin})`, duration: 0.7, ease: 'power3.inOut' }, 0.15);
   }
 
   openBtn.addEventListener('click', open);
