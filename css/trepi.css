@@ -116,25 +116,48 @@
 .t3x-code .c2 { color: #2ecc71; font-weight: 700; }
 .t3x-code em { font-style: normal; color: #7B68EE; margin-left: 0.5rem; }
 
-.t3i { position: relative; width: 100%; max-width: 560px; margin: 0.5rem auto 0; aspect-ratio: 480 / 420; container-type: inline-size; }
+.t3i { position: relative; width: 100%; max-width: 560px; margin: 0.5rem auto 0; aspect-ratio: 480 / 600; container-type: inline-size; }
 .t3i svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .t3i-line { fill: none; stroke: #475569; stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; }
 .t3i-pk { fill: #cfe9ff; filter: drop-shadow(0 0 4px #3498db) drop-shadow(0 0 8px #3498db); }
 .t3i-pk:nth-of-type(even) { fill: #fff3c4; filter: drop-shadow(0 0 4px #f2cc6f) drop-shadow(0 0 8px #f2cc6f); }
 .t3i-hub {
-  position: absolute; left: 50%; top: 50%; width: 17%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%;
+  position: absolute; left: 50%; top: 58.33%; width: 17%; aspect-ratio: 1; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: clamp(11px, 4cqw, 20px); color: #fff;
   background: linear-gradient(135deg, #7B68EE, #3498db); box-shadow: 0 0 30px rgba(52, 152, 219, 0.75);
 }
 .t3i-node {
-  position: absolute; transform: translate(-50%, -50%); white-space: nowrap; color: #fff; background: #1e293b;
+  position: absolute; white-space: nowrap; color: #fff; background: #1e293b;
   border: 1.5px solid #3498db; border-radius: 9999px; padding: 0.4em 0.8em; font-size: clamp(9px, 2.7cqw, 14px); font-weight: 600;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+}
+/* Centre labels on their anchor; once GSAP owns transforms it uses xPercent/yPercent instead. */
+.t3i:not(.is-gsap) :is(.t3i-node, .t3i-agent, .t3i-badge, .t3i-hub, .t3i-cloudlabel) { translate: -50% -50%; }
+.t3i-cloud {
+  fill: rgba(52, 152, 219, 0.07); stroke: #3498db; stroke-width: 2; stroke-dasharray: 7 8; stroke-linejoin: round;
+  filter: drop-shadow(0 0 10px rgba(52, 152, 219, 0.45)); transform-box: fill-box; transform-origin: 50% 50%;
+  animation: t3i-march 2.4s linear infinite;
+}
+@keyframes t3i-march { to { stroke-dashoffset: -30; } }
+.t3i-cloudlabel {
+  position: absolute; white-space: nowrap; font-size: clamp(9px, 2.8cqw, 14px); font-weight: 700; color: #cfe9ff;
+  padding: 0.35em 0.9em; border-radius: 9999px; background: #0b1220; border: 1.5px solid #3498db;
+}
+.t3i-cloudlabel i { margin-right: 0.5em; color: #3498db; }
+.t3i-agent {
+  position: absolute; white-space: nowrap; display: flex; align-items: center; gap: 0.55em; color: #fff;
+  font-size: clamp(10px, 3.2cqw, 17px); font-weight: 700; padding: 0.55em 1.2em; border-radius: 0.9em;
+  background: #111827; border: 2px solid #7B68EE; box-shadow: 0 0 22px rgba(123, 104, 238, 0.55);
+}
+.t3i-agent i { color: #7B68EE; }
+.t3i-badge {
+  position: absolute; font-size: clamp(8px, 2.4cqw, 12px); font-weight: 800; color: #fff;
+  padding: 0.25em 0.7em; border-radius: 9999px; background: linear-gradient(135deg, #7B68EE, #3498db); box-shadow: 0 0 12px rgba(123, 104, 238, 0.7);
 }
 .t3i-node i { margin-right: 0.45em; color: #f2cc6f; }
 
 @media (prefers-reduced-motion: reduce) {
-  .t3d-floor, .t3x-ring, .t3x-arrow { animation: none; }
+  .t3d-floor, .t3x-ring, .t3x-arrow, .t3i-cloud { animation: none; }
 }
 
 /* ---------- CTA + fullscreen modal ---------- */

@@ -149,6 +149,10 @@
   if (typeof gsap === 'undefined') { simpleToggle(); return; }
 
   const q = (sel) => gsap.utils.toArray(root.querySelectorAll(sel));
+  // GSAP owns the transforms of these labels, so centre them with percentages instead of CSS.
+  root.querySelector('.t3i').classList.add('is-gsap');
+  gsap.set(q('.t3i-node, .t3i-agent, .t3i-badge, .t3i-hub, .t3i-cloudlabel'), { xPercent: -50, yPercent: -50 });
+
   const mm = gsap.matchMedia();
   mm.add('(prefers-reduced-motion: reduce)', simpleToggle);
 
@@ -188,7 +192,11 @@
       .from(q('.t3x-step'), { autoAlpha: 0, scale: 0.7, stagger: 0.12, duration: 0.4, ease: 'back.out(2)' }, 0.6)
       .from(q('.t3x-code .ln'), { autoAlpha: 0, x: -14, stagger: 0.14, duration: 0.3 }, 1.0)
       .from('.t3x-title', { autoAlpha: 0, y: 14, duration: 0.5 }, 1.2)
+      .from('.t3i-cloud', { autoAlpha: 0, scale: 0.7, duration: 0.9, ease: 'power2.out' }, 1.3)
       .from('.t3i-hub', { scale: 0, duration: 0.6, ease: 'back.out(2.2)' }, 1.4)
+      .from('.t3i-agent', { autoAlpha: 0, y: -24, duration: 0.6, ease: 'back.out(2)' }, 1.5)
+      .from('.t3i-badge', { autoAlpha: 0, scale: 0, duration: 0.4, ease: 'back.out(3)' }, 2.0)
+      .from('.t3i-cloudlabel', { autoAlpha: 0, y: 10, duration: 0.5 }, 2.2)
       .fromTo(lines, { strokeDashoffset: 1 }, { strokeDashoffset: 0, stagger: 0.07, duration: 0.7, ease: 'power1.out' }, 1.5)
       .from(nodes, { autoAlpha: 0, scale: 0.3, stagger: 0.07, duration: 0.5, ease: 'back.out(2)' }, 1.7);
 
