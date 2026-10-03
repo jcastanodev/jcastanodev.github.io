@@ -111,6 +111,7 @@
   margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 0.5rem; background: #0b1220; border: 1px solid #1e293b;
   font: 0.8rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #cbd5e1; overflow-x: auto; white-space: pre;
 }
+.t3x-code .ln { display: block; }
 .t3x-code .c1 { color: #f2cc6f; font-weight: 700; }
 .t3x-code .c2 { color: #2ecc71; font-weight: 700; }
 .t3x-code em { font-style: normal; color: #7B68EE; margin-left: 0.5rem; }
@@ -135,3 +136,38 @@
 @media (prefers-reduced-motion: reduce) {
   .t3d-floor, .t3x-ring, .t3x-arrow { animation: none; }
 }
+
+/* ---------- CTA + fullscreen modal ---------- */
+.trepi-cta {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 0.6rem; width: 100%; max-width: 420px;
+  padding: 1rem 1.5rem; border: 0; border-radius: 0.9rem; color: #fff; font-size: 1.25rem; font-weight: 800; cursor: pointer;
+  background: linear-gradient(135deg, #7B68EE, #3498db); box-shadow: 0 0 28px rgba(52, 152, 219, 0.55);
+  overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.trepi-cta:hover { transform: scale(1.04); box-shadow: 0 0 40px rgba(123, 104, 238, 0.85); }
+.trepi-cta::after {
+  content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent); transform: skewX(-20deg);
+  animation: trepi-shine 3.2s ease-in-out infinite;
+}
+@keyframes trepi-shine { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+.trepi-cta i { transition: transform 0.2s ease; }
+.trepi-cta:hover i { transform: translateX(4px); }
+
+html.trepi-open, html.trepi-open body { overflow: hidden; }
+.trepi-modal {
+  width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; color: #fff;
+  background: radial-gradient(ellipse at 50% 0%, #1b1740 0%, #05060f 55%, #000 100%);
+}
+.trepi-modal::backdrop { background: rgba(0, 0, 0, 0.85); }
+.trepi-modal-body { position: relative; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; }
+.trepi-modal-content { max-width: 720px; margin: 0 auto; padding: 4.5rem 1.25rem 4rem; }
+.trepi-modal-content h2 { font-size: 2.25rem; font-weight: 800; }
+.trepi-close {
+  position: fixed; top: 1rem; right: 1rem; z-index: 5; width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+  background: rgba(17, 24, 39, 0.85); border: 2px solid #7B68EE; color: #fff; font-size: 1.6rem; line-height: 1;
+  display: grid; place-items: center; transition: transform 0.25s ease, background 0.25s ease;
+}
+.trepi-close:hover { transform: rotate(90deg); background: #312e81; }
+.trepi-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (min-width: 1024px) { .trepi-modal .t3d-fit { max-width: 620px; } }

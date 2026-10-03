@@ -84,9 +84,17 @@
       });
     }
 
-    const start = () => { entrance.play(); entrance.eventCallback('onComplete', () => loops.forEach((l) => l.play())); };
+    const start = () => { entrance.restart(); entrance.eventCallback('onComplete', () => loops.forEach((l) => l.play())); };
     loops.forEach((l) => l.pause());
-    if (window.ScrollTrigger) {
+    const modal = fit.closest('dialog');
+    const onModalOpen = () => start();
+    const onModalClosed = () => { loops.forEach((l) => l.pause()); entrance.pause(0); };
+    if (modal) {
+      // Inside the modal: play the entrance every time it opens.
+      entrance.progress(0);
+      modal.addEventListener('trepi:open', onModalOpen);
+      modal.addEventListener('trepi:closed', onModalClosed);
+    } else if (window.ScrollTrigger) {
       ScrollTrigger.create({ trigger: fit, start: 'top 85%', once: true, onEnter: start });
     } else {
       start();
@@ -108,6 +116,7 @@
     return () => {
       fit.removeEventListener('pointermove', move);
       fit.removeEventListener('pointerleave', leave);
+      if (modal) { modal.removeEventListener('trepi:open', onModalOpen); modal.removeEventListener('trepi:closed', onModalClosed); }
       loops.forEach((l) => l.kill());
     };
   });
@@ -177,7 +186,7 @@
       .to(panel, { height: 'auto', duration: 0.9, ease: 'power2.out' }, 0)
       .from('.t3x-card', { autoAlpha: 0, y: 30, duration: 0.6 }, 0.3)
       .from(q('.t3x-step'), { autoAlpha: 0, scale: 0.7, stagger: 0.12, duration: 0.4, ease: 'back.out(2)' }, 0.6)
-      .from(q('.t3x-code span'), { autoAlpha: 0, x: -14, stagger: 0.14, duration: 0.3 }, 1.0)
+      .from(q('.t3x-code .ln'), { autoAlpha: 0, x: -14, stagger: 0.14, duration: 0.3 }, 1.0)
       .from('.t3x-title', { autoAlpha: 0, y: 14, duration: 0.5 }, 1.2)
       .from('.t3i-hub', { scale: 0, duration: 0.6, ease: 'back.out(2.2)' }, 1.4)
       .fromTo(lines, { strokeDashoffset: 1 }, { strokeDashoffset: 0, stagger: 0.07, duration: 0.7, ease: 'power1.out' }, 1.5)
@@ -197,13 +206,81 @@
     }
     btn.addEventListener('click', toggle);
 
-    // Unfolds by itself the first time the user scrolls down to it.
-    if (window.ScrollTrigger) {
-      ScrollTrigger.create({ trigger: btn, start: 'top 80%', once: true, onEnter: () => { if (!isOpen) toggle(); } });
+    // Unfolds by itself when the user scrolls down to it (inside the modal, scrolling its own body).
+    const modal = root.closest('dialog');
+    let trigger = null;
+    const arm = () => {
+      if (trigger) trigger.kill();
+      if (!window.ScrollTrigger) { if (!isOpen) toggle(); return; }
+      trigger = ScrollTrigger.create({
+        trigger: btn, scroller: modal ? modal.querySelector('.trepi-modal-body') : window,
+        start: 'top 85%', once: true, onEnter: () => { if (!isOpen) toggle(); },
+      });
+    };
+    const reset = () => {
+      if (trigger) trigger.kill();
+      loops.pause(); floats.forEach((f) => f.pause());
+      gsap.set(pks, { autoAlpha: 0 });
+      open.pause(0); isOpen = false; setExpanded(false);
+    };
+    if (modal) {
+      modal.addEventListener('trepi:open', arm);
+      modal.addEventListener('trepi:closed', reset);
     } else {
-      toggle();
+      arm();
     }
 
-    return () => { btn.removeEventListener('click', toggle); loops.kill(); open.kill(); floats.forEach((f) => f.kill()); };
+    return () => {
+      btn.removeEventListener('click', toggle);
+      if (modal) { modal.removeEventListener('trepi:open', arm); modal.removeEventListener('trepi:closed', reset); }
+      if (trigger) trigger.kill();
+      loops.kill(); open.kill(); floats.forEach((f) => f.kill());
+    };
   });
+})();
+
+// "Conoce Trepi" button -> fullscreen modal with a reveal transition.
+(function () {
+  const modal = document.getElementById('trepi-modal');
+  const openBtn = document.getElementById('trepi-open');
+  if (!modal || !openBtn) return;
+  const closeBtn = modal.querySelector('.trepi-close');
+  const root = document.documentElement;
+  const animated = typeof gsap !== 'undefined' && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let origin = '50% 50%';
+  let busy = false;
+
+  const fire = (name) => modal.dispatchEvent(new CustomEvent(name));
+  const content = () => gsap.utils.toArray(modal.querySelectorAll('.trepi-reveal'));
+
+  function open() {
+    if (busy || modal.open) return;
+    const r = openBtn.getBoundingClientRect();
+    origin = `${Math.round(r.left + r.width / 2)}px ${Math.round(r.top + r.height / 2)}px`;
+    root.classList.add('trepi-open');
+    modal.showModal();
+    modal.querySelector('.trepi-modal-body').scrollTop = 0;
+    if (!animated) { fire('trepi:open'); return; }
+    busy = true;
+    gsap.set(content(), { autoAlpha: 0, y: 26 });
+    gsap.timeline({ onComplete: () => { busy = false; } })
+      .fromTo(modal, { clipPath: `circle(0px at ${origin})` }, { clipPath: `circle(150vmax at ${origin})`, duration: 0.85, ease: 'power3.inOut' })
+      .to(content(), { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out' }, 0.45)
+      .add(() => fire('trepi:open'), 0.55)
+      .set(modal, { clearProps: 'clipPath' });
+  }
+
+  function close() {
+    if (busy || !modal.open) return;
+    const done = () => { modal.close(); root.classList.remove('trepi-open'); fire('trepi:closed'); busy = false; openBtn.focus(); };
+    if (!animated) { done(); return; }
+    busy = true;
+    gsap.timeline({ onComplete: done })
+      .to(content(), { autoAlpha: 0, y: 14, duration: 0.25, stagger: { each: 0.03, from: 'end' } })
+      .to(modal, { clipPath: `circle(0px at ${origin})`, duration: 0.6, ease: 'power3.inOut' }, 0.1);
+  }
+
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
 })();
