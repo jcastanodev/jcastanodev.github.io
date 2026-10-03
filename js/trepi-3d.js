@@ -177,7 +177,7 @@
         }, 0);
       });
     }
-    const floats = nodes.map((n, i) => gsap.to(n, { y: i % 2 ? -4 : 4, duration: 2 + i * 0.2, ease: 'sine.inOut', yoyo: true, repeat: -1, paused: true }));
+    const floats = nodes.map((n, i) => gsap.to(n, { y: i % 2 ? -2.5 : 2.5, duration: 2 + i * 0.2, ease: 'sine.inOut', yoyo: true, repeat: -1, paused: true }));
     const refresh = () => { if (window.ScrollTrigger) ScrollTrigger.refresh(); };
 
     const open = gsap.timeline({
