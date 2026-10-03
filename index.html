@@ -24,7 +24,7 @@
   <meta name="google-site-verification" content="ilP8Pyb22zDUPz1Ye_57RuxTyJnfiCdTqMZ2UKCntxY" />
   <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
   <link href="./tailwind.css?v=2" rel="stylesheet" />
-  <link href="./css/trepi.css?v=3" rel="stylesheet" />
+  <link href="./css/trepi.css?v=4" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -215,7 +215,7 @@
                   </div>
                   <div class="t3d-ring"><i class="r3"></i><i class="r1"></i><i class="r2"></i><div class="core">MCP</div></div>
                   <div class="t3d-card t3d-trepi"><i class="ex" style="--n:1"></i><i class="ex" style="--n:2"></i><i class="ex" style="--n:3"></i><i class="ex" style="--n:4"></i><i class="ex" style="--n:5"></i><i class="ex" style="--n:6"></i><div class="face"></div>
-                    <div class="txt"><div class="t3d-title">Trepi</div><div class="t3d-sub" data-i18n="trepi-trepi-sub">Negocios e independientes</div></div>
+                    <div class="txt"><div class="t3d-title">Trepi</div><div class="t3d-sub" data-i18n="trepi-trepi-sub">Oportunidades de negocio para todos</div></div>
                   </div>
                   <div class="t3d-plate"><div class="slab"></div>
                   <div class="t3d-chip" style="left:20px;top:20px"><div class="in" data-i18n="trepi-social">Redes</div></div>
@@ -227,6 +227,35 @@
                   </div>
                 </div></div>
               </div>
+            </div>
+            <div class="t3x">
+              <div class="t3x-stem"></div>
+              <button type="button" class="t3x-btn" aria-expanded="true" aria-controls="t3x-panel">
+                <span class="t3x-plus"><i class="t3x-ring"></i></span>
+                <span data-i18n="trepi-more-label">Integraciones y webhooks</span>
+              </button>
+              <div id="t3x-panel" class="t3x-panel"><div class="t3x-inner">
+                <div class="trepi-card t3x-card">
+                  <h3 class="text-xl font-bold text-white"><i class="fa-solid fa-bolt" style="color:#f2cc6f"></i> <span data-i18n="trepi-webhooks-title">Webhooks</span></h3>
+                  <p class="mt-2" data-i18n="trepi-webhooks-desc">Recibe eventos en tiempo real de tus plataformas (mensajes, pedidos, leads). Trepi los analiza y los entrega a tu agente AI por MCP.</p>
+                  <div class="t3x-flow">
+                    <span class="t3x-step" data-i18n="trepi-step-platform">Tu plataforma</span><i class="t3x-arrow"></i>
+                    <span class="t3x-step t3x-step-hot">Webhook</span><i class="t3x-arrow"></i>
+                    <span class="t3x-step t3x-step-trepi">Trepi</span><i class="t3x-arrow"></i>
+                    <span class="t3x-step" data-i18n="trepi-step-agent">Agente AI</span>
+                  </div>
+                  <pre class="t3x-code"><span class="c1">POST</span> /webhooks/trepi
+<span>{ "event": "message.received",</span>
+<span>  "channel": "instagram" }</span>
+<span class="c2">200 OK</span> <em data-i18n="trepi-code-badge">Oportunidad detectada</em></pre>
+                </div>
+                <h3 class="mt-6 text-center text-xl font-bold text-white t3x-title" data-i18n="trepi-integrations-title">Se conecta a todas tus plataformas</h3>
+                <div class="t3i" role="img" aria-label="Se conecta a todas tus plataformas">
+                  <svg viewBox="0 0 480 420" aria-hidden="true"><path class="t3i-line" d="M240 210 L240 48" pathLength="1" /><path class="t3i-line" d="M240 210 L372 96" pathLength="1" /><path class="t3i-line" d="M240 210 L426 210" pathLength="1" /><path class="t3i-line" d="M240 210 L372 324" pathLength="1" /><path class="t3i-line" d="M240 210 L240 372" pathLength="1" /><path class="t3i-line" d="M240 210 L108 324" pathLength="1" /><path class="t3i-line" d="M240 210 L54 210" pathLength="1" /><path class="t3i-line" d="M240 210 L108 96" pathLength="1" /><circle class="t3i-pk" r="4.5" cx="0" cy="0" /><circle class="t3i-pk" r="4.5" cx="0" cy="0" /><circle class="t3i-pk" r="4.5" cx="0" cy="0" /><circle class="t3i-pk" r="4.5" cx="0" cy="0" /><circle class="t3i-pk" r="4.5" cx="0" cy="0" /><circle class="t3i-pk" r="4.5" cx="0" cy="0" /><circle class="t3i-pk" r="4.5" cx="0" cy="0" /><circle class="t3i-pk" r="4.5" cx="0" cy="0" /></svg>
+                  <div class="t3i-hub">Trepi</div>
+                  <div class="t3i-node" style="left:50.00%;top:11.43%"><i class="fa-brands fa-instagram"></i>Instagram</div><div class="t3i-node" style="left:77.50%;top:22.86%"><i class="fa-brands fa-facebook"></i>Facebook</div><div class="t3i-node" style="left:88.75%;top:50.00%"><i class="fa-brands fa-whatsapp"></i>WhatsApp</div><div class="t3i-node" style="left:77.50%;top:77.14%"><i class="fa-brands fa-tiktok"></i>TikTok</div><div class="t3i-node" style="left:50.00%;top:88.57%"><i class="fa-brands fa-google"></i>Google Ads</div><div class="t3i-node" style="left:22.50%;top:77.14%"><i class="fa-brands fa-shopify"></i>Shopify</div><div class="t3i-node" style="left:11.25%;top:50.00%"><i class="fa-brands fa-amazon"></i>Amazon</div><div class="t3i-node" style="left:22.50%;top:22.86%"><i class="fa-solid fa-envelope"></i>Gmail</div>
+                </div>
+              </div></div>
             </div>
             <div class="mt-6 trepi-card">
               <h3 class="text-2xl font-bold text-white">Trepidantes</h3>
@@ -260,7 +289,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
-  <script src="./js/trepi-3d.js?v=2"></script>
+  <script src="./js/trepi-3d.js?v=4"></script>
 </body>
 
 </html>

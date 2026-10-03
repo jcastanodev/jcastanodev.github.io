@@ -116,3 +116,94 @@
     gsap.set(sway, { rotationY: -12, rotationX: 3 });
   });
 })();
+
+// Expandable "+" panel: webhooks flow and platform integrations.
+(function () {
+  const root = document.querySelector('.t3x');
+  if (!root) return;
+  const btn = root.querySelector('.t3x-btn');
+  const panel = root.querySelector('.t3x-panel');
+  const plus = root.querySelector('.t3x-plus');
+  const setExpanded = (v) => btn.setAttribute('aria-expanded', String(v));
+
+  // Plain toggle, open by default (no GSAP, or reduced motion).
+  function simpleToggle() {
+    const onClick = () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      panel.style.display = open ? '' : 'none';
+      setExpanded(open);
+    };
+    btn.addEventListener('click', onClick);
+    return () => btn.removeEventListener('click', onClick);
+  }
+
+  if (typeof gsap === 'undefined') { simpleToggle(); return; }
+
+  const q = (sel) => gsap.utils.toArray(root.querySelectorAll(sel));
+  const mm = gsap.matchMedia();
+  mm.add('(prefers-reduced-motion: reduce)', simpleToggle);
+
+  mm.add('(prefers-reduced-motion: no-preference)', () => {
+    const lines = q('.t3i-line');
+    const nodes = q('.t3i-node');
+    const pks = q('.t3i-pk');
+    let isOpen = false;
+
+    gsap.set(panel, { height: 0 });
+    gsap.set(pks, { autoAlpha: 0 });
+    setExpanded(false);
+
+    // Packets travel both ways along each connection: webhooks in, actions out.
+    const loops = gsap.timeline({ paused: true });
+    if (window.MotionPathPlugin) {
+      pks.forEach((pk, i) => {
+        const inbound = i % 2 === 0;
+        loops.to(pk, {
+          motionPath: { path: lines[i], align: lines[i], alignOrigin: [0.5, 0.5], start: inbound ? 1 : 0, end: inbound ? 0 : 1 },
+          duration: 2 + (i % 3) * 0.4, ease: 'none', repeat: -1,
+        }, 0);
+      });
+    }
+    const floats = nodes.map((n, i) => gsap.to(n, { y: i % 2 ? -4 : 4, duration: 2 + i * 0.2, ease: 'sine.inOut', yoyo: true, repeat: -1, paused: true }));
+    const refresh = () => { if (window.ScrollTrigger) ScrollTrigger.refresh(); };
+
+    const open = gsap.timeline({
+      paused: true,
+      onComplete: () => { if (isOpen) { loops.play(); floats.forEach((f) => f.play()); gsap.to(pks, { autoAlpha: 1, duration: 0.4 }); } refresh(); },
+      onReverseComplete: refresh,
+    });
+    open
+      .to(plus, { rotation: 45, duration: 0.4, ease: 'back.out(2)' }, 0)
+      .to(panel, { height: 'auto', duration: 0.9, ease: 'power2.out' }, 0)
+      .from('.t3x-card', { autoAlpha: 0, y: 30, duration: 0.6 }, 0.3)
+      .from(q('.t3x-step'), { autoAlpha: 0, scale: 0.7, stagger: 0.12, duration: 0.4, ease: 'back.out(2)' }, 0.6)
+      .from(q('.t3x-code span'), { autoAlpha: 0, x: -14, stagger: 0.14, duration: 0.3 }, 1.0)
+      .from('.t3x-title', { autoAlpha: 0, y: 14, duration: 0.5 }, 1.2)
+      .from('.t3i-hub', { scale: 0, duration: 0.6, ease: 'back.out(2.2)' }, 1.4)
+      .fromTo(lines, { strokeDashoffset: 1 }, { strokeDashoffset: 0, stagger: 0.07, duration: 0.7, ease: 'power1.out' }, 1.5)
+      .from(nodes, { autoAlpha: 0, scale: 0.3, stagger: 0.07, duration: 0.5, ease: 'back.out(2)' }, 1.7);
+
+    function toggle() {
+      isOpen = !isOpen;
+      setExpanded(isOpen);
+      if (isOpen) {
+        open.timeScale(1).play();
+      } else {
+        loops.pause();
+        gsap.set(pks, { autoAlpha: 0 });
+        floats.forEach((f) => f.pause());
+        open.timeScale(1.8).reverse();
+      }
+    }
+    btn.addEventListener('click', toggle);
+
+    // Unfolds by itself the first time the user scrolls down to it.
+    if (window.ScrollTrigger) {
+      ScrollTrigger.create({ trigger: btn, start: 'top 80%', once: true, onEnter: () => { if (!isOpen) toggle(); } });
+    } else {
+      toggle();
+    }
+
+    return () => { btn.removeEventListener('click', toggle); loops.kill(); open.kill(); floats.forEach((f) => f.kill()); };
+  });
+})();

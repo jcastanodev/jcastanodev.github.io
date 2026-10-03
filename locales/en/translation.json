@@ -26,7 +26,7 @@
   "trepi-diagram-label": "Diagram: the client's AI agent connects through MCP to Trepi, which manages social media, ads, inbox, web, ecommerce and marketplace, and sends business opportunities back.",
   "trepi-agent": "Your AI agent",
   "trepi-agent-sub": "the one you already use",
-  "trepi-trepi-sub": "Businesses and freelancers",
+  "trepi-trepi-sub": "Business opportunities for everyone",
   "trepi-opportunities": "Opportunities",
   "trepi-social": "Social",
   "trepidantes-desc": "A tool for freelancers: **invoice, plan, audit and complete tasks**. Very handy for anyone day to day, because we all need to track income and expenses, keep a to-do list, an agenda, contacts and social media.",
@@ -38,5 +38,12 @@
   "trepidantes-todo": "To-do list",
   "trepidantes-agenda": "Agenda",
   "trepidantes-contacts": "Contacts",
-  "trepidantes-social": "Social media"
+  "trepidantes-social": "Social media",
+  "trepi-more-label": "Integrations and webhooks",
+  "trepi-webhooks-title": "Webhooks",
+  "trepi-webhooks-desc": "Receive real-time events from your platforms (messages, orders, leads). Trepi analyzes them and delivers them to your AI agent through MCP.",
+  "trepi-step-platform": "Your platform",
+  "trepi-step-agent": "AI agent",
+  "trepi-code-badge": "Opportunity detected",
+  "trepi-integrations-title": "Connects to all your platforms"
 }
