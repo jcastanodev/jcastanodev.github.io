@@ -21,5 +21,22 @@
   "tech-stack": "JavaScript | Java | PHP | React | Spring Boot | Vue | Angular | Flutter | RoR | Laravel | Symfony",
   "yellow-flowers": "Flores amarillas",
   "ai-badge": "Capa",
-  "ai-badge-tooltip": "Texto optimizado por AI"
+  "ai-badge-tooltip": "Texto optimizado por AI",
+  "trepi-intro": "Tu agente AI + MCP con Trepi: ayuda a tu negocio o labor y encuentra oportunidades para hacerlo crecer. Diseñado para **negocios e independientes**.",
+  "trepi-diagram-label": "Diagrama: el agente AI del cliente se conecta por MCP con Trepi, que gestiona redes, ads, inbox, web, ecommerce y marketplace, y devuelve oportunidades de negocio.",
+  "trepi-agent": "Tu agente AI",
+  "trepi-agent-sub": "el de tu negocio",
+  "trepi-trepi-sub": "Negocios e independientes",
+  "trepi-opportunities": "Oportunidades",
+  "trepi-social": "Redes",
+  "trepidantes-desc": "Herramienta para freelancers: **facturar, planear, auditar y completar tareas**. Muy práctica para el día a día de cualquier persona, porque todos necesitamos registrar gastos e ingresos, llevar una lista de tareas, una agenda, contactos y redes sociales.",
+  "trepidantes-invoice": "Facturar",
+  "trepidantes-plan": "Planear",
+  "trepidantes-audit": "Auditar",
+  "trepidantes-complete": "Completar tareas",
+  "trepidantes-money": "Gastos e ingresos",
+  "trepidantes-todo": "ToDo list",
+  "trepidantes-agenda": "Agenda",
+  "trepidantes-contacts": "Contactos",
+  "trepidantes-social": "Redes sociales"
 }

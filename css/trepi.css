@@ -1,0 +1,34 @@
+.trepi-section { color: #fff; }
+
+.trepi-diagram { width: 100%; max-width: 480px; height: auto; display: block; margin: 0 auto; }
+.trepi-diagram text { font-family: inherit; fill: #fff; text-anchor: middle; }
+.trepi-diagram .t-sub { fill: #cbd5e1; font-size: 12px; }
+.trepi-diagram .node { fill: #111827; stroke: #7B68EE; stroke-width: 2; }
+.trepi-diagram .node-trepi { fill: url(#trepi-grad); stroke: none; }
+.trepi-diagram .link { fill: none; stroke: #475569; stroke-width: 2; stroke-dasharray: 4 6; }
+.trepi-diagram .link-back { stroke: #f2cc6f; }
+.trepi-diagram .frame { fill: rgba(255, 255, 255, 0.04); stroke: #334155; stroke-width: 1.5; }
+.trepi-diagram .chip { fill: #1e293b; stroke: #3498db; stroke-width: 1.5; animation: chip-glow 6s ease-in-out infinite; }
+.trepi-diagram .chip-label { font-size: 14px; font-weight: 600; }
+
+.trepi-diagram .dot { offset-rotate: 0deg; animation: dot-travel 2.4s linear infinite; }
+.trepi-diagram .dot-out { fill: #3498db; }
+.trepi-diagram .dot-back { fill: #f2cc6f; animation-duration: 3.2s; }
+.trepi-diagram .pulse { transform-box: fill-box; transform-origin: center; animation: node-pulse 2.4s ease-in-out infinite; }
+
+@keyframes dot-travel { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+@keyframes node-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@keyframes chip-glow {
+  0%, 100% { fill: #1e293b; stroke: #3498db; }
+  8%, 16% { fill: #312e81; stroke: #f2cc6f; }
+  24% { fill: #1e293b; stroke: #3498db; }
+}
+
+.trepi-card { background: rgba(255, 255, 255, 0.06); border: 1px solid #334155; border-radius: 0.75rem; padding: 1rem; }
+.trepi-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.trepi-tag { padding: 0.25rem 0.75rem; border: 1px solid #fff; border-radius: 9999px; font-size: 0.875rem; }
+.trepi-tag-accent { background: #fff; color: #000; font-weight: 700; border-color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .trepi-diagram .dot, .trepi-diagram .pulse, .trepi-diagram .chip { animation: none; }
+}
