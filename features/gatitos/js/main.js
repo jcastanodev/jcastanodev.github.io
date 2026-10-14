@@ -3,12 +3,26 @@ import { KEYS, SCALES, noteFreq } from './harmony.js';
 import { TIMBRES, resolveSound } from './sound.js';
 import { TRAITS, traitMods } from './traits.js';
 import { noteEvents } from './melody.js';
+import { ACCESSORIES, ACCESSORY_IDS, DEFAULT_ANCHORS, newEquip, equipPose, equipMods } from './accessories.js';
 import { MOTION_KINDS, evaluate, totalDuration } from './anim.js';
 import { playNote } from './audio.js';
 import * as store from './store.js';
 
 // ---- state -----------------------------------------------------------
 const DEFAULT_HARMONY = { key: 'C', scale: 'mayor', bpm: 100 };
+
+// Accessories each cat wears on first load.
+const STARTER_LOOK = {
+  naranjo: ['sombrero', 'maraca', 'maraca'],
+  gris: ['gafas', 'mono'],
+  negro: ['corona'],
+};
+
+function starterEquips(catId) {
+  const equips = [];
+  for (const accId of STARTER_LOOK[catId] || []) equips.push(newEquip(accId, equips));
+  return equips;
+}
 
 function initialState() {
   const saved = store.load();
@@ -19,8 +33,10 @@ function initialState() {
       name: def.name,
       svg: def.svg,
       pattern: def.pattern,
+      anchors: structuredClone(DEFAULT_ANCHORS),
       sound: { ...def.sound, ...(s?.sound || {}) },
       traits: s?.traits || [],
+      equips: s?.equips ?? starterEquips(def.id),
       motions: s?.motions ? s.motions : structuredClone(def.motions),
     };
   });
@@ -32,7 +48,9 @@ const state = initialState();
 function persist() {
   store.save({
     harmony: state.harmony,
-    cats: state.cats.map((c) => ({ id: c.id, sound: c.sound, traits: c.traits, motions: c.motions })),
+    cats: state.cats.map((c) => ({
+      id: c.id, sound: c.sound, traits: c.traits, equips: c.equips, motions: c.motions,
+    })),
   });
 }
 
@@ -44,10 +62,20 @@ for (const cat of state.cats) {
   runtime.set(cat.id, { img, startedAt: null, noteIdx: 0 });
 }
 
+const accImgs = {};
+for (const id of ACCESSORY_IDS) {
+  const img = new Image();
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ACCESSORIES[id].svg);
+  accImgs[id] = img;
+}
+
+let selected = null; // { catId, equipId }
+let showAnchors = false;
+
 function trigger(cat) {
   const rt = runtime.get(cat.id);
   rt.startedAt = performance.now();
-  const snd = resolveSound(cat.sound, traitMods(cat.traits));
+  const snd = resolveSound(cat.sound, [...traitMods(cat.traits), ...equipMods(cat.equips)]);
   const { key, scale, bpm } = state.harmony;
   const events = noteEvents({ sound: snd, pattern: cat.pattern, step: rt.noteIdx++, beatMs: 60000 / bpm });
   for (const ev of events) {
@@ -107,6 +135,37 @@ function frame(now) {
       g.rotate(tr.rot);
       g.scale(tr.scale, tr.scale);
       g.drawImage(rt.img, -w / 2, -h / 2, w, h);
+
+      // Accessories live in the cat's local space, so they follow its motion.
+      const k = size / 220;
+      const worn = [...cat.equips].sort((a, b) => a.z - b.z);
+      for (const eq of worn) {
+        const img = accImgs[eq.accessoryId];
+        if (!img?.complete) continue;
+        const p = equipPose(cat.anchors, eq);
+        const px = (p.x - 100) * k;
+        const py = (p.y - 110) * k;
+        const s = p.size * k;
+        g.save();
+        g.translate(px, py);
+        g.rotate(p.rot);
+        g.drawImage(img, -s / 2, -s / 2, s, s);
+        if (selected?.equipId === eq.id) {
+          g.strokeStyle = '#8a6bff';
+          g.lineWidth = 2;
+          g.setLineDash([5, 4]);
+          g.strokeRect(-s / 2, -s / 2, s, s);
+        }
+        g.restore();
+      }
+      if (showAnchors) {
+        for (const a of Object.values(cat.anchors)) {
+          g.fillStyle = '#4ade80';
+          g.beginPath();
+          g.arc((a.x - 100) * k, (a.y - 110) * k, 4, 0, Math.PI * 2);
+          g.fill();
+        }
+      }
       g.restore();
     }
     g.fillStyle = '#9a90b8';
@@ -117,11 +176,66 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
+// Topmost accessory under the pointer (rest pose), or null.
+function accessoryAt(mx, my) {
+  for (let i = 0; i < state.cats.length; i++) {
+    const cat = state.cats[i];
+    const { cx, size, ground } = slot(i);
+    const k = size / 220;
+    const sorted = [...cat.equips].sort((a, b) => b.z - a.z);
+    for (const eq of sorted) {
+      const p = equipPose(cat.anchors, eq);
+      const sx = cx + (p.x - 100) * k;
+      const sy = ground - size / 2 + (p.y - 110) * k;
+      const r = Math.max(16, (p.size * k) / 2);
+      if (Math.hypot(mx - sx, my - sy) <= r) return { cat, eq, k };
+    }
+  }
+  return null;
+}
+
+let drag = null;
+
 canvas.addEventListener('pointerdown', (e) => {
-  const x = e.clientX - canvas.getBoundingClientRect().left;
-  const i = Math.min(state.cats.length - 1, Math.max(0, Math.floor(x / (W / state.cats.length))));
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const hit = accessoryAt(mx, my);
+  if (hit) {
+    // Manual placement: drag the accessory instead of playing.
+    drag = { ...hit, lastX: mx, lastY: my, moved: false };
+    selected = { catId: hit.cat.id, equipId: hit.eq.id };
+    canvas.setPointerCapture(e.pointerId);
+    renderPanel();
+    return;
+  }
+  selected = null;
+  const i = Math.min(state.cats.length - 1, Math.max(0, Math.floor(mx / (W / state.cats.length))));
   trigger(state.cats[i]);
 });
+
+canvas.addEventListener('pointermove', (e) => {
+  if (!drag) return;
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  drag.eq.x += (mx - drag.lastX) / drag.k;
+  drag.eq.y += (my - drag.lastY) / drag.k;
+  drag.lastX = mx;
+  drag.lastY = my;
+  drag.moved = true;
+});
+
+function endDrag() {
+  if (!drag) return;
+  const { cat, moved } = drag;
+  drag = null;
+  persist();
+  if (moved) renderPanel();
+  else trigger(cat); // plain click on an accessory still plays the cat
+}
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
 window.addEventListener('keydown', (e) => {
   if (e.target.closest('input, select, textarea')) return;
   const i = Number(e.key) - 1;
@@ -176,6 +290,7 @@ bpmEl.addEventListener('input', () => {
   persist();
   if (bandTimer) { toggleBand(); toggleBand(); } // restart at the new tempo
 });
+document.getElementById('anchors').addEventListener('change', (e) => { showAnchors = e.target.checked; });
 document.getElementById('reset').addEventListener('click', () => {
   store.reset();
   location.reload();
@@ -196,6 +311,23 @@ function renderPanel() {
         <label>Timbre <select data-f="timbre">${opts(TIMBRES, cat.sound.timbre)}</select></label>
         <label>Octava <input data-f="octave" type="number" min="1" max="7" value="${cat.sound.octave}" style="width:56px"></label>
         <label>Vol <input data-f="volume" type="range" min="0" max="1" step="0.05" value="${cat.sound.volume}"></label>
+      </div>
+      <small>Accesorios (arrastra sobre el gatito o ajusta aquí; cada uno cambia el sonido)</small>
+      ${cat.equips.map((eq) => `
+        <div class="row equip${selected?.equipId === eq.id ? ' sel' : ''}" data-eq="${eq.id}">
+          <strong>${ACCESSORIES[eq.accessoryId]?.name || eq.accessoryId}</strong>
+          <select data-ef="anchor">${Object.entries(cat.anchors).map(([k, a]) =>
+            `<option value="${k}"${k === eq.anchor ? ' selected' : ''}>${a.label}</option>`).join('')}</select>
+          <label>x <input data-ef="x" type="range" min="-80" max="80" step="1" value="${Math.round(eq.x)}"></label>
+          <label>y <input data-ef="y" type="range" min="-80" max="80" step="1" value="${Math.round(eq.y)}"></label>
+          <label>rot <input data-ef="rot" type="range" min="-180" max="180" step="5" value="${eq.rot}"></label>
+          <label>tam <input data-ef="scale" type="range" min="0.3" max="2.5" step="0.05" value="${eq.scale}"></label>
+          <label>z <input data-ef="z" type="number" min="0" max="20" value="${eq.z}" style="width:48px"></label>
+          <button data-act="eq-del" class="ghost">✕</button>
+        </div>`).join('')}
+      <div class="row">
+        <select data-add>${ACCESSORY_IDS.map((id) => `<option value="${id}">${ACCESSORIES[id].name}</option>`).join('')}</select>
+        <button data-act="eq-add">+ accesorio</button>
       </div>
       <small>Características (cambian la melodía)</small>
       <div class="row traits">
@@ -219,7 +351,22 @@ function renderPanel() {
     </div>`).join('');
 }
 
+// Accessory sliders: update live while dragging (no panel rebuild), save on release.
+panel.addEventListener('input', (e) => {
+  const f = e.target.dataset.ef;
+  if (!f) return;
+  const catEl = e.target.closest('.cat');
+  const cat = state.cats.find((c) => c.id === catEl.dataset.cat);
+  const eq = cat.equips.find((q) => q.id === e.target.closest('.equip').dataset.eq);
+  eq[f] = f === 'anchor' ? e.target.value : Number(e.target.value);
+  selected = { catId: cat.id, equipId: eq.id };
+});
+
 panel.addEventListener('change', (e) => {
+  if (e.target.dataset.ef) {
+    persist();
+    return;
+  }
   const traitId = e.target.dataset.trait;
   if (traitId) {
     const tcat = state.cats.find((c) => c.id === e.target.closest('.cat').dataset.cat);
@@ -255,6 +402,23 @@ panel.addEventListener('click', (e) => {
   if (!act) return;
   const cat = state.cats.find((c) => c.id === e.target.closest('.cat').dataset.cat);
   if (act === 'test') return trigger(cat);
+  if (act === 'eq-add') {
+    const accId = e.target.closest('.cat').querySelector('[data-add]').value;
+    const eq = newEquip(accId, cat.equips);
+    cat.equips.push(eq);
+    selected = { catId: cat.id, equipId: eq.id };
+    persist();
+    renderPanel();
+    return trigger(cat); // hear what the accessory adds
+  }
+  if (act === 'eq-del') {
+    const id = e.target.closest('.equip').dataset.eq;
+    cat.equips = cat.equips.filter((q) => q.id !== id);
+    if (selected?.equipId === id) selected = null;
+    persist();
+    renderPanel();
+    return;
+  }
   if (act === 'add') {
     cat.motions.push({ id: `m${motionSeq++}`, kind: 'jump', amp: 30, duration: 300, start: { mode: 'with', delay: 0 } });
   } else if (act === 'del') {
