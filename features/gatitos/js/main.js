@@ -1,6 +1,8 @@
 import { DEFAULT_CATS } from './cats.js';
 import { KEYS, SCALES, noteFreq } from './harmony.js';
 import { TIMBRES, resolveSound } from './sound.js';
+import { TRAITS, traitMods } from './traits.js';
+import { noteEvents } from './melody.js';
 import { MOTION_KINDS, evaluate, totalDuration } from './anim.js';
 import { playNote } from './audio.js';
 import * as store from './store.js';
@@ -18,6 +20,7 @@ function initialState() {
       svg: def.svg,
       pattern: def.pattern,
       sound: { ...def.sound, ...(s?.sound || {}) },
+      traits: s?.traits || [],
       motions: s?.motions ? s.motions : structuredClone(def.motions),
     };
   });
@@ -29,7 +32,7 @@ const state = initialState();
 function persist() {
   store.save({
     harmony: state.harmony,
-    cats: state.cats.map((c) => ({ id: c.id, sound: c.sound, motions: c.motions })),
+    cats: state.cats.map((c) => ({ id: c.id, sound: c.sound, traits: c.traits, motions: c.motions })),
   });
 }
 
@@ -44,14 +47,19 @@ for (const cat of state.cats) {
 function trigger(cat) {
   const rt = runtime.get(cat.id);
   rt.startedAt = performance.now();
-  const snd = resolveSound(cat.sound);
-  const degree = cat.pattern[rt.noteIdx++ % cat.pattern.length];
-  const { key, scale } = state.harmony;
-  playNote(noteFreq(key, scale, degree, snd.octave), {
-    timbre: snd.timbre,
-    volume: snd.volume,
-    duration: 0.35,
-  });
+  const snd = resolveSound(cat.sound, traitMods(cat.traits));
+  const { key, scale, bpm } = state.harmony;
+  const events = noteEvents({ sound: snd, pattern: cat.pattern, step: rt.noteIdx++, beatMs: 60000 / bpm });
+  for (const ev of events) {
+    const play = () =>
+      playNote(noteFreq(key, scale, ev.degree, ev.octave), {
+        timbre: ev.timbre,
+        volume: ev.volume,
+        duration: ev.durationMs / 1000,
+      });
+    if (ev.delayMs <= 0) play();
+    else setTimeout(play, ev.delayMs);
+  }
 }
 
 // ---- stage ---------------------------------------------------------------
@@ -189,6 +197,11 @@ function renderPanel() {
         <label>Octava <input data-f="octave" type="number" min="1" max="7" value="${cat.sound.octave}" style="width:56px"></label>
         <label>Vol <input data-f="volume" type="range" min="0" max="1" step="0.05" value="${cat.sound.volume}"></label>
       </div>
+      <small>Características (cambian la melodía)</small>
+      <div class="row traits">
+        ${Object.entries(TRAITS).map(([id, t]) => `
+          <label class="chip"><input type="checkbox" data-trait="${id}"${cat.traits.includes(id) ? ' checked' : ''}> ${t.label}</label>`).join('')}
+      </div>
       <small>Movimientos (se combinan; "después" encadena tras el anterior)</small>
       ${cat.motions.map((m, mi) => `
         <div class="row motion" data-m="${m.id}">
@@ -207,6 +220,16 @@ function renderPanel() {
 }
 
 panel.addEventListener('change', (e) => {
+  const traitId = e.target.dataset.trait;
+  if (traitId) {
+    const tcat = state.cats.find((c) => c.id === e.target.closest('.cat').dataset.cat);
+    tcat.traits = e.target.checked
+      ? [...new Set([...tcat.traits, traitId])]
+      : tcat.traits.filter((t) => t !== traitId);
+    persist();
+    trigger(tcat); // hear the change right away
+    return;
+  }
   const f = e.target.dataset.f;
   if (!f) return;
   const cat = state.cats.find((c) => c.id === e.target.closest('.cat').dataset.cat);

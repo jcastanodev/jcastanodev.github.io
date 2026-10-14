@@ -19,3 +19,6 @@ main { max-width: 1100px; margin: 0 auto; padding: 12px 16px 40px; }
 .motion { border-top: 1px dashed #443a63; padding-top: 6px; }
 .motion input[type=number] { width: 64px; }
 small { color: #9a90b8; }
+.chip { background: #2b2440; border: 1px solid #443a63; border-radius: 999px; padding: 2px 8px; font-size: 12px; cursor: pointer; }
+.chip:has(input:checked) { background: #5b3fa8; border-color: #8a6bff; }
+.chip input { display: none; }
