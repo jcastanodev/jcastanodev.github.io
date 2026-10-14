@@ -57,3 +57,41 @@ test('resolveSound composes modifiers in z order', () => {
   assert.equal(s.octave, 5);
   near(s.volume, 0.25);
 });
+
+// ---- traits / melody ----
+import { noteEvents, pickDegree } from '../js/melody.js';
+import { traitMods } from '../js/traits.js';
+
+const snd = (ids, base = { timbre: 'sine', octave: 4, volume: 0.5 }) => resolveSound(base, traitMods(ids));
+
+test('no traits: one note per trigger, pattern walks up', () => {
+  const ev = noteEvents({ sound: snd([]), pattern: [0, 2, 4], step: 1, beatMs: 600 });
+  assert.equal(ev.length, 1);
+  assert.equal(ev[0].degree, 2);
+});
+
+test('transponer shifts degree, acorde stacks a chord', () => {
+  const ev = noteEvents({ sound: snd(['transponer', 'acorde']), pattern: [0], step: 0, beatMs: 600 });
+  assert.deepEqual(ev.map((e) => e.degree), [2, 4, 6]);
+});
+
+test('doble + eco: ratchet hits each get echoes, decaying', () => {
+  const ev = noteEvents({ sound: snd(['doble', 'eco']), pattern: [0], step: 0, beatMs: 600 });
+  assert.equal(ev.length, 2 * 3); // 2 hits x (note + 2 echoes)
+  assert.equal(ev[0].delayMs, 0);
+  near(Math.max(...ev.map((e) => e.volume)), 0.5);
+  near(Math.min(...ev.map((e) => e.volume)), 0.5 * 0.25);
+});
+
+test('bajada walks backwards, vaiven ping-pongs', () => {
+  const p = [0, 1, 2];
+  assert.deepEqual([0, 1, 2].map((s) => pickDegree(p, s, 'down')), [2, 1, 0]);
+  assert.deepEqual([0, 1, 2, 3, 4, 5].map((s) => pickDegree(p, s, 'pingpong')), [0, 1, 2, 1, 0, 1]);
+});
+
+test('octave traits stack, staccato shortens, unknown ids ignored', () => {
+  const s = snd(['octava-arriba', 'octava-arriba', 'staccato', 'no-existe']);
+  assert.equal(s.octave, 6);
+  const ev = noteEvents({ sound: s, pattern: [0], step: 0, beatMs: 600 });
+  assert.ok(ev[0].durationMs < 200);
+});
