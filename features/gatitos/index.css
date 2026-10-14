@@ -25,3 +25,6 @@ small { color: #9a90b8; }
 .equip { border-top: 1px dashed #443a63; padding-top: 6px; }
 .equip.sel { background: #2b2440; border-radius: 6px; }
 .equip input[type=range] { width: 70px; }
+.head input[type=text] { width: 120px; }
+.cat.add { border-style: dashed; display: flex; flex-direction: column; justify-content: center; }
+button:disabled { opacity: .4; cursor: default; }

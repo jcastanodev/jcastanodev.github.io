@@ -1,4 +1,5 @@
-import { DEFAULT_CATS } from './cats.js';
+import { DEFAULT_CATS, GIF_ASSETS, SVG_LOOKS, gifUrl } from './cats.js';
+import { svgSprite, gifSprite, fitInCatBox } from './sprite.js';
 import { KEYS, SCALES, noteFreq } from './harmony.js';
 import { TIMBRES, resolveSound } from './sound.js';
 import { TRAITS, traitMods } from './traits.js';
@@ -24,22 +25,32 @@ function starterEquips(catId) {
   return equips;
 }
 
+const DEFAULT_SOUND = { timbre: 'triangle', octave: 4, volume: 0.6 };
+const PATTERNS = [[0, 2, 4, 2], [0, 4, 7, 4], [2, 4, 5, 7], [0, 1, 2, 4]];
+
+// Fill every field of a cat, from saved data and/or a default definition.
+function hydrate(c, def) {
+  return {
+    id: c.id,
+    name: c.name ?? def?.name ?? 'Gatito',
+    source: c.source ?? def?.source ?? { kind: 'svg', ref: 'naranjo' },
+    pattern: c.pattern ?? def?.pattern ?? PATTERNS[0],
+    anchors: structuredClone(DEFAULT_ANCHORS),
+    sound: { ...DEFAULT_SOUND, ...(def?.sound || {}), ...(c.sound || {}) },
+    traits: c.traits || [],
+    equips: c.equips ?? starterEquips(c.id),
+    motions: c.motions ?? structuredClone(def?.motions || [
+      { id: 'm1', kind: 'jump', amp: 40, duration: 350, start: { mode: 'with', delay: 0 } },
+    ]),
+  };
+}
+
 function initialState() {
   const saved = store.load();
-  const cats = DEFAULT_CATS.map((def) => {
-    const s = saved?.cats?.find((c) => c.id === def.id);
-    return {
-      id: def.id,
-      name: def.name,
-      svg: def.svg,
-      pattern: def.pattern,
-      anchors: structuredClone(DEFAULT_ANCHORS),
-      sound: { ...def.sound, ...(s?.sound || {}) },
-      traits: s?.traits || [],
-      equips: s?.equips ?? starterEquips(def.id),
-      motions: s?.motions ? s.motions : structuredClone(def.motions),
-    };
-  });
+  const defs = new Map(DEFAULT_CATS.map((d) => [d.id, d]));
+  const cats = saved?.cats?.length
+    ? saved.cats.map((c) => hydrate(c, defs.get(c.id)))
+    : DEFAULT_CATS.map((d) => hydrate({ id: d.id }, d));
   return { harmony: { ...DEFAULT_HARMONY, ...(saved?.harmony || {}) }, cats };
 }
 
@@ -49,18 +60,31 @@ function persist() {
   store.save({
     harmony: state.harmony,
     cats: state.cats.map((c) => ({
-      id: c.id, sound: c.sound, traits: c.traits, equips: c.equips, motions: c.motions,
+      id: c.id, name: c.name, source: c.source, pattern: c.pattern,
+      sound: c.sound, traits: c.traits, equips: c.equips, motions: c.motions,
     })),
   });
 }
 
 // ---- runtime (not persisted) ------------------------------------------
-const runtime = new Map(); // cat id -> { img, startedAt, noteIdx }
-for (const cat of state.cats) {
-  const img = new Image();
-  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(cat.svg);
-  runtime.set(cat.id, { img, startedAt: null, noteIdx: 0 });
+const runtime = new Map(); // cat id -> { sprite, startedAt, noteIdx }
+
+// Source -> sprite. An unknown ref falls back to the first SVG look.
+function makeSprite({ kind, ref }) {
+  if (kind === 'gif') {
+    const asset = GIF_ASSETS.find((a) => a.id === ref);
+    if (asset) return gifSprite(gifUrl(asset));
+  }
+  return svgSprite((SVG_LOOKS[ref] || SVG_LOOKS.naranjo).svg);
 }
+
+function ensureRuntime(cat) {
+  if (!runtime.has(cat.id)) {
+    runtime.set(cat.id, { sprite: makeSprite(cat.source), startedAt: null, noteIdx: 0 });
+  }
+  return runtime.get(cat.id);
+}
+state.cats.forEach(ensureRuntime);
 
 const accImgs = {};
 for (const id of ACCESSORY_IDS) {
@@ -127,14 +151,16 @@ function frame(now) {
       if (t > totalDuration(cat.motions)) rt.startedAt = null;
       else tr = evaluate(cat.motions, t);
     }
-    if (rt.img.complete) {
+    const src = rt.sprite.frame(now);
+    if (src) {
       const h = size;
-      const w = size * (200 / 220);
       g.save();
       g.translate(cx + tr.x, ground - h / 2 + tr.y);
       g.rotate(tr.rot);
       g.scale(tr.scale, tr.scale);
-      g.drawImage(rt.img, -w / 2, -h / 2, w, h);
+      const fit = fitInCatBox(rt.sprite.w, rt.sprite.h);
+      const kk = size / 220;
+      g.drawImage(src, (fit.x - 100) * kk, (fit.y - 110) * kk, fit.w * kk, fit.h * kk);
 
       // Accessories live in the cat's local space, so they follow its motion.
       const k = size / 220;
@@ -303,10 +329,22 @@ let motionSeq = 100;
 const opts = (values, cur) =>
   values.map((v) => `<option value="${v}"${v === cur ? ' selected' : ''}>${v}</option>`).join('');
 
+function sourceOptions(cur) {
+  const sel = (kind, ref) => (cur.kind === kind && cur.ref === ref ? ' selected' : '');
+  return `<optgroup label="GIF">${GIF_ASSETS.map((a) =>
+      `<option value="gif:${a.id}"${sel('gif', a.id)}>${a.name}</option>`).join('')}</optgroup>
+    <optgroup label="SVG">${Object.entries(SVG_LOOKS).map(([id, l]) =>
+      `<option value="svg:${id}"${sel('svg', id)}>${l.name}</option>`).join('')}</optgroup>`;
+}
+
 function renderPanel() {
   panel.innerHTML = state.cats.map((cat) => `
     <div class="cat" data-cat="${cat.id}">
-      <h2>${cat.name}</h2>
+      <div class="row head">
+        <input data-name type="text" value="${cat.name.replace(/"/g, '&quot;')}" aria-label="Nombre">
+        <select data-src aria-label="Apariencia">${sourceOptions(cat.source)}</select>
+        <button data-act="cat-del" class="ghost" title="Quitar gatito"${state.cats.length < 2 ? ' disabled' : ''}>🗑</button>
+      </div>
       <div class="row">
         <label>Timbre <select data-f="timbre">${opts(TIMBRES, cat.sound.timbre)}</select></label>
         <label>Octava <input data-f="octave" type="number" min="1" max="7" value="${cat.sound.octave}" style="width:56px"></label>
@@ -348,7 +386,14 @@ function renderPanel() {
           <button data-act="del" class="ghost">✕</button>
         </div>`).join('')}
       <div class="row"><button data-act="add">+ movimiento</button> <button data-act="test">Probar</button></div>
-    </div>`).join('');
+    </div>`).join('') + `
+    <div class="cat add">
+      <h2>Nuevo gatito</h2>
+      <div class="row">
+        <select data-newsrc>${sourceOptions({})}</select>
+        <button data-act="cat-add">+ Gatito</button>
+      </div>
+    </div>`;
 }
 
 // Accessory sliders: update live while dragging (no panel rebuild), save on release.
@@ -364,6 +409,18 @@ panel.addEventListener('input', (e) => {
 
 panel.addEventListener('change', (e) => {
   if (e.target.dataset.ef) {
+    persist();
+    return;
+  }
+  if (e.target.dataset.name !== undefined || e.target.dataset.src !== undefined) {
+    const ecat = state.cats.find((c) => c.id === e.target.closest('.cat').dataset.cat);
+    if (e.target.dataset.name !== undefined) {
+      ecat.name = e.target.value.trim() || 'Gatito';
+    } else {
+      const [kind, ref] = e.target.value.split(':');
+      ecat.source = { kind, ref };
+      ensureRuntime(ecat).sprite = makeSprite(ecat.source);
+    }
     persist();
     return;
   }
@@ -400,7 +457,32 @@ panel.addEventListener('change', (e) => {
 panel.addEventListener('click', (e) => {
   const act = e.target.dataset.act;
   if (!act) return;
+  if (act === 'cat-add') {
+    const [kind, ref] = e.target.closest('.cat').querySelector('[data-newsrc]').value.split(':');
+    const n = state.cats.length;
+    const cat = hydrate({
+      id: `c${Date.now().toString(36)}`,
+      name: `Gatito ${n + 1}`,
+      source: { kind, ref },
+      pattern: PATTERNS[n % PATTERNS.length],
+      equips: [],
+    });
+    state.cats.push(cat);
+    ensureRuntime(cat);
+    persist();
+    renderPanel();
+    return trigger(cat);
+  }
   const cat = state.cats.find((c) => c.id === e.target.closest('.cat').dataset.cat);
+  if (act === 'cat-del') {
+    if (state.cats.length < 2) return;
+    state.cats = state.cats.filter((c) => c.id !== cat.id);
+    runtime.delete(cat.id);
+    if (selected?.catId === cat.id) selected = null;
+    persist();
+    renderPanel();
+    return;
+  }
   if (act === 'test') return trigger(cat);
   if (act === 'eq-add') {
     const accId = e.target.closest('.cat').querySelector('[data-add]').value;

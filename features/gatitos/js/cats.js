@@ -19,11 +19,28 @@ function catSvg({ fur, belly, eye = '#222', extra = '' }) {
 </svg>`;
 }
 
+// GIFs shipped in assets/gifs. Add a line here to make a new GIF selectable.
+export const GIF_ASSETS = [
+  { id: 'kitty', name: 'Cat Kitty', file: 'Cat Kitty GIF.gif' },
+  { id: 'kittens-1', name: 'Kittens (1)', file: 'Kittens GIF (1).gif' },
+  { id: 'kittens-2', name: 'Kittens', file: 'Kittens GIF.gif' },
+];
+
+export const gifUrl = (asset) => `./assets/gifs/${encodeURIComponent(asset.file)}`;
+
+// Original SVG looks (kept as an alternative source for any cat).
+export const SVG_LOOKS = {
+  naranjo: { name: 'SVG Naranjo', svg: catSvg({ fur: '#f4a640', belly: '#ffe2b3' }) },
+  gris: { name: 'SVG Gris', svg: catSvg({ fur: '#9aa3ad', belly: '#e6eaee', eye: '#0a3' }) },
+  negro: { name: 'SVG Negro', svg: catSvg({ fur: '#2d2d34', belly: '#555560', eye: '#ffd54a' }) },
+};
+
+// source = { kind: 'gif' | 'svg', ref: asset id / look id }
 export const DEFAULT_CATS = [
   {
     id: 'naranjo',
-    name: 'Naranjo',
-    svg: catSvg({ fur: '#f4a640', belly: '#ffe2b3' }),
+    name: 'Kitty',
+    source: { kind: 'gif', ref: 'kitty' },
     sound: { timbre: 'triangle', octave: 3, volume: 0.7 },
     pattern: [0, 2, 4, 2],
     motions: [
@@ -32,8 +49,8 @@ export const DEFAULT_CATS = [
   },
   {
     id: 'gris',
-    name: 'Gris',
-    svg: catSvg({ fur: '#9aa3ad', belly: '#e6eaee', eye: '#0a3' }),
+    name: 'Kittens',
+    source: { kind: 'gif', ref: 'kittens-1' },
     sound: { timbre: 'square', octave: 4, volume: 0.35 },
     pattern: [0, 4, 7, 4],
     motions: [
@@ -43,8 +60,8 @@ export const DEFAULT_CATS = [
   },
   {
     id: 'negro',
-    name: 'Negro',
-    svg: catSvg({ fur: '#2d2d34', belly: '#555560', eye: '#ffd54a' }),
+    name: 'Kittens corona',
+    source: { kind: 'gif', ref: 'kittens-2' },
     sound: { timbre: 'pluck', octave: 5, volume: 0.6 },
     pattern: [2, 4, 5, 7],
     motions: [

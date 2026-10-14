@@ -125,3 +125,17 @@ test('worn accessories change the melody like traits', () => {
   assert.equal(s.octave, 5);
   assert.ok(s.echo);
 });
+
+// ---- sprite fit ----
+import { fitInCatBox } from '../js/sprite.js';
+
+test('fitInCatBox contains, centers and rests on the floor', () => {
+  const tall = fitInCatBox(270, 480); // 9:16 clip
+  near(tall.h, 220);
+  near(tall.y, 0);
+  near(tall.x + tall.w / 2, 100);
+  const wide = fitInCatBox(400, 100);
+  near(wide.w, 200);
+  near(wide.y + wide.h, 220);
+  assert.deepEqual(fitInCatBox(0, 0), { x: 0, y: 0, w: 200, h: 220 });
+});
