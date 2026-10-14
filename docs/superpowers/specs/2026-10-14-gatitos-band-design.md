@@ -49,4 +49,4 @@ Whole-image targets drag anchors and accessories along.
 
 Unit tests only where cheap and critical: sound resolver, motion evaluator,
 SVG sanitizer. The rest is checked by hand in the browser.
-Run: `node --test features/gatitos/tests`.
+Run: `node --test "features/gatitos/tests/*.test.mjs"`.
