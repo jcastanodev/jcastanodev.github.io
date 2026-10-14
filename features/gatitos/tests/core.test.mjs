@@ -95,3 +95,33 @@ test('octave traits stack, staccato shortens, unknown ids ignored', () => {
   const ev = noteEvents({ sound: s, pattern: [0], step: 0, beatMs: 600 });
   assert.ok(ev[0].durationMs < 200);
 });
+
+// ---- accessories ----
+import { newEquip, equipPose, equipMods, DEFAULT_ANCHORS } from '../js/accessories.js';
+
+test('newEquip picks the next free slot and mirrors rotation on the right', () => {
+  const a = newEquip('maraca', []);
+  assert.equal(a.anchor, 'handL');
+  const b = newEquip('maraca', [a]);
+  assert.equal(b.anchor, 'handR');
+  assert.equal(b.rot, -a.rot);
+  assert.ok(b.z > a.z);
+  assert.equal(newEquip('nope', []), null);
+});
+
+test('equipPose = anchor + offset, scaled size, rotation in radians', () => {
+  const e = { accessoryId: 'sombrero', anchor: 'head', x: 5, y: -3, rot: 180, scale: 2, z: 1 };
+  const p = equipPose(DEFAULT_ANCHORS, e);
+  near(p.x, DEFAULT_ANCHORS.head.x + 5);
+  near(p.y, DEFAULT_ANCHORS.head.y - 3);
+  near(p.rot, Math.PI);
+  near(p.size, 96 * 2);
+});
+
+test('worn accessories change the melody like traits', () => {
+  const equips = [newEquip('maraca', []), newEquip('corona', [])];
+  const s = resolveSound({ timbre: 'sine', octave: 4, volume: 0.5 }, equipMods(equips));
+  assert.equal(s.ratchet, 2);
+  assert.equal(s.octave, 5);
+  assert.ok(s.echo);
+});
