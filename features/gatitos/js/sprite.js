@@ -4,21 +4,34 @@
 //   sprite.w / sprite.h      natural size (0 until ready)
 //   sprite.frame(nowMs)      -> CanvasImageSource | null  (null while loading)
 
-export function svgSprite(svg) {
+export function svgSprite(svg, size = { w: 200, h: 220 }) {
   const img = new Image();
   img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   return {
     // Our SVGs only declare a viewBox, so natural size is unreliable.
-    w: 200,
-    h: 220,
+    w: size.w,
+    h: size.h,
     frame: () => (img.complete ? img : null),
   };
 }
 
-// Animated GIF. Uses ImageDecoder (Chrome/Edge) to get every frame as a
+// Static raster image (PNG/JPEG/...).
+export function imageSprite(url) {
+  const img = new Image();
+  img.src = url;
+  return {
+    get w() { return img.naturalWidth; },
+    get h() { return img.naturalHeight; },
+    frame: () => (img.complete && img.naturalWidth ? img : null),
+  };
+}
+
+// Animated GIF / WebP. Uses ImageDecoder (Chrome/Edge) to get every frame as a
 // bitmap, so canvas drawing is deterministic and exportable later. Without it
 // we fall back to an <img> kept in the DOM, which browsers keep animating.
-export function gifSprite(url) {
+export const gifSprite = (url) => animatedSprite(url, 'image/gif');
+
+export function animatedSprite(url, type) {
   const sprite = { w: 0, h: 0, frame: () => null };
   const t0 = performance.now();
 
@@ -39,10 +52,12 @@ export function gifSprite(url) {
     fallback();
     return sprite;
   }
+  // Type support is checked asynchronously below; unsupported -> fallback.
 
   (async () => {
     const buf = await (await fetch(url)).arrayBuffer();
-    const decoder = new ImageDecoder({ data: buf, type: 'image/gif' });
+    if (!(await ImageDecoder.isTypeSupported(type))) throw new Error('unsupported type');
+    const decoder = new ImageDecoder({ data: buf, type });
     await decoder.tracks.ready;
     const count = decoder.tracks.selectedTrack.frameCount;
     const frames = [];

@@ -56,7 +56,17 @@ export const ACCESSORIES = {
   },
 };
 
-export const ACCESSORY_IDS = Object.keys(ACCESSORIES);
+export const accessoryIds = () => Object.keys(ACCESSORIES);
+
+// Uploaded accessories register themselves at runtime.
+//   def: { name, slots, size, aspect?, mods?, svg? | url? }
+export function registerAccessory(id, def) {
+  ACCESSORIES[id] = { slots: ['head'], size: 56, aspect: 1, ...def };
+}
+
+export function unregisterAccessory(id) {
+  delete ACCESSORIES[id];
+}
 
 // Anchor points in cat-SVG coordinates (viewBox 0 0 200 220).
 export const DEFAULT_ANCHORS = {
@@ -106,5 +116,8 @@ export function equipPose(anchors, equip, acc = ACCESSORIES[equip.accessoryId]) 
 export function equipMods(equips = []) {
   return equips
     .filter((e) => ACCESSORIES[e.accessoryId])
-    .map((e) => ({ ...ACCESSORIES[e.accessoryId].mod, z: e.z || 0 }));
+    .flatMap((e) => {
+      const acc = ACCESSORIES[e.accessoryId];
+      return (acc.mods || [acc.mod || {}]).map((m) => ({ ...m, z: e.z || 0 }));
+    });
 }

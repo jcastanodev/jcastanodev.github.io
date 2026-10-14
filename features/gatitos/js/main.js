@@ -1,13 +1,52 @@
 import { DEFAULT_CATS, GIF_ASSETS, SVG_LOOKS, gifUrl } from './cats.js';
-import { svgSprite, gifSprite, fitInCatBox } from './sprite.js';
+import { svgSprite, gifSprite, animatedSprite, imageSprite, fitInCatBox } from './sprite.js';
+import { sanitizeSvg } from './sanitize.js';
+import { putAsset, listAssets, deleteAsset } from './db.js';
 import { KEYS, SCALES, noteFreq } from './harmony.js';
 import { TIMBRES, resolveSound } from './sound.js';
 import { TRAITS, traitMods } from './traits.js';
 import { noteEvents } from './melody.js';
-import { ACCESSORIES, ACCESSORY_IDS, DEFAULT_ANCHORS, newEquip, equipPose, equipMods } from './accessories.js';
+import {
+  ACCESSORIES, DEFAULT_ANCHORS, accessoryIds, registerAccessory, unregisterAccessory,
+  newEquip, equipPose, equipMods,
+} from './accessories.js';
 import { MOTION_KINDS, evaluate, totalDuration } from './anim.js';
 import { playNote } from './audio.js';
 import * as store from './store.js';
+
+// ---- user assets (IndexedDB) --------------------------------------------
+const accImgs = {}; // accessory id -> HTMLImageElement
+const userAssets = new Map(); // asset id -> record + url
+let uploadMsg = '';
+
+const svgUri = (svg) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+
+function loadAccImg(id) {
+  const acc = ACCESSORIES[id];
+  if (!acc) return;
+  const img = new Image();
+  img.src = acc.url || svgUri(acc.svg);
+  accImgs[id] = img;
+}
+
+function registerUserAsset(rec) {
+  const url = rec.svg ? svgUri(rec.svg) : URL.createObjectURL(rec.blob);
+  userAssets.set(rec.id, { ...rec, url });
+  if (rec.kind === 'accessory') {
+    const id = `u:${rec.id}`;
+    registerAccessory(id, {
+      name: rec.name,
+      slots: [rec.slot || 'head'],
+      size: 56,
+      aspect: rec.w / rec.h || 1,
+      mods: traitMods(rec.traits || []),
+      url,
+    });
+    loadAccImg(id);
+  }
+}
+
+for (const rec of await listAssets()) registerUserAsset(rec);
 
 // ---- state -----------------------------------------------------------
 const DEFAULT_HARMONY = { key: 'C', scale: 'mayor', bpm: 100 };
@@ -35,10 +74,11 @@ function hydrate(c, def) {
     name: c.name ?? def?.name ?? 'Gatito',
     source: c.source ?? def?.source ?? { kind: 'svg', ref: 'naranjo' },
     pattern: c.pattern ?? def?.pattern ?? PATTERNS[0],
-    anchors: structuredClone(DEFAULT_ANCHORS),
+    anchors: Object.fromEntries(Object.entries(DEFAULT_ANCHORS).map(([k, a]) =>
+      [k, { ...a, ...(c.anchors?.[k] ? { x: c.anchors[k].x, y: c.anchors[k].y } : {}) }])),
     sound: { ...DEFAULT_SOUND, ...(def?.sound || {}), ...(c.sound || {}) },
     traits: c.traits || [],
-    equips: c.equips ?? starterEquips(c.id),
+    equips: (c.equips ?? starterEquips(c.id)).filter((e) => ACCESSORIES[e.accessoryId]),
     motions: c.motions ?? structuredClone(def?.motions || [
       { id: 'm1', kind: 'jump', amp: 40, duration: 350, start: { mode: 'with', delay: 0 } },
     ]),
@@ -61,6 +101,7 @@ function persist() {
     harmony: state.harmony,
     cats: state.cats.map((c) => ({
       id: c.id, name: c.name, source: c.source, pattern: c.pattern,
+      anchors: Object.fromEntries(Object.entries(c.anchors).map(([k, a]) => [k, { x: a.x, y: a.y }])),
       sound: c.sound, traits: c.traits, equips: c.equips, motions: c.motions,
     })),
   });
@@ -75,6 +116,12 @@ function makeSprite({ kind, ref }) {
     const asset = GIF_ASSETS.find((a) => a.id === ref);
     if (asset) return gifSprite(gifUrl(asset));
   }
+  if (kind === 'asset') {
+    const a = userAssets.get(ref);
+    if (a?.svg) return svgSprite(a.svg, { w: a.w, h: a.h });
+    if (a && (a.mime === 'image/gif' || a.mime === 'image/webp')) return animatedSprite(a.url, a.mime);
+    if (a) return imageSprite(a.url);
+  }
   return svgSprite((SVG_LOOKS[ref] || SVG_LOOKS.naranjo).svg);
 }
 
@@ -86,12 +133,7 @@ function ensureRuntime(cat) {
 }
 state.cats.forEach(ensureRuntime);
 
-const accImgs = {};
-for (const id of ACCESSORY_IDS) {
-  const img = new Image();
-  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ACCESSORIES[id].svg);
-  accImgs[id] = img;
-}
+accessoryIds().filter((id) => !accImgs[id]).forEach(loadAccImg);
 
 let selected = null; // { catId, equipId }
 let showAnchors = false;
@@ -172,15 +214,16 @@ function frame(now) {
         const px = (p.x - 100) * k;
         const py = (p.y - 110) * k;
         const s = p.size * k;
+        const sh = s / (ACCESSORIES[eq.accessoryId].aspect || 1);
         g.save();
         g.translate(px, py);
         g.rotate(p.rot);
-        g.drawImage(img, -s / 2, -s / 2, s, s);
+        g.drawImage(img, -s / 2, -sh / 2, s, sh);
         if (selected?.equipId === eq.id) {
           g.strokeStyle = '#8a6bff';
           g.lineWidth = 2;
           g.setLineDash([5, 4]);
-          g.strokeRect(-s / 2, -s / 2, s, s);
+          g.strokeRect(-s / 2, -sh / 2, s, sh);
         }
         g.restore();
       }
@@ -220,18 +263,39 @@ function accessoryAt(mx, my) {
   return null;
 }
 
+// Anchor dot under the pointer (only while anchors are shown).
+function anchorAt(mx, my) {
+  for (let i = 0; i < state.cats.length; i++) {
+    const cat = state.cats[i];
+    const { cx, size, ground } = slot(i);
+    const k = size / 220;
+    for (const [key, a] of Object.entries(cat.anchors)) {
+      const sx = cx + (a.x - 100) * k;
+      const sy = ground - size / 2 + (a.y - 110) * k;
+      if (Math.hypot(mx - sx, my - sy) <= 11) return { cat, key, k };
+    }
+  }
+  return null;
+}
+
 let drag = null;
 
 canvas.addEventListener('pointerdown', (e) => {
   const rect = canvas.getBoundingClientRect();
   const mx = e.clientX - rect.left;
   const my = e.clientY - rect.top;
+  const anchorHit = showAnchors ? anchorAt(mx, my) : null;
+  if (anchorHit) {
+    drag = { type: 'anchor', ...anchorHit, lastX: mx, lastY: my, moved: false };
+    try { canvas.setPointerCapture(e.pointerId); } catch { /* synthetic pointer */ }
+    return;
+  }
   const hit = accessoryAt(mx, my);
   if (hit) {
     // Manual placement: drag the accessory instead of playing.
-    drag = { ...hit, lastX: mx, lastY: my, moved: false };
+    drag = { type: 'equip', ...hit, lastX: mx, lastY: my, moved: false };
     selected = { catId: hit.cat.id, equipId: hit.eq.id };
-    canvas.setPointerCapture(e.pointerId);
+    try { canvas.setPointerCapture(e.pointerId); } catch { /* synthetic pointer */ }
     renderPanel();
     return;
   }
@@ -245,8 +309,9 @@ canvas.addEventListener('pointermove', (e) => {
   const rect = canvas.getBoundingClientRect();
   const mx = e.clientX - rect.left;
   const my = e.clientY - rect.top;
-  drag.eq.x += (mx - drag.lastX) / drag.k;
-  drag.eq.y += (my - drag.lastY) / drag.k;
+  const target = drag.type === 'anchor' ? drag.cat.anchors[drag.key] : drag.eq;
+  target.x += (mx - drag.lastX) / drag.k;
+  target.y += (my - drag.lastY) / drag.k;
   drag.lastX = mx;
   drag.lastY = my;
   drag.moved = true;
@@ -254,9 +319,10 @@ canvas.addEventListener('pointermove', (e) => {
 
 function endDrag() {
   if (!drag) return;
-  const { cat, moved } = drag;
+  const { cat, moved, type } = drag;
   drag = null;
   persist();
+  if (type === 'anchor') return;
   if (moved) renderPanel();
   else trigger(cat); // plain click on an accessory still plays the cat
 }
@@ -329,20 +395,26 @@ let motionSeq = 100;
 const opts = (values, cur) =>
   values.map((v) => `<option value="${v}"${v === cur ? ' selected' : ''}>${v}</option>`).join('');
 
+const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
 function sourceOptions(cur) {
+  const mine = [...userAssets.values()].filter((a) => a.kind === 'cat');
   const sel = (kind, ref) => (cur.kind === kind && cur.ref === ref ? ' selected' : '');
   return `<optgroup label="GIF">${GIF_ASSETS.map((a) =>
       `<option value="gif:${a.id}"${sel('gif', a.id)}>${a.name}</option>`).join('')}</optgroup>
     <optgroup label="SVG">${Object.entries(SVG_LOOKS).map(([id, l]) =>
-      `<option value="svg:${id}"${sel('svg', id)}>${l.name}</option>`).join('')}</optgroup>`;
+      `<option value="svg:${id}"${sel('svg', id)}>${l.name}</option>`).join('')}</optgroup>
+    ${mine.length ? `<optgroup label="Mis recursos">${mine.map((a) =>
+      `<option value="asset:${a.id}"${sel('asset', a.id)}>${esc(a.name)}</option>`).join('')}</optgroup>` : ''}`;
 }
 
 function renderPanel() {
   panel.innerHTML = state.cats.map((cat) => `
     <div class="cat" data-cat="${cat.id}">
       <div class="row head">
-        <input data-name type="text" value="${cat.name.replace(/"/g, '&quot;')}" aria-label="Nombre">
+        <input data-name type="text" value="${esc(cat.name)}" aria-label="Nombre">
         <select data-src aria-label="Apariencia">${sourceOptions(cat.source)}</select>
+        <button data-act="anchors-reset" class="ghost" title="Restablecer anclas">⌖</button>
         <button data-act="cat-del" class="ghost" title="Quitar gatito"${state.cats.length < 2 ? ' disabled' : ''}>🗑</button>
       </div>
       <div class="row">
@@ -353,7 +425,7 @@ function renderPanel() {
       <small>Accesorios (arrastra sobre el gatito o ajusta aquí; cada uno cambia el sonido)</small>
       ${cat.equips.map((eq) => `
         <div class="row equip${selected?.equipId === eq.id ? ' sel' : ''}" data-eq="${eq.id}">
-          <strong>${ACCESSORIES[eq.accessoryId]?.name || eq.accessoryId}</strong>
+          <strong>${esc(ACCESSORIES[eq.accessoryId]?.name || eq.accessoryId)}</strong>
           <select data-ef="anchor">${Object.entries(cat.anchors).map(([k, a]) =>
             `<option value="${k}"${k === eq.anchor ? ' selected' : ''}>${a.label}</option>`).join('')}</select>
           <label>x <input data-ef="x" type="range" min="-80" max="80" step="1" value="${Math.round(eq.x)}"></label>
@@ -364,7 +436,7 @@ function renderPanel() {
           <button data-act="eq-del" class="ghost">✕</button>
         </div>`).join('')}
       <div class="row">
-        <select data-add>${ACCESSORY_IDS.map((id) => `<option value="${id}">${ACCESSORIES[id].name}</option>`).join('')}</select>
+        <select data-add>${accessoryIds().map((id) => `<option value="${id}">${esc(ACCESSORIES[id].name)}</option>`).join('')}</select>
         <button data-act="eq-add">+ accesorio</button>
       </div>
       <small>Características (cambian la melodía)</small>
@@ -393,6 +465,29 @@ function renderPanel() {
         <select data-newsrc>${sourceOptions({})}</select>
         <button data-act="cat-add">+ Gatito</button>
       </div>
+    </div>
+    <div class="cat upload">
+      <h2>Subir recurso</h2>
+      <div class="row">
+        <label>Tipo <select data-up-kind>
+          <option value="cat">Gatito (personaje)</option>
+          <option value="accessory">Accesorio</option>
+        </select></label>
+      </div>
+      <div class="row up-acc" hidden>
+        <label>Ancla <select data-up-slot>${Object.entries(DEFAULT_ANCHORS).map(([k, a]) =>
+          `<option value="${k}">${a.label}</option>`).join('')}</select></label>
+        <small>Sonido del accesorio:</small>
+        <div class="row traits">${Object.entries(TRAITS).map(([id, t]) =>
+          `<label class="chip"><input type="checkbox" data-up-trait="${id}"> ${t.label}</label>`).join('')}</div>
+      </div>
+      <div class="row"><input type="file" data-upload accept=".svg,.gif,.webp,.png,.jpg,.jpeg,image/*"></div>
+      <small>${esc(uploadMsg) || 'SVG, GIF, WebP, PNG o JPG (máx. 8 MB). Se guardan solo en tu navegador.'}</small>
+      ${[...userAssets.values()].map((a) => `
+        <div class="row asset">
+          <span>${a.kind === 'cat' ? '🐱' : '🎩'} ${esc(a.name)}</span>
+          <button data-act="asset-del" data-id="${a.id}" class="ghost" title="Borrar">✕</button>
+        </div>`).join('')}
     </div>`;
 }
 
@@ -408,6 +503,20 @@ panel.addEventListener('input', (e) => {
 });
 
 panel.addEventListener('change', (e) => {
+  if (e.target.closest('.upload')) {
+    const card = e.target.closest('.upload');
+    if (e.target.dataset.upKind !== undefined) {
+      card.querySelector('.up-acc').hidden = e.target.value !== 'accessory';
+    } else if (e.target.dataset.upload !== undefined && e.target.files[0]) {
+      const traits = [...card.querySelectorAll('[data-up-trait]:checked')].map((c) => c.dataset.upTrait);
+      handleUpload(e.target.files[0], {
+        kind: card.querySelector('[data-up-kind]').value,
+        slot: card.querySelector('[data-up-slot]').value,
+        traits,
+      });
+    }
+    return;
+  }
   if (e.target.dataset.ef) {
     persist();
     return;
@@ -473,7 +582,13 @@ panel.addEventListener('click', (e) => {
     renderPanel();
     return trigger(cat);
   }
+  if (act === 'asset-del') return deleteUserAsset(e.target.dataset.id);
   const cat = state.cats.find((c) => c.id === e.target.closest('.cat').dataset.cat);
+  if (act === 'anchors-reset') {
+    cat.anchors = structuredClone(DEFAULT_ANCHORS);
+    persist();
+    return;
+  }
   if (act === 'cat-del') {
     if (state.cats.length < 2) return;
     state.cats = state.cats.filter((c) => c.id !== cat.id);
@@ -514,6 +629,82 @@ panel.addEventListener('click', (e) => {
   persist();
   renderPanel();
 });
+
+// ---- uploads ------------------------------------------------------------------
+const MAX_UPLOAD = 8 * 1024 * 1024;
+const RASTER = { gif: 'image/gif', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg' };
+
+async function handleUpload(file, { kind, slot, traits }) {
+  const fail = (msg) => { uploadMsg = msg; renderPanel(); };
+  if (file.size > MAX_UPLOAD) return fail('El archivo supera 8 MB.');
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  const rec = {
+    id: `a${Date.now().toString(36)}`,
+    kind,
+    name: file.name.replace(/\.[^.]+$/, '').slice(0, 40) || 'Recurso',
+    slot,
+    traits,
+  };
+
+  if (ext === 'svg' || file.type === 'image/svg+xml') {
+    const clean = sanitizeSvg(await file.text());
+    if (!clean) return fail('SVG no válido.');
+    Object.assign(rec, { mime: 'image/svg+xml', svg: clean.svg, w: clean.w, h: clean.h });
+  } else if (RASTER[ext]) {
+    const blob = new Blob([file], { type: RASTER[ext] });
+    let bmp;
+    try {
+      bmp = await createImageBitmap(blob);
+    } catch {
+      return fail('No se pudo leer la imagen.');
+    }
+    Object.assign(rec, { mime: RASTER[ext], blob, w: bmp.width, h: bmp.height });
+    bmp.close();
+  } else {
+    return fail('Formato no soportado (usa svg, gif, webp, png o jpg).');
+  }
+
+  const kept = await putAsset(rec);
+  registerUserAsset(rec);
+  uploadMsg = kept ? `"${rec.name}" guardado.` : `"${rec.name}" cargado (no se pudo guardar en el navegador).`;
+
+  if (kind === 'cat') {
+    const n = state.cats.length;
+    const cat = hydrate({
+      id: `c${Date.now().toString(36)}`,
+      name: rec.name,
+      source: { kind: 'asset', ref: rec.id },
+      pattern: PATTERNS[n % PATTERNS.length],
+      equips: [],
+    });
+    state.cats.push(cat);
+    ensureRuntime(cat);
+    persist();
+  }
+  renderPanel();
+}
+
+async function deleteUserAsset(id) {
+  const a = userAssets.get(id);
+  if (!a) return;
+  userAssets.delete(id);
+  if (a.blob) URL.revokeObjectURL(a.url);
+  await deleteAsset(id);
+  const accId = `u:${id}`;
+  unregisterAccessory(accId);
+  delete accImgs[accId];
+  for (const cat of state.cats) {
+    cat.equips = cat.equips.filter((q) => q.accessoryId !== accId);
+    if (cat.source.kind === 'asset' && cat.source.ref === id) {
+      cat.source = { kind: 'svg', ref: 'naranjo' };
+      ensureRuntime(cat).sprite = makeSprite(cat.source);
+    }
+  }
+  if (selected && !state.cats.some((c) => c.equips.some((q) => q.id === selected.equipId))) selected = null;
+  uploadMsg = `"${a.name}" eliminado.`;
+  persist();
+  renderPanel();
+}
 
 // ---- boot ---------------------------------------------------------------------
 resize();

@@ -28,3 +28,6 @@ small { color: #9a90b8; }
 .head input[type=text] { width: 120px; }
 .cat.add { border-style: dashed; display: flex; flex-direction: column; justify-content: center; }
 button:disabled { opacity: .4; cursor: default; }
+.cat.upload { border-style: dashed; }
+.asset { justify-content: space-between; }
+[hidden] { display: none !important; }
