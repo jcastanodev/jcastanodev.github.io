@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roomies · Gastos compartidos</title>
+  <meta name="description" content="App para llevar los gastos entre roomies. Se sincroniza por tu Wi-Fi, sin nube ni cuentas." />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      --bg: #f6f7f6;
+      --card: #ffffff;
+      --text: #18181b;
+      --muted: #52525b;
+      --line: #e4e4e7;
+      --accent: #059669;
+      --accent-ink: #ffffff;
+      --soft: #ecfdf5;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #09090b;
+        --card: #18181b;
+        --text: #fafafa;
+        --muted: #a1a1aa;
+        --line: #27272a;
+        --accent: #10b981;
+        --accent-ink: #052e1f;
+        --soft: #052e1f;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    main { max-width: 860px; margin: 0 auto; padding: 48px 16px 64px; }
+
+    .hero { display: flex; gap: 20px; align-items: center; margin-bottom: 28px; }
+    .hero img { width: 84px; height: 84px; flex: none; }
+    h1 { margin: 0; font-size: clamp(28px, 6vw, 40px); line-height: 1.1; }
+    .lead { margin: 6px 0 0; color: var(--muted); font-size: 18px; }
+
+    .downloads { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 28px 0 40px; }
+    .dl {
+      display: block; padding: 18px 20px; border-radius: 18px; text-decoration: none;
+      background: var(--accent); color: var(--accent-ink);
+    }
+    .dl strong { display: block; font-size: 19px; }
+    .dl span { font-size: 14px; opacity: .85; }
+    .dl:hover { filter: brightness(1.07); }
+
+    h2 { font-size: 22px; margin: 36px 0 12px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+    .card h3 { margin: 0 0 6px; font-size: 17px; }
+    .card p, .card li { color: var(--muted); margin: 0; }
+    ol { padding-left: 20px; margin: 0; }
+    ol li + li { margin-top: 6px; }
+    .note { background: var(--soft); border-radius: 14px; padding: 14px 16px; color: var(--text); }
+    code { font-size: 12px; word-break: break-all; color: var(--muted); }
+    footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+    footer a { color: inherit; }
+  </style>
+</head>
+
+<body>
+  <main>
+    <section class="hero">
+      <img src="./icon.svg" alt="" />
+      <div>
+        <h1>Roomies</h1>
+        <p class="lead">Gastos compartidos entre roomies. Todo queda en tus dispositivos y se sincroniza por tu Wi-Fi: sin nube, sin cuentas.</p>
+      </div>
+    </section>
+
+    <section class="downloads">
+      <a class="dl" href="./downloads/Roomies_0.1.0_x64-setup.exe" download>
+        <strong>Descargar para Windows</strong>
+        <span>Instalador .exe · 2.3 MB · Windows 10/11 x64</span>
+      </a>
+      <a class="dl" href="./downloads/Roomies_0.1.0_arm64.apk" download>
+        <strong>Descargar para Android</strong>
+        <span>APK · 7.7 MB · Android 7+ (arm64)</span>
+      </a>
+    </section>
+
+    <h2>Qué hace</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Espacios</h3>
+        <p>Arranca con <b>Personal</b> (privado) y <b>Hogar</b> (para compartir). Crea los que quieras: un viaje, la oficina…</p>
+      </div>
+      <div class="card">
+        <h3>Quién debe a quién</h3>
+        <p>Registra quién pagó y entre quiénes se divide. La app calcula los saldos y el mínimo de pagos para quedar a paz y salvo.</p>
+      </div>
+      <div class="card">
+        <h3>Sync automático por LAN</h3>
+        <p>Con la app abierta, todos los espacios se mantienen sincronizados con los dispositivos de la misma red, sin importar cuál estés viendo.</p>
+      </div>
+      <div class="card">
+        <h3>Tus dispositivos, tu respaldo</h3>
+        <p>Vincula tu PC y tu teléfono: cada uno guarda una copia completa de todos tus espacios, también el Personal.</p>
+      </div>
+    </div>
+
+    <h2>Primeros pasos</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Invitar a un roomie</h3>
+        <ol>
+          <li>Abre <b>Hogar</b> → pestaña <b>Espacio</b> → <b>Generar código</b>.</li>
+          <li>Tu roomie: <b>+ Espacio</b> → <b>Unirme con código</b>.</li>
+          <li>Ambos en la misma Wi-Fi y con la app abierta.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>Vincular tu PC y tu teléfono</h3>
+        <ol>
+          <li>En uno: <b>⚙ Ajustes</b> → <b>Mostrar código</b>.</li>
+          <li>En el otro: <b>⚙ Ajustes</b> → <b>Vincular con otro dispositivo</b>.</li>
+          <li>Desde ahí comparten todos tus espacios.</li>
+        </ol>
+      </div>
+    </div>
+
+    <h2>Al instalar</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Windows</h3>
+        <p>Si SmartScreen avisa, elige <b>Más información → Ejecutar de todas formas</b> (el instalador no está firmado). La primera vez, permite el acceso en <b>redes privadas</b> en el Firewall: es lo que deja sincronizar.</p>
+      </div>
+      <div class="card">
+        <h3>Android</h3>
+        <p>Abre el APK descargado y permite <b>instalar apps de origen desconocido</b> para tu navegador o administrador de archivos.</p>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:18px">
+      Los dispositivos tienen que estar en la misma red y la app abierta en ambos para sincronizar. En redes de invitados o con
+      “aislamiento de clientes” los equipos no se ven entre sí. La conexión va cifrada y solo se comparte un espacio con quien tenga su código.
+    </p>
+
+    <h2>Verificación (SHA-256)</h2>
+    <div class="card">
+      <p>Roomies_0.1.0_x64-setup.exe<br /><code>324ed6f903c62d0a197ecaf19bb2da9654d37dad12da489bfeab8a67a26d9172</code></p>
+      <p style="margin-top:10px">Roomies_0.1.0_arm64.apk<br /><code>64ef125ca6d38d4c60bc6b18b28f64baf604132fa3881123467000f954410b79</code></p>
+    </div>
+
+    <footer>
+      Versión 0.1.0 · Hecho por <a href="../../">jcastanodev</a>
+    </footer>
+  </main>
+</body>
+
+</html>
