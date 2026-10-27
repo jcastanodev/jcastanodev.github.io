@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Galería de zurvali (@cra.zev): los ojos de Canas encienden la web y cada obra llega con su propia transición.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Los ojos de Canas</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jcastanodev">
+<meta property="og:title" content="Los ojos de Canas">
+<meta property="og:description" content="Galería de zurvali (@cra.zev): los ojos de Canas encienden la web y cada obra llega con su propia transición.">
+<meta property="og:url" content="https://jcastanodev.github.io/features/canas/">
+<meta property="og:image" content="https://jcastanodev.github.io/features/canas/assets/og-canas.jpg">
+<meta property="og:image:secure_url" content="https://jcastanodev.github.io/features/canas/assets/og-canas.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Canas, la gata negra de ojos ámbar pintada por zurvali.">
+<meta property="og:locale" content="es_CO">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Los ojos de Canas">
+<meta name="twitter:description" content="Galería de zurvali (@cra.zev): los ojos de Canas encienden la web.">
+<meta name="twitter:image" content="https://jcastanodev.github.io/features/canas/assets/og-canas.jpg">
+<link rel="canonical" href="https://jcastanodev.github.io/features/canas/">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: escenario fijo a pantalla completa sobre negro absoluto; el scroll nativo conduce una línea de tiempo de escenas (cada obra con su transición). Canas camina por el piso como progreso. */
+:root{
+  --void:#000000; --cream:#EFE7D6; --muted:#9C9488; --line:#26231F;
+  --amber:#E3A33C;
+  --display:"Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--void);color:var(--cream)}
+body{font-family:var(--display);overflow-x:hidden}
+body.locked{overflow:hidden}
+a{color:var(--amber)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:6px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+#track{position:relative;width:100%}
+#stage{position:fixed;inset:0;overflow:hidden;background:var(--void)}
+.layer{position:absolute;inset:0;visibility:hidden;will-change:clip-path}
+.layer img,.slice img{position:absolute;display:block;max-width:none;user-select:none;-webkit-user-drag:none}
+.slice{position:absolute;inset:0;overflow:hidden;background:#000;will-change:transform}
+#eye{position:absolute;inset:0;width:100%;height:100%;visibility:hidden}
+#dark{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* Textos */
+.hud{position:fixed;top:0;left:0;right:0;z-index:6;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(18px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 0 max(20px,env(safe-area-inset-left,0px));pointer-events:none;opacity:0;transition:opacity 1s}
+.hud.on{opacity:1}
+.hud a,.hud span{pointer-events:auto;color:var(--muted);text-decoration:none}
+.hud a:hover{color:var(--cream)}
+.txt{position:fixed;z-index:5;opacity:0;pointer-events:none;max-width:min(34ch,calc(100vw - 40px));display:flex;flex-direction:column;gap:12px}
+.txt.live{pointer-events:auto}
+.txt h1,.txt h2{margin:0;font-weight:400;line-height:1.02;text-wrap:balance}
+.txt h1{font-size:clamp(2.6rem,5vw,4.4rem)}
+.txt h2{font-size:clamp(1.7rem,2.8vw,2.5rem);font-style:italic}
+.txt p{margin:0;font-size:clamp(1.15rem,1.6vw,1.4rem);line-height:1.35;color:var(--cream)}
+.txt .song{color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+.txt .song::before{content:"♪ ";color:var(--amber)}
+.bottomtxt .txt{background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.82) 28%);padding:28px 20px 16px;margin:0 -20px}
+.cta{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 20px;border:1px solid var(--amber);color:var(--amber);text-decoration:none;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;align-self:flex-start;transition:background .3s,color .3s}
+.cta:hover{background:var(--amber);color:#000}
+#hint{position:fixed;z-index:5;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);color:var(--muted);opacity:0;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+#hint i{display:block;width:1px;height:36px;background:linear-gradient(var(--amber),transparent);animation:drip 1.8s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+#skip{position:fixed;z-index:7;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));min-height:44px;padding:0 16px;background:transparent;border:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+
+/* Canas en el piso */
+.piso{position:fixed;left:0;right:0;bottom:0;z-index:6;height:calc(70px + env(safe-area-inset-bottom,0px));pointer-events:none;opacity:0;transition:opacity 1s}
+.piso.on{opacity:1}
+.piso::after{content:"";position:absolute;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0px));height:1px;background:linear-gradient(90deg,transparent,var(--line) 12%,var(--line) 88%,transparent)}
+#canas{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));width:118px;height:65px;padding:0;border:0;background:transparent;cursor:pointer;pointer-events:auto;will-change:transform}
+#canas svg{width:100%;height:100%;display:block;overflow:visible}
+#canas .flip{transform-box:view-box;transform-origin:50% 50%;transition:transform .3s}
+#canas.left .flip{transform:scaleX(-1)}
+#canas .leg{transform-box:fill-box;transform-origin:50% 4%}
+#canas .tail{transform-box:fill-box;transform-origin:95% 85%;animation:tail 3.2s ease-in-out infinite}
+#canas .lid{transform-box:fill-box;transform-origin:50% 50%;animation:blink 5s infinite}
+#canas.walk .l1,#canas.walk .l4{animation:step .5s ease-in-out infinite}
+#canas.walk .l2,#canas.walk .l3{animation:step .5s ease-in-out infinite reverse}
+#canas.walk .bodyg{animation:bob .25s ease-in-out infinite alternate}
+#canas.walk .tail{animation-duration:1.1s}
+#canas .shadow{transition:opacity .4s}
+@keyframes step{from{transform:rotate(17deg)}to{transform:rotate(-17deg)}}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-1.4px)}}
+@keyframes tail{0%,100%{transform:rotate(0)}50%{transform:rotate(-12deg)}}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.08)}}
+@media (prefers-reduced-motion:reduce){#canas *,#hint i{animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="hud" id="hud">
+  <span class="mono">zurvali</span>
+  <a class="mono" href="https://www.instagram.com/cra.zev/">@cra.zev</a>
+</header>
+
+<div id="track"></div>
+
+<div id="stage" aria-hidden="true">
+  <div class="layer" id="L-canas"><img src="assets/canas.jpg" alt="" data-r="1"></div>
+  <div class="layer" id="L-luna"><img src="assets/luna.jpg" alt="" data-r="1.334"></div>
+  <div class="layer" id="L-rocas"><img src="assets/rocas.jpg" alt="" data-r="1.3325"></div>
+  <div class="layer" id="L-trenzas"><img src="assets/trenzas.jpg" alt="" data-r="1"></div>
+  <div class="layer" id="L-flores"></div>
+  <svg id="eye" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <path id="almond" d="M-50 0 C-25 -32 25 -32 50 0 C25 32 -25 32 -50 0 Z"></path>
+      <radialGradient id="iris" cx="0" cy="0" r="40" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFD27A"></stop>
+        <stop offset=".45" stop-color="#E3A33C"></stop>
+        <stop offset=".85" stop-color="#9C5E14"></stop>
+        <stop offset="1" stop-color="#3B2406"></stop>
+      </radialGradient>
+      <mask id="hole" maskUnits="userSpaceOnUse" x="-100000" y="-100000" width="200000" height="200000">
+        <rect x="-100000" y="-100000" width="200000" height="200000" fill="#fff"></rect>
+        <g class="eyeT"><use href="#almond" fill="#000"></use></g>
+      </mask>
+      <clipPath id="clipA"><use class="eyeT" href="#almond"></use></clipPath>
+    </defs>
+    <rect id="eyeBlack" x="0" y="0" width="100%" height="100%" fill="#000" mask="url(#hole)"></rect>
+    <g id="irisG" clip-path="url(#clipA)">
+      <g class="eyeT">
+        <rect x="-60" y="-40" width="120" height="80" fill="#2A1A05"></rect>
+        <circle r="40" fill="url(#iris)"></circle>
+        <g opacity=".35" stroke="#5A3608" stroke-width=".35" fill="none">
+          <path d="M0 -38 L0 -10 M0 38 L0 10 M-27 -27 L-8 -8 M27 27 L8 8 M-27 27 L-8 8 M27 -27 L8 -8 M-38 0 L-12 0 M38 0 L12 0"></path>
+        </g>
+        <ellipse id="pupil" rx="4" ry="30" fill="#050302"></ellipse>
+        <ellipse cx="11" cy="-12" rx="4.5" ry="3" fill="#fff" opacity=".75"></ellipse>
+      </g>
+    </g>
+    <g class="eyeT"><use href="#almond" fill="none" stroke="#E3A33C" stroke-opacity=".28" stroke-width=".6"></use></g>
+  </svg>
+  <canvas id="dark"></canvas>
+</div>
+
+<section class="txt" id="t-intro">
+  <p class="mono" style="color:var(--amber);font-size:12px">zurvali</p>
+  <h1>Diario imaginativo</h1>
+  <p>Porque lo onírico persiste ante la incertidumbre de lo desconocido.</p>
+</section>
+<section class="txt" id="t-luna"><h2>Fuera del tiempo.</h2><span class="song">Onda Vaga — Oración al No Tiempo</span></section>
+<section class="txt" id="t-rocas"><h2>Pido que vuelvas a buscar ♡</h2><span class="song">La Texana — Soñar en grande</span></section>
+<section class="txt" id="t-trenzas"><h2>She’s so, I forgot her name :’( she’s so beautiful.</h2><span class="song">The American Dawn — Her</span></section>
+<section class="txt" id="t-flores"><h2>♡ F</h2><span class="song">Austin Farwell — Venus and Flower</span></section>
+<section class="txt" id="t-end">
+  <h1>Canas ♡</h1>
+  <span class="song">Carpe, sakuracloud — silly cat</span>
+  <a class="cta" href="https://www.instagram.com/cra.zev/">Ver el diario en Instagram</a>
+</section>
+
+<div id="hint" class="mono"><span>Baja</span><i></i></div>
+<button id="skip" type="button">Saltar intro</button>
+
+<ol class="sr" aria-label="Obras de zurvali">
+  <li>Canas: pintura digital de la gata negra de la artista, de ojos ámbar, mirando hacia arriba.</li>
+  <li>Fuera del tiempo: una luna violeta con los ojos cerrados llora sobre una aurora turquesa; una figura líquida se alza de un charco.</li>
+  <li>Pido que vuelvas a buscar: una figura rosada recogida sobre una roca, rodeada de brillo verde, bajo un cielo rosa estrellado.</li>
+  <li>She’s so, I forgot her name: retrato digital de una mujer de flequillo y trenzas sobre fondo azul.</li>
+  <li>F: retrato digital de perfil de una joven con flores en el cabello y tallos en la boca, sobre fondo amarillo.</li>
+</ol>
+
+<div class="piso" id="piso">
+  <button id="canas" type="button" aria-label="Canas: ir a la siguiente obra">
+    <svg viewBox="0 0 200 110" aria-hidden="true">
+      <g class="flip">
+        <ellipse class="shadow" cx="100" cy="105" rx="64" ry="3.5" fill="rgba(227,163,60,.12)"></ellipse>
+        <g class="bodyg">
+          <path class="tail" d="M54 63 C36 67 23 59 22 46 C21 34 29 25 38 28 C41 29 41 33 38 34 C33 35 30 40 31 46 C32 55 41 60 53 57 Z" fill="#1D1E22" stroke="#3E3934" stroke-width=".7"></path>
+          <g transform="translate(76 72)"><path class="leg l2" d="M-5 0 C-6 10 -4.5 19 -3.5 26 C-3.5 30 -1 31.5 2 31.5 L6.5 31.5 C8.5 31.5 8.5 28.5 6.5 27.5 L4 26.5 C4 18 5 9 5.5 0 Z" fill="#131316"></path></g>
+          <g transform="translate(140 73)"><path class="leg l3" d="M-4 0 C-4 10 -3.5 19 -3.5 26.5 C-3.5 30 -1 31 2 31 L5.5 31 C7.5 31 7.5 28 5.5 27 L3 26.5 C3 18 3.5 9 4 0 Z" fill="#131316"></path></g>
+          <path d="M50 69 C44 55 53 44 71 41 C93 37 116 40 132 43 C141 45 148 50 150 56 C152 63 150 70 145 74 C139 79 127 80 117 79 L75 79 C62 79 53 77 50 69 Z" fill="#1D1E22" stroke="#3E3934" stroke-width=".7"></path>
+          <ellipse cx="66" cy="65" rx="17" ry="14.5" fill="#1F2024"></ellipse>
+          <path d="M56 56 C62 52 70 52 76 56" fill="none" stroke="#33363F" stroke-width="1" stroke-linecap="round"></path>
+          <path d="M76 43 C97 39 118 41 134 45" fill="none" stroke="#3A3E4A" stroke-width="1.6" stroke-linecap="round" opacity=".8"></path>
+          <ellipse cx="135" cy="63" rx="12" ry="14" fill="#1F2024"></ellipse>
+          <g transform="translate(64 71)"><path class="leg l1" d="M-5 0 C-6 10 -4.5 19 -3.5 26 C-3.5 30 -1 31.5 2 31.5 L6.5 31.5 C8.5 31.5 8.5 28.5 6.5 27.5 L4 26.5 C4 18 5 9 5.5 0 Z" fill="#1F2024" stroke="#3E3934" stroke-width=".6"></path></g>
+          <g transform="translate(130 73)"><path class="leg l4" d="M-4 0 C-4 10 -3.5 19 -3.5 26.5 C-3.5 30 -1 31 2 31 L5.5 31 C7.5 31 7.5 28 5.5 27 L3 26.5 C3 18 3.5 9 4 0 Z" fill="#1F2024" stroke="#3E3934" stroke-width=".6"></path></g>
+          <path d="M136 52 C140 42 146 37 152 35 L160 46 C154 52 146 56 140 57 Z" fill="#1D1E22"></path>
+          <path d="M150 27 L151.5 7 L164 21 Z M165 21 L177 5 L179.5 26 Z" fill="#1D1E22" stroke="#3E3934" stroke-width=".7" stroke-linejoin="round"></path>
+          <path d="M153.5 23.5 L154 12.5 L160.5 20.5 Z M168.5 20.5 L175.5 10.5 L177.5 23.5 Z" fill="#4A3B3A"></path>
+          <path d="M146 40 C145 28 152 20 163 20 C174 20 181 27 181 36 C181 43 177 48 171 50 C164 52 152 51 148 46 Z" fill="#1D1E22" stroke="#3E3934" stroke-width=".7"></path>
+          <path d="M175 38 C183 38 187.5 41.5 185.5 46 C183.5 49 177 49.5 173 47 Z" fill="#202126"></path>
+          <path d="M183.5 41.4 L186.2 40.6 L185.4 43 Z" fill="#4A3B3A"></path>
+          <path d="M180 47 C181.5 48.5 183 48.5 184 47.5" fill="none" stroke="#3E3934" stroke-width=".6"></path>
+          <g stroke="#7A7680" stroke-width=".45" opacity=".75" stroke-linecap="round" fill="none">
+            <path d="M180 44 C186 42 191 41 197 41"></path><path d="M180 45.5 C186 45 192 45.5 198 46.5"></path><path d="M179.5 47 C185 48 190 50 195 52"></path>
+          </g>
+          <g class="lid">
+            <path d="M165.5 32.5 C168 29.6 173.4 29.6 176 32.5 C173.4 35.2 168 35.2 165.5 32.5 Z" fill="#E3A33C"></path>
+            <ellipse cx="171.2" cy="32.5" rx=".95" ry="2.3" fill="#050302"></ellipse>
+            <circle cx="172.6" cy="31.3" r=".6" fill="#fff" opacity=".85"></circle>
+          </g>
+          <path d="M149 30 C152 33 154 37 155 41" fill="none" stroke="#33363F" stroke-width=".8" stroke-linecap="round"></path>
+        </g>
+      </g>
+    </svg>
+  </button>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function(id){ return document.getElementById(id); };
+  var stage = $('stage'), cv = $('dark'), ctx = cv.getContext('2d'), eyeSvg = $('eye');
+  var L = {canas:$('L-canas'), luna:$('L-luna'), rocas:$('L-rocas'), trenzas:$('L-trenzas'), flores:$('L-flores')};
+  var T = {intro:$('t-intro'), luna:$('t-luna'), rocas:$('t-rocas'), trenzas:$('t-trenzas'), flores:$('t-flores'), end:$('t-end')};
+  var eyeTs = Array.prototype.slice.call(document.querySelectorAll('.eyeT'));
+  var irisG = $('irisG');
+  var W, H, dpr, rect = {}, sideText = true;
+
+  /* ---------- Línea de tiempo (unidades = altura de pantalla de scroll) ---------- */
+  var TOTAL = 11.6;
+  var HOLDS = [0.25, 3.8, 5.7, 8.0, 9.55, 11.3];
+  var COVER_EYE = 1.0;
+
+  /* Franjas de "trenzas" para la obra F */
+  var N = 8, slices = [];
+  for (var i = 0; i < N; i++){
+    var s = document.createElement('div'); s.className = 'slice';
+    s.style.clipPath = 'inset(0 ' + (100 - (i+1)*100/N) + '% 0 ' + (i*100/N) + '%)';
+    var im = document.createElement('img'); im.src = 'assets/flores.jpg'; im.alt = ''; im.dataset.r = '1';
+    s.appendChild(im); L.flores.appendChild(s); slices.push(s);
+  }
+
+  function fit(r){
+    var mobile = W < 760;
+    var top, avail, w, h;
+    if (mobile){ top = 64; avail = H - 64 - 200; w = Math.min(W - 32, avail / r); h = w * r; if (h > avail){ h = avail; w = h / r; } }
+    else { top = 60; avail = H - 60 - 96; h = Math.min(avail, W * 0.6 * r); w = h / r; }
+    var left = (W - w) / 2, t = top + (avail - h) / 2;
+    return {x:left, y:t, w:w, h:h};
+  }
+  function layout(){
+    W = window.innerWidth; H = window.innerHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    eyeSvg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    $('track').style.height = (TOTAL * H + H) + 'px';
+    document.querySelectorAll('#stage img').forEach(function(im){
+      var r = fit(parseFloat(im.dataset.r));
+      im.style.left = r.x + 'px'; im.style.top = r.y + 'px'; im.style.width = r.w + 'px'; im.style.height = r.h + 'px';
+    });
+    rect.sq = fit(1); rect.tall = fit(1.334);
+    sideText = rect.sq.x >= 330 && W >= 760;
+    document.body.classList.toggle('bottomtxt', !sideText);
+    Object.keys(T).forEach(function(k){
+      var el = T[k], r = (k === 'luna' || k === 'rocas') ? rect.tall : rect.sq;
+      if (sideText){ el.style.left = Math.max(24, r.x - 330) + 'px'; el.style.width = Math.min(300, r.x - 48) + 'px'; el.style.top = 'auto'; el.style.bottom = (H - (r.y + r.h)) + 'px'; el.style.right = 'auto'; }
+      else { el.style.left = '20px'; el.style.right = '20px'; el.style.width = 'auto'; el.style.bottom = 'calc(84px + env(safe-area-inset-bottom,0px))'; el.style.top = 'auto'; }
+    });
+    COVER_EYE = Math.max(2.4, 3.2 * H / W) * 1.15;
+  }
+
+  /* ---------- Utilidades ---------- */
+  function clamp(v,a,b){ return v < a ? a : v > b ? b : v; }
+  function seg(p,a,b){ return clamp((p - a) / (b - a), 0, 1); }
+  function lerp(a,b,t){ return a + (b - a) * t; }
+  var ease = {
+    io: function(t){ return t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2; },
+    out: function(t){ return 1 - Math.pow(1 - t, 3); },
+    in: function(t){ return t*t*t; },
+    expo: function(t){ return t === 0 ? 0 : Math.pow(2, 10*t - 10); }
+  };
+  function show(el, on){ el.style.visibility = on ? 'visible' : 'hidden'; }
+  function fadeWin(p, a, b, f){ f = f || .18; return Math.min(seg(p, a, a + f), 1 - seg(p, b - f, b)); }
+  function at(r, fx, fy){ return {x: r.x + r.w*fx, y: r.y + r.h*fy}; }
+  function coverR(x, y){ return Math.max(Math.hypot(x, y), Math.hypot(W - x, y), Math.hypot(x, H - y), Math.hypot(W - x, H - y)); }
+
+  /* Ojos de Canas sobre su pintura (proporciones medidas en la imagen) */
+  var EYES = [[.50, .286, .046], [.727, .462, .038]];
+  function canasEyes(){ var r = rect.sq; return EYES.map(function(e){ return {x: r.x + r.w*e[0], y: r.y + r.h*e[1], r: r.w*e[2]}; }); }
+
+  /* ---------- Oscuridad (canvas) ---------- */
+  function darkness(alpha, holes, glow, blinkOpen){
+    ctx.clearRect(0,0,W,H);
+    if (alpha <= 0.001) return;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = 'rgba(0,0,0,' + alpha + ')'; ctx.fillRect(0,0,W,H);
+    ctx.globalCompositeOperation = 'destination-out';
+    (holes || []).forEach(function(h){
+      if (h.r <= 0.5) return;
+      ctx.save(); ctx.translate(h.x, h.y); ctx.scale(1, h.sy == null ? 1 : Math.max(.06, h.sy));
+      var g = ctx.createRadialGradient(0,0,0,0,0,h.r);
+      g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(h.hard == null ? .62 : h.hard,'rgba(0,0,0,.96)'); g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0,0,h.r,0,6.2832); ctx.fill(); ctx.restore();
+    });
+    ctx.globalCompositeOperation = 'lighter';
+    (glow || []).forEach(function(g){
+      if (g.a <= 0.01) return;
+      var gg = ctx.createRadialGradient(g.x,g.y,g.r*.5,g.x,g.y,g.r*3.4);
+      gg.addColorStop(0,'rgba(227,163,60,' + (g.a*.28) + ')'); gg.addColorStop(1,'rgba(227,163,60,0)');
+      ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(g.x,g.y,g.r*3.4,0,6.2832); ctx.fill();
+    });
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  /* ---------- Intro: negro absoluto → ojos → revelación ---------- */
+  var intro = reduce ? 1 : 0, introStart = null, INTRO_MS = 4200;
+  function blinkAt(t, period, len){ var c = (t % period) / period, w = len / period; if (c > 1 - w){ var k = (c - (1 - w)) / w; return Math.abs(Math.cos(k * Math.PI)); } return 1; }
+
+  /* ---------- Render principal ---------- */
+  var cur = 0, target = 0, lastP = -1, now = 0;
+  function render(p){
+    var vis = {canas:false, luna:false, rocas:false, trenzas:false, flores:false};
+    var eyeOn = false, dark = {a:0, holes:[], glow:[]};
+    var ce = canasEyes();
+
+    if (reduce){
+      /* Movimiento reducido: fundidos simples entre obras */
+      var order = [['canas',0,1.25],['luna',1.25,4.6],['rocas',4.6,6.4],['trenzas',6.4,8.6],['flores',8.6,10.3],['canas',10.3,99]];
+      order.forEach(function(o){ if (p >= o[1] && p < o[2]) vis[o[0]] = true; });
+      Object.keys(L).forEach(function(k){ show(L[k], vis[k]); L[k].style.clipPath = 'none'; L[k].style.opacity = 1; });
+      slices.forEach(function(s){ s.style.transform = 'none'; });
+      show(eyeSvg, false); darkness(0);
+    } else {
+      /* 1 · Canas en la luz, luego se apaga y quedan sus ojos */
+      if (p < 1.25){
+        vis.canas = true;
+        var k1 = ease.io(seg(p, .6, 1.0)), k2 = seg(p, 1.02, 1.25);
+        var introA = 1 - seg(intro, .72, 1);
+        var a = Math.max(k1, introA);
+        var eyeR = intro < 1 ? ease.out(seg(intro, .1, .42)) : 1;
+        var bl = intro < 1 ? (intro > .5 && intro < .64 ? Math.abs(Math.cos(seg(intro, .5, .64) * Math.PI)) : 1) : blinkAt(now, 4800, 260);
+        dark.a = a;
+        ce.forEach(function(e){
+          dark.holes.push({x:e.x, y:e.y, r:e.r*1.35*eyeR*(1 - ease.in(k2)), sy:bl, hard:.7});
+          dark.glow.push({x:e.x, y:e.y, r:e.r, a:eyeR*(1 - k2)*bl*a});
+        });
+        if (intro < 1){
+          var mid = {x:(ce[0].x + ce[1].x)/2, y:(ce[0].y + ce[1].y)/2};
+          var rr = ease.in(seg(intro, .66, 1)) * coverR(mid.x, mid.y) * 1.3;
+          dark.holes.push({x:mid.x, y:mid.y, r:rr, hard:.55});
+        }
+      }
+      /* 2 · Ojo de gata: crece, parpadea y al abrir revela "Fuera del tiempo" */
+      if (p >= 1.25 && p < 3.5){
+        eyeOn = true; vis.luna = true;
+        var grow = ease.expo(seg(p, 1.25, 2.45));
+        var wf = lerp(.035, 1, grow);
+        var close = ease.in(seg(p, 2.45, 2.66)), open = ease.out(seg(p, 2.78, 3.0));
+        var o = 1 - close + open; o = clamp(o, .015, 1);
+        if (p >= 2.95) wf = lerp(1, COVER_EYE, ease.in(seg(p, 2.95, 3.5)));
+        var s = wf * W / 100;
+        var tr = 'translate(' + (W/2) + ' ' + (H/2) + ') scale(' + s + ' ' + (s*o) + ')';
+        eyeTs.forEach(function(g){ g.setAttribute('transform', tr); });
+        irisG.style.opacity = p < 2.72 ? 1 : 0;
+        $('pupil').setAttribute('rx', lerp(4, 2.2, seg(p, 1.6, 2.4)));
+      }
+      /* 3 · Eclipse: la luna se cierra sobre sí misma */
+      var luna = at(rect.tall, .672, .27);
+      if (p >= 3.5 && p < 4.62){ vis.luna = true; }
+      var eR = lerp(coverR(luna.x, luna.y), 0, ease.io(seg(p, 4.1, 4.6)));
+      L.luna.style.clipPath = p >= 4.1 ? 'circle(' + eR + 'px at ' + luna.x + 'px ' + luna.y + 'px)' : 'none';
+      /* 4 · Amanece desde la figura: "Pido que vuelvas a buscar" */
+      var fig = at(rect.tall, .505, .69);
+      if (p >= 4.75 && p < 6.45){ vis.rocas = true; }
+      var rR = lerp(0, coverR(fig.x, fig.y), ease.io(seg(p, 4.75, 5.4)));
+      L.rocas.style.clipPath = p < 5.4 ? 'circle(' + rR + 'px at ' + fig.x + 'px ' + fig.y + 'px)' : 'none';
+      if (p >= 6.0 && p < 6.45){ dark.a = ease.io(seg(p, 6.0, 6.4)); }
+      /* 5 · Volver a buscar: una linterna busca en la oscuridad hasta encontrarla */
+      if (p >= 6.4 && p < 9.25){ vis.trenzas = true; }
+      if (p >= 6.4 && p < 7.75){
+        var r = rect.sq, q = seg(p, 6.4, 7.3);
+        var pts = [[-.15,.85],[.9,.75],[.15,.45],[.82,.25],[.5,.36]];
+        var f = ease.io(q) * (pts.length - 1), i0 = Math.min(pts.length - 2, Math.floor(f)), t = ease.io(f - i0);
+        var fx = lerp(pts[i0][0], pts[i0+1][0], t), fy = lerp(pts[i0][1], pts[i0+1][1], t);
+        var lx = r.x + r.w*fx, ly = r.y + r.h*fy;
+        var base = Math.min(W, H) * .15;
+        var big = ease.in(seg(p, 7.3, 7.75)) * coverR(lx, ly) * 1.25;
+        dark.a = 1;
+        dark.holes.push({x:lx, y:ly, r:Math.max(base, big) * seg(p, 6.4, 6.55), hard:.45});
+        if (p >= 7.73) dark.a = 0;
+      }
+      /* 6 · Trenzas: la obra F entra en franjas alternadas */
+      if (p >= 8.3 && p < 10.4){ vis.flores = true; }
+      slices.forEach(function(s, i){
+        var a0 = 8.35 + i * .06, k = ease.out(seg(p, a0, a0 + .5));
+        s.style.transform = 'translateY(' + ((i % 2 ? -1 : 1) * (1 - k) * 105) + '%)';
+      });
+      /* 7 · Negro absoluto y vuelven los ojos de Canas */
+      if (p >= 9.85){
+        var ka = ease.io(seg(p, 9.85, 10.35));
+        dark.a = ka;
+        if (p >= 10.35){
+          vis.flores = false; vis.canas = true;
+          var ko = ease.out(seg(p, 10.35, 10.9)), b2 = blinkAt(now, 4200, 280);
+          dark.a = 1;
+          ce.forEach(function(e){
+            dark.holes.push({x:e.x, y:e.y, r:e.r*1.35*ko, sy:b2, hard:.7});
+            dark.glow.push({x:e.x, y:e.y, r:e.r, a:ko*b2});
+          });
+        }
+      }
+      Object.keys(L).forEach(function(k){ show(L[k], vis[k]); });
+      show(eyeSvg, eyeOn);
+      darkness(dark.a, dark.holes, dark.glow);
+    }
+
+    /* Textos */
+    var ready = intro >= 1;
+    var tv = {
+      intro: ready ? 1 - seg(p, .35, .6) : seg(intro, .8, 1),
+      luna: fadeWin(p, 3.45, 4.15, .2),
+      rocas: fadeWin(p, 5.3, 6.05, .2),
+      trenzas: fadeWin(p, 7.65, 8.4, .2),
+      flores: fadeWin(p, 9.15, 9.9, .2),
+      end: seg(p, 10.6, 10.95)
+    };
+    Object.keys(T).forEach(function(k){
+      var v = tv[k]; T[k].style.opacity = v;
+      T[k].style.transform = 'translateY(' + ((1 - v) * 14) + 'px)';
+      T[k].classList.toggle('live', v > .5);
+      T[k].setAttribute('aria-hidden', v > .5 ? 'false' : 'true');
+    });
+    $('hint').style.opacity = ready ? (1 - seg(p, .05, .25)) * .9 : 0;
+  }
+
+  /* ---------- Canas en el piso ---------- */
+  var walker = $('canas'), walkT = 0;
+  function moveWalker(p, dp){
+    var span = W - walker.offsetWidth - 24;
+    walker.style.transform = 'translateX(' + (clamp(p / TOTAL, 0, 1) * span) + 'px)';
+    if (Math.abs(dp) > 0.0008 && !reduce){ walker.classList.add('walk'); walkT = now; walker.classList.toggle('left', dp < 0); }
+    else if (now - walkT > 160) walker.classList.remove('walk');
+  }
+  walker.addEventListener('click', function(){
+    var p = window.scrollY / H, next = HOLDS.find(function(h){ return h > p + .05; });
+    window.scrollTo({top: (next == null ? 0 : next) * H, behavior: reduce ? 'auto' : 'smooth'});
+  });
+
+  /* ---------- Bucle ---------- */
+  function finishIntro(){
+    intro = 1; document.body.classList.remove('locked');
+    $('hud').classList.add('on'); $('piso').classList.add('on'); $('skip').hidden = true;
+  }
+  $('skip').addEventListener('click', finishIntro);
+  function frame(t){
+    now = t;
+    if (intro < 1){
+      if (introStart == null) introStart = t;
+      intro = clamp((t - introStart) / INTRO_MS, 0, 1);
+      if (intro >= 1) finishIntro();
+    }
+    target = window.scrollY / H;
+    var prev = cur;
+    cur += (target - cur) * (reduce ? 1 : .11);
+    if (Math.abs(target - cur) < .0004) cur = target;
+    render(cur);
+    moveWalker(cur, cur - prev);
+    requestAnimationFrame(frame);
+  }
+
+  layout();
+  window.addEventListener('resize', function(){ var oldW = W; layout(); if (W !== oldW) render(cur); });
+  if (reduce){ finishIntro(); }
+  else {
+    document.body.classList.add('locked');
+    window.scrollTo(0, 0);
+  }
+  var img0 = L.canas.querySelector('img');
+  var started = false;
+  function go(){ if (started) return; started = true; requestAnimationFrame(frame); }
+  img0.complete ? go() : (img0.addEventListener('load', go), setTimeout(go, 2500));
+})();
+</script>
+
+</body>
+</html>
