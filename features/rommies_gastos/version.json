@@ -1,0 +1,14 @@
+{
+  "version": "0.4.0",
+  "exe": "downloads/Roomies_0.4.0_x64-setup.exe",
+  "apk": "downloads/Roomies_0.4.0_arm64.apk",
+  "notes": [
+    "Ingresos, pestaña Flujo, presupuestos, recurrentes y metas de ahorro",
+    "Resumen de todos tus espacios, préstamos y contactos sin la app",
+    "Abonos parciales, búsqueda, CSV e historial",
+    "Quitar miembros y desvincular dispositivos",
+    "Aviso cuando otro dispositivo tiene otra versión",
+    "Esc cierra ventanas y Deshacer después de borrar",
+    "Notificaciones con la app cerrada (bandeja en PC, servicio en Android)"
+  ]
+}
