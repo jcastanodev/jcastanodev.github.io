@@ -1,10 +1,11 @@
 {
-  "version": "0.4.1",
-  "exe": "downloads/Roomies_0.4.1_x64-setup.exe",
-  "apk": "downloads/Roomies_0.4.1_arm64.apk",
+  "version": "0.4.2",
+  "exe": "downloads/Roomies_0.4.2_x64-setup.exe",
+  "apk": "downloads/Roomies_0.4.2_arm64.apk",
   "notes": [
-    "Vincular un dispositivo ahora pregunta antes de reemplazar sus datos, sin espacios repetidos",
-    "Botón para eliminar un espacio Personal repetido",
-    "Banner con enlace de descarga cuando hay una versión nueva"
+    "Botón flotante + para registrar gastos e ingresos desde cualquier lugar (se activa en Ajustes)",
+    "Posponer recurrentes pendientes: 1 día, 1 semana, 2 semanas o saltar el mes",
+    "Ver tu propia actividad en la campana",
+    "Nombres reales en el historial y barras de scroll más finas"
   ]
 }
