@@ -1,11 +1,10 @@
 {
-  "version": "0.4.2",
-  "exe": "downloads/Roomies_0.4.2_x64-setup.exe",
-  "apk": "downloads/Roomies_0.4.2_arm64.apk",
+  "version": "0.4.3",
+  "exe": "downloads/Roomies_0.4.3_x64-setup.exe",
+  "apk": "downloads/Roomies_0.4.3_arm64.apk",
   "notes": [
-    "Botón flotante + para registrar gastos e ingresos desde cualquier lugar (se activa en Ajustes)",
-    "Posponer recurrentes pendientes: 1 día, 1 semana, 2 semanas o saltar el mes",
-    "Ver tu propia actividad en la campana",
-    "Nombres reales en el historial y barras de scroll más finas"
+    "Bolsillos por espacio (Efectivo, Nequi…): elige de cuál sale cada gasto y a cuál entra cada ingreso",
+    "Bolsillo predeterminado y saldo de cada bolsillo en Movimientos",
+    "Mover dinero entre bolsillos (ej. retiro de Nequi a efectivo)"
   ]
 }
