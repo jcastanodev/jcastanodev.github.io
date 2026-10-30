@@ -1,12 +1,15 @@
 {
-  "version": "0.5.0",
-  "exe": "downloads/Roomies_0.5.0_x64-setup.exe",
-  "apk": "downloads/Roomies_0.5.0_arm64.apk",
+  "version": "0.6.0",
+  "exe": "downloads/Roomies_0.6.0_x64-setup.exe",
+  "apk": "downloads/Roomies_0.6.0_arm64.apk",
   "notes": [
-    "Bolsillos personales (Efectivo, Nequi…) con ícono, color y saldo que solo ves tú",
-    "Cada parte de un gasto dividido sale del bolsillo de quien la pagó o la prestó",
-    "Al registrar un pago de deuda, el dinero sale y entra en los bolsillos de cada uno",
-    "Espacios solo de gastos, solo de ingresos o ambos",
-    "Dividir entre arranca solo contigo"
+    "Resumen y Personal ahora son una sola pestaña, con nombre, ícono y color editables",
+    "Abonar a una meta descuenta del bolsillo que elijas",
+    "Retirar de una meta registra el gasto, repartido según lo que abonó cada uno",
+    "Las metas tienen categoría y lista de abonos editable",
+    "Toca un bolsillo para ajustar su saldo con un ingreso o gasto",
+    "Deudas sin pagar a nadie en particular y abonos editables desde el movimiento",
+    "Recurrentes editables desde Flujo",
+    "Agrega personas de tus otros espacios a cualquier movimiento"
   ]
 }
