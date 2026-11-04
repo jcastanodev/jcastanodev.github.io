@@ -1,18 +1,18 @@
 {
-  "version": "0.7.0",
-  "exe": "downloads/Roomies_0.7.0_x64-setup.exe",
-  "apk": "downloads/Roomies_0.7.0_arm64.apk",
+  "version": "0.8.0",
+  "exe": "downloads/Roomies_0.8.0_x64-setup.exe",
+  "apk": "downloads/Roomies_0.8.0_arm64.apk",
   "notes": [
-    "Ícono y página nuevos, con el diseño de volante de la app",
-    "Categorías personalizables: crea, renombra o borra categorías y subcategorías",
-    "Al crear un movimiento, la categoría te sugiere lo que ya registraste y llena el resto",
-    "Mueve un gasto o ingreso a otro espacio; las personas y la categoría se crean allá si faltan",
-    "Quién pagó se deduce de Dividir con: ya no hay que elegirlo aparte",
-    "Movimientos por mes, semana o día, con un botón para volver a hoy",
-    "Sin bolsillo: su saldo, y asigna el bolsillo desde cada movimiento de la lista",
-    "Gráfica del saldo de cada bolsillo por horas (movimiento a movimiento), días, meses y años",
-    "Ajusta un saldo con un ingreso o gasto, o solo corrígelo sin tocar tus totales",
-    "Al unirte a un espacio no se crea un Hogar extra, y puedes reclamar tu contacto",
-    "Ajustes: repetir la configuración inicial o borrar todos los datos"
+    "Los abonos salen en Movimientos con su hora; al tocar uno abres el préstamo o gasto al que pertenece",
+    "Los préstamos pagados ya no desaparecen del Resumen",
+    "Cuentas lista tus préstamos y pendientes, con búsqueda y filtros",
+    "En el detalle de un movimiento ves y editas sus abonos",
+    "Un abono usa el bolsillo del préstamo, y si el préstamo no tenía, toma el del abono",
+    "Al borrar un movimiento se borran sus abonos",
+    "Los ajustes de saldo y el saldo inicial de un bolsillo quedan como un ingreso o gasto",
+    "Préstamos y gastos con «Sin especificar» cuando no sabes con quién; los préstamos tienen hora",
+    "Acciones rápidas para repartir un ingreso",
+    "Espacio: crea, renombra y borra contactos, y elige el bolsillo predeterminado del espacio",
+    "Repetir la configuración inicial ya no pregunta por un hogar que ya creaste"
   ]
 }
