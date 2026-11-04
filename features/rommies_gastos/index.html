@@ -5,30 +5,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Roomies · Gastos compartidos</title>
-  <meta name="description" content="App para llevar los gastos entre roomies. Se sincroniza por tu Wi-Fi, sin nube ni cuentas." />
+  <meta name="description" content="App para llevar los gastos entre roomies: quién pagó, quién debe y cuánto tienes en cada bolsillo. Se sincroniza por tu Wi-Fi, sin nube ni cuentas." />
   <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:wght@400;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* the app's tokens: a photocopied flyer on a concrete wall, riso violet marker */
     :root {
-      --bg: #f6f7f6;
-      --card: #ffffff;
-      --text: #18181b;
-      --muted: #52525b;
-      --line: #e4e4e7;
-      --accent: #059669;
-      --accent-ink: #ffffff;
-      --soft: #ecfdf5;
+      --paper: #e8e6e1;
+      --card: #dcd9d3;
+      --ink: #1a1917;
+      --muted: #54514b;
+      --line: #b3afa7;
+      --marker: #a47cff;
+      --owed: #156247;
+      --receipt: #f7f5ef;
+      --tape: rgb(232 222 196 / .8);
+      color-scheme: light;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #09090b;
-        --card: #18181b;
-        --text: #fafafa;
-        --muted: #a1a1aa;
-        --line: #27272a;
-        --accent: #10b981;
-        --accent-ink: #052e1f;
-        --soft: #052e1f;
+        --paper: #1a1917;
+        --card: #232220;
+        --ink: #e8e6e1;
+        --muted: #b3afa7;
+        --line: #403d39;
+        --owed: #4bb488;
+        --receipt: #e8e6e1;
+        --tape: rgb(200 190 160 / .55);
+        color-scheme: dark;
       }
     }
 
@@ -36,124 +43,277 @@
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      font: 17px/1.6 "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     }
 
-    main { max-width: 860px; margin: 0 auto; padding: 48px 16px 64px; }
+    /* xerox grain over everything */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .07;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
 
-    .hero { display: flex; gap: 20px; align-items: center; margin-bottom: 28px; }
-    .hero img { width: 84px; height: 84px; flex: none; }
-    h1 { margin: 0; font-size: clamp(28px, 6vw, 40px); line-height: 1.1; }
-    .lead { margin: 6px 0 0; color: var(--muted); font-size: 18px; }
+    main { max-width: 980px; margin: 0 auto; padding: 40px 16px 56px; }
 
-    .downloads { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 28px 0 40px; }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--marker); outline-offset: 3px; }
+
+    /* poster type: Anton, uppercase, cut out and stuck on like label tape */
+    h1, h2 {
+      font-family: "Anton", Impact, sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: .01em;
+      line-height: 1.05;
+      margin: 0;
+    }
+    .strip {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--paper);
+      padding: .08em .22em .02em;
+      box-shadow: 4px 4px 0 var(--marker);
+    }
+
+    /* ---- the flyer ---- */
+    .top { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+    .top img { width: 44px; height: 44px; }
+    .top b { font-family: "Anton", Impact, sans-serif; font-weight: 400; font-size: 24px; text-transform: uppercase; letter-spacing: .02em; }
+
+    .hero { display: grid; gap: 40px; align-items: center; }
+    @media (min-width: 820px) { .hero { grid-template-columns: 1.15fr .85fr; gap: 56px; } }
+
+    h1 { font-size: clamp(44px, 8vw, 72px); line-height: 1.32; }
+    /* each printed line is its own strip of tape, however the headline wraps */
+    h1 .strip {
+      display: inline;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+    .lead { margin: 22px 0 0; max-width: 34em; font-size: 19px; color: var(--muted); }
+
+    .downloads { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
     .dl {
-      display: block; padding: 18px 20px; border-radius: 18px; text-decoration: none;
-      background: var(--accent); color: var(--accent-ink);
+      display: block;
+      min-width: 230px;
+      padding: 14px 18px;
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      background: var(--ink);
+      color: var(--paper);
+      text-decoration: none;
+      box-shadow: 4px 4px 0 var(--marker);
+      transition: transform .08s, box-shadow .08s;
     }
-    .dl strong { display: block; font-size: 19px; }
-    .dl span { font-size: 14px; opacity: .85; }
-    .dl:hover { filter: brightness(1.07); }
+    .dl strong { display: block; font-size: 18px; }
+    .dl span { font-size: 14px; opacity: .8; }
+    .dl:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--marker); }
+    .dl.alt { background: transparent; color: var(--ink); }
 
-    h2 { font-size: 22px; margin: 36px 0 12px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
-    .card h3 { margin: 0 0 6px; font-size: 17px; }
-    .card p, .card li { color: var(--muted); margin: 0; }
-    ol { padding-left: 20px; margin: 0; }
-    ol li + li { margin-top: 6px; }
-    .note { background: var(--soft); border-radius: 14px; padding: 14px 16px; color: var(--text); }
-    code { font-size: 12px; word-break: break-all; color: var(--muted); }
-    footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
-    footer a { color: inherit; }
+    /* the receipt taped next to it: a real split, the result highlighted */
+    .receipt-wrap { position: relative; justify-self: center; width: min(100%, 340px); transform: rotate(1.5deg); }
+    .tape {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      width: 96px;
+      height: 26px;
+      transform: translateX(-50%) rotate(-4deg);
+      background: var(--tape);
+      box-shadow: 0 1px 2px rgb(0 0 0 / .15);
+      z-index: 1;
+    }
+    .receipt {
+      --zig: 10px;
+      background: var(--receipt);
+      color: #1a1917;
+      font-family: "Courier Prime", "Courier New", monospace;
+      font-size: 15px;
+      padding: 26px 22px calc(22px + var(--zig));
+      filter: drop-shadow(5px 6px 0 rgb(0 0 0 / .18));
+      -webkit-mask:
+        linear-gradient(#000 0 0) top / 100% calc(100% - var(--zig)) no-repeat,
+        conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(var(--zig) * 2) var(--zig) repeat-x;
+      mask:
+        linear-gradient(#000 0 0) top / 100% calc(100% - var(--zig)) no-repeat,
+        conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(var(--zig) * 2) var(--zig) repeat-x;
+    }
+    .receipt h3 { margin: 0 0 2px; font-size: 15px; text-align: center; text-transform: uppercase; letter-spacing: .1em; }
+    .receipt .meta { text-align: center; font-size: 13px; color: #54514b; margin-bottom: 14px; }
+    .receipt .row { display: flex; justify-content: space-between; gap: 10px; }
+    .receipt hr { border: 0; border-top: 2px dashed #6b6760; margin: 12px 0; }
+    .receipt .total { font-weight: 700; }
+    .receipt .result { margin-top: 14px; font-weight: 700; }
+    .mark {
+      background: linear-gradient(#a47cff, #a47cff) no-repeat 0 60% / 100% 80%;
+      padding: 0 .15em;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+
+    /* the one orchestrated moment: the receipt gets written, then the result is highlighted */
+    @media (prefers-reduced-motion: no-preference) {
+      .receipt .row, .receipt hr, .receipt .result { animation: write-in .35s ease-out both; }
+      .receipt > :nth-child(3) { animation-delay: .5s; }
+      .receipt > :nth-child(4) { animation-delay: .7s; }
+      .receipt > :nth-child(5) { animation-delay: .9s; }
+      .receipt > :nth-child(6) { animation-delay: 1.1s; }
+      .receipt > :nth-child(7) { animation-delay: 1.3s; }
+      .receipt > :nth-child(8) { animation-delay: 1.5s; }
+      .receipt > :nth-child(9) { animation-delay: 1.7s; }
+      .receipt > .result { animation-delay: 1.9s; }
+      .mark { animation: marker .6s ease-in-out 2.1s both; }
+    }
+    @keyframes write-in { from { opacity: 0; transform: translateX(-6px); } }
+    @keyframes marker { from { background-size: 0% 80%; } }
+
+    /* ---- the rest of the wall ---- */
+    section { margin-top: 72px; }
+    h2 { font-size: clamp(30px, 5vw, 42px); margin-bottom: 22px; }
+
+    .features { display: grid; gap: 26px 40px; margin: 0; padding: 0; list-style: none; }
+    @media (min-width: 720px) { .features { grid-template-columns: 1fr 1fr; } }
+    .features h3 { margin: 0 0 4px; font-size: 19px; }
+    .features p { margin: 0; color: var(--muted); max-width: 36em; }
+
+    .how { display: grid; gap: 22px; }
+    @media (min-width: 720px) { .how { grid-template-columns: 1fr 1fr; } }
+    .how > div { border: 2px solid var(--ink); border-radius: 6px; padding: 20px 22px; box-shadow: 4px 4px 0 var(--ink); background: var(--card); }
+    .how h3 { margin: 0 0 10px; font-size: 19px; }
+    .how ol { margin: 0; padding-left: 22px; }
+    .how li + li { margin-top: 6px; }
+    .how p { margin: 0; color: var(--muted); }
+
+    .note { margin-top: 26px; max-width: 46em; color: var(--muted); border-left: 4px solid var(--marker); padding: 4px 0 4px 16px; }
+
+    .verify p { margin: 0 0 12px; font-size: 15px; }
+    code { font-family: "Courier Prime", "Courier New", monospace; font-size: 13px; word-break: break-all; color: var(--muted); }
+
+    footer { margin-top: 64px; padding-top: 18px; border-top: 2px dashed var(--line); color: var(--muted); font-size: 15px; }
   </style>
 </head>
 
 <body>
   <main>
-    <section class="hero">
+    <div class="top">
       <img src="./icon.svg" alt="" />
+      <b>Roomies</b>
+    </div>
+
+    <div class="hero">
       <div>
-        <h1>Roomies</h1>
-        <p class="lead">Gastos compartidos entre roomies. Todo queda en tus dispositivos y se sincroniza por tu Wi-Fi: sin nube, sin cuentas.</p>
+        <h1>
+          <span class="strip">Cuentas claras</span><br />
+          <span class="strip">entre roomies</span>
+        </h1>
+        <p class="lead">Anota los gastos de la casa, quién los pagó y entre quiénes se dividen. La app te dice quién le debe a quién y cuánto tienes en cada bolsillo. Todo se queda en tus dispositivos y se sincroniza por tu Wi-Fi: sin nube, sin cuentas.</p>
+        <div class="downloads">
+          <a class="dl" href="./downloads/Roomies_0.6.0_arm64.apk" download>
+            <strong>Descargar para Android</strong>
+            <span>APK · 8.0 MB · Android 7+ (arm64)</span>
+          </a>
+          <a class="dl alt" href="./downloads/Roomies_0.6.0_x64-setup.exe" download>
+            <strong>Descargar para Windows</strong>
+            <span>Instalador .exe · 2.4 MB · Windows 10/11 x64</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="receipt-wrap" aria-label="Ejemplo: un mercado de 90 mil dividido entre tres">
+        <div class="tape" aria-hidden="true"></div>
+        <div class="receipt">
+          <h3>Mercado</h3>
+          <div class="meta">Apto 302 · 04/11</div>
+          <div class="row"><span>Pagaste tú</span><span>$ 90.000</span></div>
+          <hr />
+          <div class="row"><span>Tu parte</span><span>$ 30.000</span></div>
+          <div class="row"><span>Ana</span><span>$ 30.000</span></div>
+          <div class="row"><span>Camilo</span><span>$ 30.000</span></div>
+          <hr />
+          <div class="row total"><span>Salió de Nequi</span><span>$ 90.000</span></div>
+          <div class="result"><span class="mark">Te deben $ 60.000</span></div>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <h2>Qué hace</h2>
+      <ul class="features">
+        <li>
+          <h3>Quién debe a quién</h3>
+          <p>Elige con quién divides cada gasto y quién ya pagó su parte. La app lleva los saldos y te dice cuánto pagar para quedar a paz y salvo.</p>
+        </li>
+        <li>
+          <h3>Tus bolsillos</h3>
+          <p>Efectivo, Nequi, tu cuenta del banco: cada gasto sale de uno y cada ingreso entra a uno. Ves el saldo de cada bolsillo y cómo ha cambiado. El saldo solo lo ves tú.</p>
+        </li>
+        <li>
+          <h3>Espacios</h3>
+          <p>Empiezas con Personal, que es privado. Crea tu hogar o únete al de tu roomie con un código, y suma otros: un viaje, la moto, la oficina.</p>
+        </li>
+        <li>
+          <h3>Flujo del mes</h3>
+          <p>Ingresos y gastos por mes, semana o día. Pagos recurrentes que se crean solos, presupuestos por categoría y metas de ahorro.</p>
+        </li>
+        <li>
+          <h3>Rápido de anotar</h3>
+          <p>Elige la categoría y la app te sugiere lo que ya has registrado ahí: tocas uno y se llena todo, menos la fecha.</p>
+        </li>
+        <li>
+          <h3>Sin nube</h3>
+          <p>Cada dispositivo guarda su copia completa. Con la app abierta y en la misma Wi-Fi, todo se sincroniza solo, cifrado.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Primeros pasos</h2>
+      <div class="how">
+        <div>
+          <h3>Invitar a un roomie</h3>
+          <ol>
+            <li>Abre tu hogar, pestaña <b>Espacio</b>, y toca <b>Generar código</b>.</li>
+            <li>Tu roomie toca <b>+ Espacio</b> y luego <b>Unirme con código</b>.</li>
+            <li>Los dos en la misma Wi-Fi y con la app abierta.</li>
+          </ol>
+        </div>
+        <div>
+          <h3>Vincular tu PC y tu teléfono</h3>
+          <ol>
+            <li>En uno: <b>Ajustes</b> y <b>Mostrar código</b>.</li>
+            <li>En el otro: <b>Ajustes</b> y <b>Vincular con otro dispositivo</b>.</li>
+            <li>Desde ahí los dos tienen todos tus espacios.</li>
+          </ol>
+        </div>
       </div>
     </section>
 
-    <section class="downloads">
-      <a class="dl" href="./downloads/Roomies_0.6.0_x64-setup.exe" download>
-        <strong>Descargar para Windows</strong>
-        <span>Instalador .exe · 2.4 MB · Windows 10/11 x64</span>
-      </a>
-      <a class="dl" href="./downloads/Roomies_0.6.0_arm64.apk" download>
-        <strong>Descargar para Android</strong>
-        <span>APK · 8.0 MB · Android 7+ (arm64)</span>
-      </a>
+    <section>
+      <h2>Al instalar</h2>
+      <div class="how">
+        <div>
+          <h3>Android</h3>
+          <p>Abre el APK descargado y permite <b>instalar apps de origen desconocido</b> para tu navegador o administrador de archivos.</p>
+        </div>
+        <div>
+          <h3>Windows</h3>
+          <p>Si SmartScreen avisa, elige <b>Más información</b> y <b>Ejecutar de todas formas</b>: el instalador no está firmado. La primera vez, permite el acceso en <b>redes privadas</b> en el Firewall; es lo que deja sincronizar.</p>
+        </div>
+      </div>
+      <p class="note">Para sincronizar, los dispositivos tienen que estar en la misma red y con la app abierta. En redes de invitados o con aislamiento de clientes los equipos no se ven entre sí. Un espacio solo se comparte con quien tenga su código.</p>
     </section>
 
-    <h2>Qué hace</h2>
-    <div class="grid">
-      <div class="card">
-        <h3>Espacios</h3>
-        <p>Arranca con <b>Personal</b> (privado) y <b>Hogar</b> (para compartir). Crea los que quieras: un viaje, la oficina…</p>
-      </div>
-      <div class="card">
-        <h3>Quién debe a quién</h3>
-        <p>Registra quién pagó y entre quiénes se divide. La app calcula los saldos y el mínimo de pagos para quedar a paz y salvo.</p>
-      </div>
-      <div class="card">
-        <h3>Sync automático por LAN</h3>
-        <p>Con la app abierta, todos los espacios se mantienen sincronizados con los dispositivos de la misma red, sin importar cuál estés viendo.</p>
-      </div>
-      <div class="card">
-        <h3>Tus dispositivos, tu respaldo</h3>
-        <p>Vincula tu PC y tu teléfono: cada uno guarda una copia completa de todos tus espacios, también el Personal.</p>
-      </div>
-    </div>
-
-    <h2>Primeros pasos</h2>
-    <div class="grid">
-      <div class="card">
-        <h3>Invitar a un roomie</h3>
-        <ol>
-          <li>Abre <b>Hogar</b> → pestaña <b>Espacio</b> → <b>Generar código</b>.</li>
-          <li>Tu roomie: <b>+ Espacio</b> → <b>Unirme con código</b>.</li>
-          <li>Ambos en la misma Wi-Fi y con la app abierta.</li>
-        </ol>
-      </div>
-      <div class="card">
-        <h3>Vincular tu PC y tu teléfono</h3>
-        <ol>
-          <li>En uno: <b>⚙ Ajustes</b> → <b>Mostrar código</b>.</li>
-          <li>En el otro: <b>⚙ Ajustes</b> → <b>Vincular con otro dispositivo</b>.</li>
-          <li>Desde ahí comparten todos tus espacios.</li>
-        </ol>
-      </div>
-    </div>
-
-    <h2>Al instalar</h2>
-    <div class="grid">
-      <div class="card">
-        <h3>Windows</h3>
-        <p>Si SmartScreen avisa, elige <b>Más información → Ejecutar de todas formas</b> (el instalador no está firmado). La primera vez, permite el acceso en <b>redes privadas</b> en el Firewall: es lo que deja sincronizar.</p>
-      </div>
-      <div class="card">
-        <h3>Android</h3>
-        <p>Abre el APK descargado y permite <b>instalar apps de origen desconocido</b> para tu navegador o administrador de archivos.</p>
-      </div>
-    </div>
-
-    <p class="note" style="margin-top:18px">
-      Los dispositivos tienen que estar en la misma red y la app abierta en ambos para sincronizar. En redes de invitados o con
-      “aislamiento de clientes” los equipos no se ven entre sí. La conexión va cifrada y solo se comparte un espacio con quien tenga su código.
-    </p>
-
-    <h2>Verificación (SHA-256)</h2>
-    <div class="card">
+    <section class="verify">
+      <h2>Verificar la descarga</h2>
+      <p>SHA-256 de cada archivo, para comprobar que llegó completo:</p>
       <p>Roomies_0.6.0_x64-setup.exe<br /><code>865c0a64cf75d4494772b4524de4d92343e712a46c2309cc80e6b2adea85e352</code></p>
-      <p style="margin-top:10px">Roomies_0.6.0_arm64.apk<br /><code>6398d24aa1475d9ec0d185e6369e38e7b3769a7dedf00b4054496cc01daff1da</code></p>
-    </div>
+      <p>Roomies_0.6.0_arm64.apk<br /><code>6398d24aa1475d9ec0d185e6369e38e7b3769a7dedf00b4054496cc01daff1da</code></p>
+    </section>
 
     <footer>
       Versión 0.6.0 · Hecho por <a href="../../">jcastanodev</a>
