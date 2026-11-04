@@ -1,15 +1,18 @@
 {
-  "version": "0.6.0",
-  "exe": "downloads/Roomies_0.6.0_x64-setup.exe",
-  "apk": "downloads/Roomies_0.6.0_arm64.apk",
+  "version": "0.7.0",
+  "exe": "downloads/Roomies_0.7.0_x64-setup.exe",
+  "apk": "downloads/Roomies_0.7.0_arm64.apk",
   "notes": [
-    "Resumen y Personal ahora son una sola pestaña, con nombre, ícono y color editables",
-    "Abonar a una meta descuenta del bolsillo que elijas",
-    "Retirar de una meta registra el gasto, repartido según lo que abonó cada uno",
-    "Las metas tienen categoría y lista de abonos editable",
-    "Toca un bolsillo para ajustar su saldo con un ingreso o gasto",
-    "Deudas sin pagar a nadie en particular y abonos editables desde el movimiento",
-    "Recurrentes editables desde Flujo",
-    "Agrega personas de tus otros espacios a cualquier movimiento"
+    "Ícono y página nuevos, con el diseño de volante de la app",
+    "Categorías personalizables: crea, renombra o borra categorías y subcategorías",
+    "Al crear un movimiento, la categoría te sugiere lo que ya registraste y llena el resto",
+    "Mueve un gasto o ingreso a otro espacio; las personas y la categoría se crean allá si faltan",
+    "Quién pagó se deduce de Dividir con: ya no hay que elegirlo aparte",
+    "Movimientos por mes, semana o día, con un botón para volver a hoy",
+    "Sin bolsillo: su saldo, y asigna el bolsillo desde cada movimiento de la lista",
+    "Gráfica del saldo de cada bolsillo por horas (movimiento a movimiento), días, meses y años",
+    "Ajusta un saldo con un ingreso o gasto, o solo corrígelo sin tocar tus totales",
+    "Al unirte a un espacio no se crea un Hogar extra, y puedes reclamar tu contacto",
+    "Ajustes: repetir la configuración inicial o borrar todos los datos"
   ]
 }
