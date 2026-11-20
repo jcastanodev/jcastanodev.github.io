@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arma tu PC · 3M | jcastanodev</title>
+<meta name="description" content="Configurador de torre de PC gamer en Colombia con presupuesto de $3.000.000: elige componentes, compara precios y encuentra links de compra.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0e13; --panel:#141821; --panel2:#1b202c; --line:#262c3a; --txt:#e8ebf2; --mut:#8a93a6;
+  --oro:#f5c046; --plata:#c3ccd9; --bronce:#d08a52; --acc:#5ee6b0; --bad:#ff6b6b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:"Space Grotesk",system-ui,sans-serif}
+body{padding-bottom:110px}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 18px}
+header{display:flex;gap:18px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+h1{margin:0;font-size:30px;letter-spacing:-.5px}
+h1 span{color:var(--acc)}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--mut);align-items:center;flex-wrap:wrap}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:-1px}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:8px 13px;border-radius:10px;font:inherit;font-size:13px;cursor:pointer}
+.btn:hover{border-color:var(--acc)}
+.btn.pri{background:var(--acc);color:#06140e;border-color:var(--acc);font-weight:700}
+.meter{height:8px;background:var(--panel2);border-radius:6px;overflow:hidden;margin:14px 0 4px;border:1px solid var(--line)}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),#3ab0ff);width:0;transition:width .35s}
+.meter.over i{background:linear-gradient(90deg,#ff9b6b,var(--bad))}
+.mlab{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);font-family:"JetBrains Mono",monospace}
+
+.layout{display:grid;grid-template-columns:230px 1fr;gap:22px;margin-top:22px}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.tower{display:none}}
+.tower{position:sticky;top:18px;align-self:start;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px}
+.tower h3{margin:2px 0 10px;font-size:13px;color:var(--mut);font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.slot{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:10px;cursor:pointer;font-size:13px}
+.slot:hover{background:var(--panel2)}
+.slot .ic{width:30px;height:30px;flex:none}
+.slot .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot .nm small{display:block;color:var(--mut);font-size:11px}
+.slot.empty .nm{color:var(--mut)}
+.pip{width:8px;height:8px;border-radius:50%;flex:none;background:var(--line)}
+
+section.cat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 16px 12px;margin-bottom:16px;scroll-margin-top:14px}
+.ch{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.ch .ic{width:38px;height:38px}
+.ch h2{margin:0;font-size:19px}
+.ch .sel{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--mut)}
+.ch .sel b{color:var(--acc)}
+.row{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x proximity}
+.row::-webkit-scrollbar{height:6px}.row::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.card{flex:0 0 172px;scroll-snap-align:start;background:var(--panel2);border:2px solid transparent;border-radius:15px;padding:10px;cursor:pointer;position:relative;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-3px)}
+.card .img{height:104px;border-radius:10px;display:grid;place-items:center;margin-bottom:9px;position:relative;overflow:hidden}
+.card .img svg{width:84px;height:84px}
+.card .img img.ph{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);object-fit:contain;background:#fff;border-radius:8px;padding:6px;opacity:0;transition:opacity .25s}
+.card .img.has img.ph{opacity:1}
+.card .img.has>svg{visibility:hidden}
+.card .img .medal{z-index:2}
+.medal{position:absolute;top:7px;left:7px;font-size:10px;font-weight:700;letter-spacing:.6px;padding:3px 7px;border-radius:20px;color:#14110a;text-transform:uppercase}
+.card .n{font-size:13.5px;line-height:1.25;height:34px;overflow:hidden;font-weight:500}
+.card .p{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;margin-top:6px}
+.card .tag{font-size:10.5px;color:var(--mut);margin-top:2px;height:14px}
+.card.on{border-color:var(--acc);box-shadow:0 0 0 4px rgba(94,230,176,.12)}
+.card.on::after{content:"✓";position:absolute;top:8px;right:9px;width:22px;height:22px;border-radius:50%;background:var(--acc);color:#06140e;font-weight:700;display:grid;place-items:center;font-size:13px}
+.card.inc{opacity:.45}
+.card.inc .tag{color:var(--bad)}
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-height:62px;font-size:13px;border-top:1px dashed var(--line);padding-top:10px}
+.detail ul{margin:0;padding:0;list-style:none}
+.detail li{padding:2px 0 2px 22px;position:relative;color:#cfd5e1}
+.detail .pro li::before{content:"+";position:absolute;left:4px;color:var(--acc);font-weight:700}
+.detail .con li::before{content:"−";position:absolute;left:4px;color:var(--bad);font-weight:700}
+.detail .hint{grid-column:1/-1;color:var(--mut);font-size:12px;align-self:center}
+.detail .who{grid-column:1/-1;font-size:12px;color:var(--mut)}
+.detail .who b{color:var(--txt)}
+
+.float{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:16px;background:rgba(20,24,33,.92);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:22px;padding:11px 14px 11px 20px;cursor:pointer;box-shadow:0 12px 40px rgba(0,0,0,.5);width:min(560px,calc(100% - 24px))}
+.float:hover{border-color:var(--acc)}
+.float .t{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:700}
+.float .s{font-size:12px;color:var(--mut)}
+.float .s b{font-weight:700}
+.float .go{margin-left:auto;background:var(--acc);color:#06140e;font-weight:700;border-radius:14px;padding:10px 14px;font-size:13px;white-space:nowrap}
+.float.over .t{color:var(--bad)}
+.ring{width:44px;height:44px;flex:none}
+
+.modal{position:fixed;inset:0;background:rgba(5,6,9,.72);z-index:30;display:none;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:22px 22px 0 0;width:min(760px,100%);max-height:88vh;overflow:auto;padding:20px 20px 26px;animation:up .25s ease}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h2{margin:0 0 4px}
+.sheet .sub{color:var(--mut);font-size:13px;margin-bottom:14px}
+.li{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.li .ic{width:38px;height:38px;flex:none}
+.li .m{flex:1;min-width:0}
+.li .m .c{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.8px}
+.li .m .nm{font-weight:500}
+.li .links{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.li .links a{font-size:12px;color:var(--acc);text-decoration:none;border:1px solid rgba(94,230,176,.35);padding:2px 8px;border-radius:20px}
+.li .links a:hover{background:rgba(94,230,176,.1)}
+.li .pr{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:nowrap}
+.tot{display:flex;justify-content:space-between;align-items:center;padding:14px 0 4px;font-size:18px}
+.tot b{font-family:"JetBrains Mono",monospace;font-size:24px}
+.warn{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.35);color:#ffb3b3;border-radius:12px;padding:8px 12px;font-size:13px;margin:8px 0}
+.note{color:var(--mut);font-size:12px;margin-top:12px}
+.acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.x{float:right;background:none;border:none;color:var(--mut);font-size:24px;cursor:pointer;line-height:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Arma tu PC <span>· 3M</span></h1>
+      <div class="legend" style="margin-top:8px">
+        <span><i class="dot" style="background:var(--oro)"></i>Oro</span>
+        <span><i class="dot" style="background:var(--plata)"></i>Plata</span>
+        <span><i class="dot" style="background:var(--bronce)"></i>Bronce</span>
+        <span id="dataTag">· precios Colombia, nov. 2026 · pago por transferencia</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" id="bClear">Vaciar</button>
+      <button class="btn pri" id="bRec">★ Build recomendado</button>
+    </div>
+  </header>
+  <div class="meter" id="meter"><i></i></div>
+  <div class="mlab"><span id="mUsed">$0</span><span>Presupuesto $3.000.000</span></div>
+
+  <div class="layout">
+    <aside class="tower"><h3>Tu torre</h3><div id="slots"></div></aside>
+    <main id="cats"></main>
+  </div>
+</div>
+
+<div class="float" id="float" role="button" tabindex="0">
+  <svg class="ring" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="none" stroke="#262c3a" stroke-width="5"/><circle id="ringArc" cx="22" cy="22" r="18" fill="none" stroke="#5ee6b0" stroke-width="5" stroke-linecap="round" stroke-dasharray="113.1" stroke-dashoffset="113.1" transform="rotate(-90 22 22)"/></svg>
+  <div><div class="t" id="fTotal">$0</div><div class="s" id="fSub">0 de 8 piezas</div></div>
+  <div class="go">Ver resumen ↑</div>
+</div>
+
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script>
+/* ---------- Ilustraciones SVG por componente ---------- */
+const ICONS={
+cpu:c=>`<svg viewBox="0 0 64 64"><g stroke="${c}" stroke-width="2.4" stroke-linecap="round">${[18,26,34,42].map(x=>`<path d="M${x+2} 6v6M${x+2} 52v6M6 ${x+2}h6M52 ${x+2}h6"/>`).join('')}</g><rect x="12" y="12" width="40" height="40" rx="5" fill="#1d2230" stroke="${c}" stroke-width="2.4"/><rect x="21" y="21" width="22" height="22" rx="3" fill="${c}" opacity=".9"/><path d="M26 32h12M32 26v12" stroke="#0c0e13" stroke-width="2"/></svg>`,
+mobo:c=>`<svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="5" fill="#1d2230" stroke="${c}" stroke-width="2.4"/><rect x="13" y="13" width="16" height="16" rx="2" fill="${c}"/><rect x="36" y="12" width="4" height="22" rx="1" fill="${c}" opacity=".7"/><rect x="43" y="12" width="4" height="22" rx="1" fill="${c}" opacity=".7"/><rect x="12" y="38" width="38" height="4" rx="1" fill="${c}" opacity=".55"/><rect x="12" y="47" width="28" height="4" rx="1" fill="${c}" opacity=".55"/><circle cx="50" cy="50" r="3" fill="${c}"/></svg>`,
+ram:c=>`<svg viewBox="0 0 64 64"><rect x="4" y="18" width="56" height="24" rx="3" fill="#1d2230" stroke="${c}" stroke-width="2.4"/>${[10,20,30,40].map(x=>`<rect x="${x}" y="23" width="8" height="12" rx="1" fill="${c}"/>`).join('')}<path d="M8 42v6M14 42v6M20 42v6M26 42v6M38 42v6M44 42v6M50 42v6M56 42v6" stroke="${c}" stroke-width="2"/><path d="M4 18l6-6h44l6 6" fill="none" stroke="${c}" stroke-width="2.4" opacity=".6"/></svg>`,
+gpu:c=>`<svg viewBox="0 0 64 64"><rect x="4" y="16" width="56" height="28" rx="5" fill="#1d2230" stroke="${c}" stroke-width="2.4"/><circle cx="21" cy="30" r="9" fill="none" stroke="${c}" stroke-width="2.4"/><circle cx="43" cy="30" r="9" fill="none" stroke="${c}" stroke-width="2.4"/><circle cx="21" cy="30" r="2.5" fill="${c}"/><circle cx="43" cy="30" r="2.5" fill="${c}"/><path d="M21 21v4M21 35v4M12 30h4M26 30h4M43 21v4M43 35v4M34 30h4M48 30h4" stroke="${c}" stroke-width="1.6" opacity=".6"/><path d="M10 44v6h26v-6" fill="none" stroke="${c}" stroke-width="2.4"/></svg>`,
+ssd:c=>`<svg viewBox="0 0 64 64"><rect x="4" y="22" width="56" height="20" rx="3" fill="#1d2230" stroke="${c}" stroke-width="2.4"/><rect x="12" y="27" width="12" height="10" rx="1" fill="${c}"/><rect x="27" y="27" width="12" height="10" rx="1" fill="${c}" opacity=".7"/><rect x="42" y="27" width="8" height="10" rx="1" fill="${c}" opacity=".5"/><path d="M4 28h-0M56 32h4" stroke="${c}" stroke-width="2.4"/><circle cx="55" cy="32" r="2" fill="none" stroke="${c}" stroke-width="1.6"/></svg>`,
+psu:c=>`<svg viewBox="0 0 64 64"><rect x="6" y="12" width="52" height="40" rx="5" fill="#1d2230" stroke="${c}" stroke-width="2.4"/><circle cx="26" cy="32" r="13" fill="none" stroke="${c}" stroke-width="2.4"/><path d="M26 19v26M13 32h26M17 23l18 18M35 23L17 41" stroke="${c}" stroke-width="1.4" opacity=".55"/><path d="M49 22l-4 9h5l-4 9" fill="none" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"/></svg>`,
+case:c=>`<svg viewBox="0 0 64 64"><rect x="15" y="4" width="34" height="56" rx="4" fill="#1d2230" stroke="${c}" stroke-width="2.4"/><circle cx="32" cy="20" r="7" fill="none" stroke="${c}" stroke-width="2.2"/><circle cx="32" cy="38" r="7" fill="none" stroke="${c}" stroke-width="2.2"/><circle cx="32" cy="20" r="2" fill="${c}"/><circle cx="32" cy="38" r="2" fill="${c}"/><path d="M22 52h20" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/><circle cx="42" cy="9" r="1.6" fill="${c}"/></svg>`,
+cooler:c=>`<svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="8" fill="#1d2230" stroke="${c}" stroke-width="2.4"/><circle cx="32" cy="32" r="19" fill="none" stroke="${c}" stroke-width="1.6" opacity=".5"/>${[0,72,144,216,288].map(a=>`<path d="M32 32c2-8 8-12 12-10" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" transform="rotate(${a} 32 32)"/>`).join('')}<circle cx="32" cy="32" r="5" fill="${c}"/></svg>`
+};
+
+const CATS=[
+ {k:'cpu',n:'Procesador'},{k:'mobo',n:'Tarjeta madre'},{k:'ram',n:'Memoria RAM'},{k:'gpu',n:'Tarjeta gráfica'},
+ {k:'ssd',n:'Almacenamiento'},{k:'psu',n:'Fuente de poder'},{k:'case',n:'Gabinete'},{k:'cooler',n:'Disipador'}
+];
+const TIER={oro:'var(--oro)',plata:'var(--plata)',bronce:'var(--bronce)'};
+const TIERHEX={oro:'#f5c046',plata:'#c3ccd9',bronce:'#d08a52'};
+const ml=q=>'https://listado.mercadolibre.com.co/'+q;
+
+/* ---------- DATA (investigación nov. 2026) ---------- */
+let DATA = {"cpu": [{"id": "r5-5600", "name": "AMD Ryzen 5 5600 (AM4)", "price": 590000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/procesador-amd-ryzen-5-5600-am4/"}, {"label": "PC Masters Bogotá ($699.000)", "url": "https://pcmastersbogota.com.co/producto/amd-ryzen-5-6-nucleos-12-hilos-4-4ghz/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/ryzen-5-5600"}], "pros": ["6 núcleos, 32MB caché L3", "PCIe 4.0 en board B550", "Rinde bien con GPU media"], "cons": ["Con tarjeta: $702.100", "Confirmar que trae Wraith Stealth"], "tier": "oro", "compat": "AM4 / DDR4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/x1-53-300x300.webp"}, {"id": "r5-5500", "name": "AMD Ryzen 5 5500 (AM4)", "price": 370000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/procesador-amd-ryzen-5-5500-am4/"}, {"label": "PC Masters Bogotá ($499.000)", "url": "https://pcmastersbogota.com.co/producto/amd-ryzen-5-5500-4-4ghz/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/ryzen-5-5500"}], "pros": ["Ahorra 220k frente al 5600", "6 núcleos / 12 hilos", "Incluye disipador Wraith"], "cons": ["Solo PCIe 3.0, 16MB caché", "Pierde FPS con GPUs rápidas"], "tier": "plata", "compat": "AM4 / DDR4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/x1-546-jpg-300x300.webp"}, {"id": "i5-12400f", "name": "Intel Core i5-12400F", "price": 730000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/procesador-intel-core-i5-12400f-lga1700/"}, {"label": "Enjoy Videogames (agotado, $700.000)", "url": "https://enjoyvideogames.com.co/product/procesador-intel-core-i5-12400f-alder-lake-6-core-2-5-ghz-socket-lga-1700-65w/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/intel-core-i5-12400f"}], "pros": ["IPC mejor que Zen 3", "Plataforma LGA1700 con PCIe 4.0"], "cons": ["Plataforma ~240k más cara", "Con tarjeta: $868.700"], "tier": "bronce", "compat": "LGA1700 / DDR4 o DDR5", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/CPU180-jpg.webp"}, {"id": "r7-5700x", "name": "AMD Ryzen 7 5700X (AM4)", "price": 780000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/procesador-amd-ryzen-7-5700x-am4/"}], "pros": ["8 núcleos para streaming/productividad", "Misma board AM4 barata"], "cons": ["No trae disipador", "Rompe el presupuesto de 3M"], "tier": "bronce", "compat": "AM4 / DDR4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/x1-559-jpg-300x300.webp"}], "mobo": [{"id": "msi-b550m-a-pro", "name": "MSI B550M-A PRO", "price": 290000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/mother-msi-b550m-a-pro-am4/"}], "pros": ["B550 al precio de una B450", "M.2 Gen4, DDR4", "20 unidades en stock"], "cons": ["Ficha de la tienda poco detallada", "Con tarjeta: $345.100"], "tier": "oro", "compat": "AM4 / DDR4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/2026/11/B550M-CONTROLLER.webp"}, {"id": "asrock-b450m-hdv", "name": "ASRock B450M-HDV R4.0", "price": 303000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/mother-asrock-b450m-hdv-ddr4-am4/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/asrock-b450m-hdv-r4.0"}], "pros": ["Barata y muy probada", "Soporta Ryzen 5000"], "cons": ["Solo PCIe 3.0", "Confirmar BIOS para Ryzen 5000"], "tier": "plata", "compat": "AM4 / DDR4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/2026/05/BOARD-ASROCK-B450M-HDV-AM4-DDR4-300x300.webp"}, {"id": "msi-pro-b760m-e", "name": "MSI PRO B760M-E DDR4", "price": 340000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/mother-msi-pro-b760m-e-ddr4-1700/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/board-gigabyte-b760m"}], "pros": ["La B760 DDR4 más barata", "Para la ruta i5-12400F"], "cons": ["Solo 2 slots RAM", "Gigabyte B760M K V2 sin stock local"], "tier": "plata", "compat": "LGA1700 / DDR4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/2026/08/x1-1031-jpg-300x300.webp"}, {"id": "msi-b550m-pro-vdh", "name": "MSI B550M PRO-VDH", "price": 484000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/mother-msi-b550m-pro-vdh-ddr4-am4/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/msi-b550m-pro"}], "pros": ["4 slots RAM, 2 M.2", "VRM más sólido"], "cons": ["~190k más que la B550M-A PRO"], "tier": "bronce", "compat": "AM4 / DDR4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/MOT191-jpg-300x300.webp"}, {"id": "msi-pro-b550m-p", "name": "MSI PRO B550M-P", "price": 350000, "store": "MIPS Colombia", "links": [{"label": "MIPS Colombia (agotado)", "url": "https://mipscolombia.com.co/producto/board-msi-pro-b550m-p/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/msi-b550m-pro"}], "pros": ["B550 económica", "PCIe 4.0 GPU y M.2"], "cons": ["Agotada en MIPS"], "tier": "bronce", "compat": "AM4 / DDR4", "verified": true, "img": "https://vjdughsbkotqdjjyncrh.supabase.co/storage/v1/object/public/product-images/443ae3dc-0584-45e4-8311-545db29d6640/6e100465-9a08-4c76-94e3-4b0dbe4cfabe-1788802735818.webp"}], "ram": [{"id": "kingston-16gb-3200", "name": "Kingston 16GB DDR4 3200 (1x16)", "price": 330000, "store": "MIPS Colombia", "links": [{"label": "MIPS Colombia", "url": "https://mipscolombia.com.co/producto/memoria-ddr4-16gb-3200mhz-kingston-pc-3-5/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/ram-ddr4-16gb-3200"}], "pros": ["El 16GB más barato verificado", "Fácil subir a 32GB luego"], "cons": ["Un solo módulo: single channel", "Última unidad en tienda"], "tier": "oro", "compat": "DDR4", "verified": true, "img": "https://vjdughsbkotqdjjyncrh.supabase.co/storage/v1/object/public/product-images/443ae3dc-0584-45e4-8311-545db29d6640/11540286-c3d0-4b4b-adce-a9e4409f7a25-1786220617044.webp"}, {"id": "kingston-fury-16gb", "name": "Kingston Fury Beast 16GB DDR4 3200 (1x16)", "price": 380000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/memoria-ram-16gb-1x16-ddr4-3200-kingston-fury-disipada/"}], "pros": ["Con disipador, marca confiable", "Entrega inmediata"], "cons": ["Single channel", "50k más que la Kingston de MIPS"], "tier": "plata", "compat": "DDR4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/FURY-300x300.png"}, {"id": "corsair-lpx-2x8", "name": "Corsair Vengeance LPX 16GB (2x8) 3200", "price": 350000, "store": "MIPS Colombia", "links": [{"label": "MIPS Colombia (agotado)", "url": "https://mipscolombia.com.co/producto/memoria-ddr4-16gb-2x8gb-3200mhz-corsair-vengeance-lpx-pc/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/memoria-ram-ddr4-3200-mhz-2x8-gb"}], "pros": ["Kit dual channel", "Perfil bajo, sin problemas de altura"], "cons": ["Agotado, consultar disponibilidad"], "tier": "bronce", "compat": "DDR4", "verified": true, "img": "https://vjdughsbkotqdjjyncrh.supabase.co/storage/v1/object/public/product-images/443ae3dc-0584-45e4-8311-545db29d6640/df4d65d8-c210-4f17-8176-2ae2db6ead93-1793882753915.webp"}, {"id": "patriot-viper-steel-2x8", "name": "Patriot Viper Steel 16GB (2x8) 3200", "price": 309000, "store": "PC Masters Bogotá", "links": [{"label": "PC Masters Bogotá (agotado)", "url": "https://pcmastersbogota.com.co/producto/memoria-ddr4-kit-16gb-3200mhz-viper-patriot-steel/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/ddr4-16gb-3200-viper-steel-patriot"}], "pros": ["Kit dual channel CL16", "Precio de referencia bajo"], "cons": ["Agotado; precio viejo antes de alza RAM"], "tier": "bronce", "compat": "DDR4", "verified": true, "img": "https://pcmastersbogota.com.co/wp-content/uploads/2023/08/Viper_steel_B_web.jpg"}, {"id": "netac-shadow-32gb", "name": "Netac Shadow 32GB (2x16) DDR4 3200", "price": 820000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/memoria-ram-32gb-2x16-ddr4-3200-netac-shadow/"}, {"label": "MIPS Colombia ($800.000)", "url": "https://mipscolombia.com.co/producto/memoria-ddr4-32gb-2x16gb-3200mhz-netac-shadow-ii-blanca/"}], "pros": ["32GB dual channel", "En stock en dos tiendas"], "cons": ["Casi 500k sobre el presupuesto"], "tier": "bronce", "compat": "DDR4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/2026/07/SHADOW.webp"}], "gpu": [{"id": "rx-6600", "name": "AMD Radeon RX 6600 8GB", "price": 1080000, "store": "StackPC", "links": [{"label": "StackPC", "url": "https://www.stackpc.com.co/productos/amd-rx-6600-8gb"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/rx-6600-8gb"}], "pros": ["Mejor FPS por peso", "1080p alto 60+ FPS", "Bajo consumo (~130W)"], "cons": ["Últimas 3 unidades; ensamble no especificado", "Sin DLSS, RT débil"], "tier": "oro", "compat": "PCIe 4.0 x8", "verified": true, "img": "https://blduclhudbrosuctflfs.supabase.co/storage/v1/object/public/product-images/amd-rx-6600-8gb.jpg"}, {"id": "arc-b580", "name": "ASRock Challenger Intel Arc B580 12GB OC", "price": 1280000, "store": "Enjoy Videogames", "links": [{"label": "Enjoy Videogames (preorden)", "url": "https://enjoyvideogames.com.co/product/tarjeta-de-video-asrock-challenger-arc-b580-12gb-oc/"}, {"label": "PC Masters Bogotá ($1.999.000)", "url": "https://pcmastersbogota.com.co/producto/asrock-challenger-intel-arc-b580-12gb-oc/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/intel-arc-b580"}], "pros": ["12GB VRAM", "Más rápida que RX 7600", "XeSS y buen RT"], "cons": ["Preorden: llega en ~21 días", "Rinde menos con Ryzen 5000 (overhead)"], "tier": "plata", "compat": "PCIe 4.0 x8 · ReBAR", "verified": true, "img": "https://enjoyvideogames.com.co/wp-content/uploads/2025/09/14-930-131-06_square.jpg"}, {"id": "rx-7600", "name": "ASRock Radeon RX 7600 Challenger 8GB", "price": 1330000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/video-radeon-rx-7600-8gb-challenger-ddr6-asrock/"}, {"label": "PC Masters Bogotá ($1.649.000)", "url": "https://pcmastersbogota.com.co/producto/amd-radeon-rx-7600-challenger-8gb-oc/"}], "pros": ["~15-20% más que RX 6600", "14 unidades en stock"], "cons": ["8GB VRAM", "Con tarjeta: $1.582.700"], "tier": "plata", "compat": "PCIe 4.0 x8", "verified": true, "img": "https://pcmastersbogota.com.co/wp-content/uploads/2023/07/imagen_2023-07-07_154832908.png"}, {"id": "arc-a580", "name": "ASRock Challenger Intel Arc A580 8GB", "price": 815000, "store": "TigerTech", "links": [{"label": "TigerTech (agotado)", "url": "https://tigercomputadores.com/producto/video-intel-arc-a580-8gb-asrock-challenger/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/intel-arc-a580"}], "pros": ["La más barata con rendimiento decente"], "cons": ["Agotada en tiendas locales", "Drivers irregulares, consumo alto"], "tier": "bronce", "compat": "PCIe 4.0 x8 · ReBAR", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/VIDEO-INTEL-ARC-A580-8GB-ASROCK-CHALLENGER.png"}, {"id": "rtx-3050-8gb", "name": "MSI RTX 3050 Ventus 2X OC 8GB", "price": 1495000, "store": "The Mark", "links": [{"label": "The Mark", "url": "https://themark.com.co/producto/msi-rtx-3050-ventus-2x-oc-8gb-gddr6/"}, {"label": "Speed Logic (agotado, $1.249.000)", "url": "https://speedlogic.com.co/tienda/tarjetas-graficas/nvidia/tarjeta-de-video-nvidia-msi-gef-rtx-3050-ventus-2x-xs-oc-8-gigas/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/rtx-3050"}], "pros": ["DLSS y NVENC"], "cons": ["Más lenta que RX 6600", "Cara para su rendimiento"], "tier": "bronce", "compat": "PCIe 4.0 x8", "verified": true, "img": "https://themark.com.co/wp-content/uploads/2022/10/MSI-RTX-3050-VENTUS-2X-OC-8GB-GDDR6-.png"}], "ssd": [{"id": "patriot-p300-500", "name": "Patriot P300 500GB NVMe", "price": 280000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/disco-ssd-500gb-patriot-p300-m2-nvme/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/ssd-nvme-500gb"}], "pros": ["NVMe más barato verificado", "En stock"], "cons": ["500GB se llena rápido", "Gen3, sin DRAM"], "tier": "oro", "compat": "M.2 NVMe", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/2026/09/P300-300x300.webp"}, {"id": "puskill-1tb", "name": "Puskill 1TB NVMe", "price": 478000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/disco-ssd-1tb-puskill-nvme/"}], "pros": ["1TB más barato verificado", "Mejor costo por GB"], "cons": ["Marca poco conocida"], "tier": "plata", "compat": "M.2 NVMe", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/2026/09/PUSKILL-300x300.webp"}, {"id": "kingston-nv3-1tb", "name": "Kingston NV3 1TB NVMe Gen4", "price": 599000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/disco-ssd-1tb-kingston-nv3-nvme/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/kingston-nv3-1tb"}], "pros": ["Marca confiable, Gen4", "Buena garantía"], "cons": ["Ya no está a ~281k (alza 2026)"], "tier": "plata", "compat": "M.2 NVMe Gen4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/x3-2-300x300.jpg"}, {"id": "kingston-nv3-500", "name": "Kingston NV3 500GB NVMe Gen4", "price": 418000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/disco-ssd-500gb-kingston-nv3-nvme/"}], "pros": ["Marca confiable", "Gen4"], "cons": ["Caro para 500GB"], "tier": "bronce", "compat": "M.2 NVMe Gen4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/NV3-1.webp"}, {"id": "samsung-990-evo-plus-1tb", "name": "Samsung 990 EVO Plus 1TB", "price": 1095000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/disco-ssd-1tb-samsung-990-evo-plus-nvme/"}], "pros": ["Muy rápido y durable"], "cons": ["Precio fuera de este presupuesto"], "tier": "bronce", "compat": "M.2 NVMe Gen4", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/990-EVO-PLUS.avif"}], "psu": [{"id": "xpg-probe-700", "name": "XPG Probe 700W 80+ Bronze", "price": 240000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech (fuentes 80 Plus)", "url": "https://tigercomputadores.com/categoria/fuentes-pc/fuentes-80-plus/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/fuente-xpg-probe-700w"}], "pros": ["700W Bronze a precio bajo", "Sobra margen para la GPU"], "cons": ["Precio visto solo en listado de categoría", "Gama básica, no modular"], "tier": "oro", "compat": "ATX", "verified": true, "img": ""}, {"id": "corsair-cx650", "name": "Corsair CX650 80+ Bronze", "price": 278000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/fuente-corsair-650w-cx650/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/corsair-cx650"}], "pros": ["Marca confiable", "650W suficiente para el build"], "cons": ["Solo 2 unidades en stock"], "tier": "plata", "compat": "ATX", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/x3-104.jpg"}, {"id": "corsair-cv750", "name": "Corsair CV750 80+ Bronze", "price": 299000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/fuente-corsair-750w-cv750-80-plus-bronze/"}], "pros": ["750W por solo 21k más", "Margen para futura GPU"], "cons": ["Serie CV es la básica de Corsair"], "tier": "plata", "compat": "ATX", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/80P131-jpg-300x300.webp"}, {"id": "xpg-pylon-650", "name": "XPG Pylon 650W 80+ Bronze", "price": 285000, "store": "Speed Logic", "links": [{"label": "Speed Logic (agotado)", "url": "https://speedlogic.com.co/tienda/fuentes/fuente-650w-xpg-pylon-80p-bronze/"}, {"label": "PC Masters Bogotá (agotado, $289.000)", "url": "https://pcmastersbogota.com.co/producto/xpg-pylon-80p-bronze-650w/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/fuente-poder-xpg-pylon-650w"}], "pros": ["Bronze probada"], "cons": ["Agotada; ya no cuesta ~198k"], "tier": "bronce", "compat": "ATX", "verified": true, "img": "https://speedlogic.com.co/wp-content/uploads/2020/11/14132-600x600.png"}, {"id": "lian-li-rb750", "name": "Lian Li RB 750W 80+ Bronze", "price": 360000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/fuente-lian-li-rb-750w-80-plus-bronze/"}], "pros": ["750W, buena marca"], "cons": ["Más cara que la CV750"], "tier": "bronce", "compat": "ATX", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/750W-LIAN-LIO.png"}], "case": [{"id": "iceberg-flow-e", "name": "Iceberg Flow E Black ATX (4 fans)", "price": 230000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/gabinete-iceberg-flow-e-black-atx-4-fans/"}], "pros": ["4 ventiladores incluidos", "Frente mesh, buen flujo"], "cons": ["Solo 1 unidad en stock"], "tier": "oro", "compat": "ATX / mATX", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/FLOW-E-NEGRA-png.avif"}, {"id": "iceberg-clacius", "name": "Iceberg Clacius Black ATX (1 fan)", "price": 180000, "store": "TigerTech", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/gabinete-gamer-iceberg-clacius-black-atx-1-fans/"}], "pros": ["El más barato decente", "ATX, deja espacio"], "cons": ["Solo 1 ventilador", "Precio sin confirmar si es de transferencia"], "tier": "plata", "compat": "ATX / mATX", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/GLACIUS-BLACK-600x600.png"}, {"id": "iceberg-v6-plus", "name": "Iceberg Gear V6 Plus (3 fans)", "price": 199900, "store": "TooGamer", "links": [{"label": "TooGamer", "url": "https://www.toogamer.com.co/caja-iceberg-gear-v6-plus-vidrio-templado-3-ventiladores-color-negro/p/MCO29586962"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/iceberg-gear-v6"}], "pros": ["Vidrio templado + 3 fans"], "cons": ["Precio solo del buscador, no confirmado"], "tier": "plata", "compat": "ATX / mATX", "verified": false, "img": ""}, {"id": "xpg-valor-air-plus", "name": "XPG Valor Air Plus (4 ARGB)", "price": 189000, "store": "Speed Logic", "links": [{"label": "Speed Logic (agotado)", "url": "https://speedlogic.com.co/tienda/cajas/caja-xpg-valor-air-plus-vid-temp-4-argb-negro/"}, {"label": "MIPS Colombia (agotado, $210.000)", "url": "https://mipscolombia.com.co/producto/chasis-xpg-valor-air-plus-black/"}, {"label": "Mercado Libre", "url": "https://listado.mercadolibre.com.co/xpg-valor-air"}], "pros": ["4 ARGB, mesh, gran valor"], "cons": ["Agotado en Speed Logic y MIPS"], "tier": "bronce", "compat": "ATX / mATX", "verified": true, "img": "https://speedlogic.com.co/wp-content/uploads/2025/08/16571_4.png"}, {"id": "iceberg-wave-m", "name": "Iceberg Wave Negro mATX (3 fans)", "price": 330000, "store": "TigerTech", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/gabinete-gamer-iceberg-wave-negro-m-atx-3-fans/"}], "pros": ["Estética pecera compacta"], "cons": ["Caro para el presupuesto", "Solo mATX"], "tier": "bronce", "compat": "mATX", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/ICEBERG-WAVE-png.avif"}], "cooler": [{"id": "stock", "name": "Incluido con el CPU (Wraith Stealth)", "price": 0, "store": "Incluido", "links": [], "pros": ["Costo cero", "Suficiente para 65W"], "cons": ["Ruidoso con carga", "El 5700X no lo trae"], "tier": "oro", "compat": "", "verified": true, "img": ""}, {"id": "thermalright-ax120-se", "name": "Thermalright Assassin X120 Refined SE", "price": 90000, "store": "TigerTech (transferencia/efectivo)", "links": [{"label": "TigerTech", "url": "https://tigercomputadores.com/producto/cooler-cpu-thermalright-assassin-x120-refined-se-negro/"}, {"label": "Tienda Akiba (V2 White, $109.900)", "url": "https://tiendaakiba.com/partes-de-computador/disipadores-cpu/disipador-cpu-thermalright-assassin-x-120-refined-se-v2-white-refrigeracion-por-aire/"}], "pros": ["Torre 4 heatpipes barata", "Mucho más silencioso"], "cons": ["Gasto extra de 90k"], "tier": "plata", "compat": "AM4 / LGA1700", "verified": true, "img": "https://tigercomputadores.com/wp-content/uploads/2026/09/ASSASIN-BLACK.webp"}, {"id": "aerocool-rave4-argb", "name": "Aerocool Rave 4 ARGB", "price": 114900, "store": "Tienda Akiba", "links": [{"label": "Tienda Akiba", "url": "https://tiendaakiba.com/partes-de-computador/disipadores-cpu/disipador-cpu-aerocool-rave-4-argb-refrigeracion-por-aire/"}], "pros": ["ARGB, en stock"], "cons": ["Rinde menos que el Assassin"], "tier": "bronce", "compat": "AM4 / LGA1700", "verified": true, "img": "https://tiendaakiba.com/wp-content/uploads/disipador-cpu-aerocool-rave-4-argb-refrigeracion-por-aire-foto-1-1.webp"}, {"id": "aerocool-air-frost-plus", "name": "Aerocool Air Frost Plus", "price": 65900, "store": "Tienda Akiba", "links": [{"label": "Tienda Akiba", "url": "https://tiendaakiba.com/partes-de-computador/disipadores-cpu/disipador-cpu-aerocool-air-frost-plus-refrigeracion-por-aire/"}], "pros": ["Muy barato, en stock"], "cons": ["Apenas mejor que el de stock"], "tier": "bronce", "compat": "AM4 / LGA1700", "verified": true, "img": "https://tiendaakiba.com/wp-content/uploads/disipador-cpu-aerocool-air-frost-plus-refrigeracion-por-aire-foto-1-1.webp"}]};
+let RECOMMENDED={"cpu": "r5-5600", "mobo": "msi-b550m-a-pro", "ram": "kingston-16gb-3200", "gpu": "rx-6600", "ssd": "patriot-p300-500", "psu": "xpg-probe-700", "case": "iceberg-clacius", "cooler": "stock"};
+let NOTES="Precios verificados en tiendas colombianas (nov. 2026), en su mayoría por transferencia o efectivo: con tarjeta suben cerca de 19%. La RAM está cara en 2026, por eso el build recomendado usa 1x16 GB (single channel). Algunas piezas son últimas unidades o están agotadas.";
+const BUDGET=3000000;
+
+/* ---------- Estado ---------- */
+let sel={};
+try{sel=JSON.parse(localStorage.getItem('pc3m-sel')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('pc3m-sel',JSON.stringify(sel))}catch(e){}};
+const fmt=n=>'$'+n.toLocaleString('es-CO');
+const item=(k,id)=>(DATA[k]||[]).find(i=>i.id===id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const sock=it=>(it&&it.compat||'').split(/[ \/]/)[0];
+function incompatible(k,it){
+  const cpu=item('cpu',sel.cpu), mobo=item('mobo',sel.mobo);
+  if(k==='mobo'&&cpu&&sock(it)!==sock(cpu)) return 'No compatible con '+sock(cpu);
+  if(k==='cpu'&&mobo&&sock(it)!==sock(mobo)) return 'No compatible con '+sock(mobo);
+  if(k==='cooler'&&it.id==='stock'&&cpu&&/5700X/.test(cpu.name)) return 'Tu CPU no lo incluye';
+  return '';
+}
+
+function render(){
+  const main=document.getElementById('cats');
+  main.innerHTML=CATS.map(c=>{
+    const items=DATA[c.k]||[];
+    const s=item(c.k,sel[c.k]);
+    return `<section class="cat" id="c-${c.k}">
+      <div class="ch"><div class="ic">${ICONS[c.k]('#5ee6b0')}</div><h2>${c.n}</h2>
+        <div class="sel">${s?`<b>${fmt(s.price)}</b>`:'sin elegir'}</div></div>
+      <div class="row">${items.map(it=>{
+        const inc=incompatible(c.k,it);
+        return `<div class="card ${sel[c.k]===it.id?'on':''} ${inc?'inc':''}" data-k="${c.k}" data-id="${it.id}" style="${sel[c.k]===it.id?'':`border-color:${TIERHEX[it.tier]}33`}">
+          <div class="img" style="background:radial-gradient(circle at 50% 40%,${TIERHEX[it.tier]}22,transparent 70%)">
+            ${ICONS[c.k](TIERHEX[it.tier])}${it.img?`<img class="ph" src="${esc(it.img)}" alt="${esc(it.name)}" loading="lazy" referrerpolicy="no-referrer" onload="this.parentNode.classList.add('has')" onerror="this.remove()">`:''}
+            <span class="medal" style="background:${TIER[it.tier]}">${it.tier}</span></div>
+          <div class="n">${esc(it.name)}</div>
+          <div class="p">${it.price?fmt(it.price):'Incluido'}</div>
+          <div class="tag">${inc?esc(inc):esc([it.compat,it.verified===false?'precio aprox.':''].filter(Boolean).join(' · '))}</div>
+        </div>`}).join('')}</div>
+      <div class="detail" id="d-${c.k}"></div>
+    </section>`}).join('');
+  CATS.forEach(c=>showDetail(c.k,sel[c.k]));
+  main.querySelectorAll('.card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>showDetail(el.dataset.k,el.dataset.id));
+    el.addEventListener('mouseleave',()=>showDetail(el.dataset.k,sel[el.dataset.k]));
+    el.addEventListener('click',()=>{
+      const k=el.dataset.k,id=el.dataset.id;
+      sel[k]=sel[k]===id?undefined:id; if(!sel[k])delete sel[k];
+      save(); render();
+    });
+  });
+  renderSlots(); renderTotal();
+}
+
+function showDetail(k,id){
+  const d=document.getElementById('d-'+k); if(!d)return;
+  const it=item(k,id);
+  if(!it){d.innerHTML='<div class="hint">Pasa el cursor sobre una opción para ver ventajas y desventajas · clic para elegir</div>';return}
+  d.innerHTML=`<div class="who"><b>${esc(it.name)}</b>${it.store?' · '+esc(it.store):''}</div>
+   <ul class="pro">${(it.pros||[]).map(p=>`<li>${esc(p)}</li>`).join('')}</ul>
+   <ul class="con">${(it.cons||[]).map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+}
+
+function renderSlots(){
+  document.getElementById('slots').innerHTML=CATS.map(c=>{
+    const it=item(c.k,sel[c.k]);
+    return `<div class="slot ${it?'':'empty'}" data-go="${c.k}"><div class="ic">${ICONS[c.k](it?TIERHEX[it.tier]:'#3a4256')}</div>
+      <div class="nm">${it?esc(it.name):c.n}<small>${it?(it.price?fmt(it.price):'Incluido'):'—'}</small></div>
+      <span class="pip" style="${it?`background:${TIERHEX[it.tier]}`:''}"></span></div>`}).join('');
+  document.querySelectorAll('.slot').forEach(s=>s.onclick=()=>document.getElementById('c-'+s.dataset.go).scrollIntoView({behavior:'smooth'}));
+}
+
+function totals(){
+  let t=0,n=0; CATS.forEach(c=>{const it=item(c.k,sel[c.k]); if(it){t+=it.price;n++}}); return {t,n};
+}
+function renderTotal(){
+  const {t,n}=totals(), over=t>BUDGET, pct=Math.min(t/BUDGET,1);
+  document.getElementById('fTotal').textContent=fmt(t);
+  document.getElementById('fSub').innerHTML=`${n} de ${CATS.length} piezas · ${over?`<b style="color:var(--bad)">+${fmt(t-BUDGET)} sobre</b>`:`<b style="color:var(--acc)">${fmt(BUDGET-t)} libres</b>`}`;
+  document.getElementById('float').classList.toggle('over',over);
+  const arc=document.getElementById('ringArc'); arc.style.strokeDashoffset=113.1*(1-pct); arc.setAttribute('stroke',over?'#ff6b6b':'#5ee6b0');
+  const m=document.getElementById('meter'); m.classList.toggle('over',over); m.firstElementChild.style.width=(pct*100)+'%';
+  document.getElementById('mUsed').textContent=fmt(t)+' usados';
+}
+
+function openSummary(){
+  const {t,n}=totals(), over=t>BUDGET;
+  const rows=CATS.map(c=>{const it=item(c.k,sel[c.k]); if(!it)return '';
+    return `<div class="li"><div class="ic">${ICONS[c.k](TIERHEX[it.tier])}</div>
+      <div class="m"><div class="c">${c.n} · <span style="color:${TIERHEX[it.tier]}">${it.tier}</span></div><div class="nm">${esc(it.name)}</div><div style="font-size:12px;color:var(--mut)">${esc(it.store||"")}</div>
+      <div class="links">${(it.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')||'<span style="font-size:12px;color:var(--mut)">Viene con el procesador</span>'}</div></div>
+      <div class="pr">${it.price?fmt(it.price):'$0'}</div></div>`}).join('');
+  const cpu=item('cpu',sel.cpu),mobo=item('mobo',sel.mobo);
+  const miss=CATS.filter(c=>!sel[c.k]).map(c=>c.n);
+  let warn='';
+  if(cpu&&mobo&&sock(cpu)!==sock(mobo)) warn+=`<div class="warn">⚠ ${esc(cpu.name)} (${sock(cpu)}) no encaja en ${esc(mobo.name)} (${sock(mobo)}).</div>`;
+  if(cpu&&/5700X/.test(cpu.name)&&sel.cooler==='stock') warn+=`<div class="warn">⚠ El Ryzen 7 5700X no trae disipador: elige uno.</div>`;
+  if(miss.length) warn+=`<div class="warn" style="background:rgba(245,192,70,.08);border-color:rgba(245,192,70,.3);color:#f5d68a">Falta: ${miss.join(', ')}</div>`;
+  document.getElementById('sheet').innerHTML=`<button class="x" id="xClose">×</button>
+    <h2>Resumen del build</h2><div class="sub">${n} piezas · ${over?'sobre el presupuesto':'dentro del presupuesto'}</div>
+    ${warn}${rows||'<div class="sub">Aún no eliges componentes.</div>'}
+    <div class="tot"><span>Total</span><b style="color:${over?'var(--bad)':'var(--acc)'}">${fmt(t)}</b></div>
+    <div class="sub" style="margin:0">${over?`Te pasas por ${fmt(t-BUDGET)}`:`Te sobran ${fmt(BUDGET-t)}`} de $3.000.000</div>
+    <div class="acts"><button class="btn pri" id="bCopy">Copiar lista</button><button class="btn" id="bClose2">Seguir armando</button></div>
+    <div class="note">${esc(NOTES)} Precios de referencia; confirma stock y precio en la tienda antes de comprar.</div>`;
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('xClose').onclick=document.getElementById('bClose2').onclick=closeSummary;
+  document.getElementById('bCopy').onclick=async e=>{
+    const txt=CATS.map(c=>{const it=item(c.k,sel[c.k]);return it?`${c.n}: ${it.name} — ${fmt(it.price)}${it.links&&it.links[0]?' — '+it.links[0].url:''}`:''}).filter(Boolean).join('\n')+`\nTOTAL: ${fmt(t)}`;
+    try{await navigator.clipboard.writeText(txt);e.target.textContent='¡Copiado!'}catch(err){e.target.textContent='No se pudo copiar'}
+  };
+}
+function closeSummary(){document.getElementById('modal').classList.remove('open')}
+document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closeSummary()};
+document.getElementById('float').onclick=openSummary;
+document.getElementById('float').onkeydown=e=>{if(e.key==='Enter')openSummary()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSummary()});
+document.getElementById('bRec').onclick=()=>{sel={...RECOMMENDED};save();render()};
+document.getElementById('bClear').onclick=()=>{sel={};save();render()};
+
+// limpia selecciones que ya no existen
+Object.keys(sel).forEach(k=>{if(!item(k,sel[k]))delete sel[k]});
+if(!Object.keys(sel).length) sel={...RECOMMENDED};
+render();
+</script>
+</body>
+</html>
