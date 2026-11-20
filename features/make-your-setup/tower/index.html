@@ -30,7 +30,37 @@ h1 span{color:var(--acc)}
 .mlab{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);font-family:"JetBrains Mono",monospace}
 
 .layout{display:grid;grid-template-columns:230px 1fr;gap:22px;margin-top:22px}
+.layout>main,section.cat,.row{min-width:0}
+html,body{overflow-x:hidden}
 @media(max-width:860px){.layout{grid-template-columns:1fr}.tower{display:none}}
+@media(max-width:600px){
+  .wrap{padding:16px 12px}
+  header{align-items:flex-start;gap:12px}
+  header>div:last-child{width:100%}
+  header .btn{flex:1;padding:10px}
+  h1{font-size:24px}
+  .legend{gap:10px;font-size:12px}
+  #dataTag{flex-basis:100%}
+  .layout{margin-top:16px}
+  section.cat{padding:12px 10px 10px;border-radius:14px;margin-bottom:12px}
+  .ch{gap:10px;margin-bottom:8px}.ch .ic{width:30px;height:30px}.ch h2{font-size:16px}
+  .row{gap:9px;margin:0 -10px;padding:4px 10px 10px;scroll-padding-left:10px}
+  .card{flex-basis:138px;padding:8px;border-radius:12px}
+  .card:hover{transform:none}
+  .card .img{height:86px}.card .img svg{width:64px;height:64px}
+  .card .n{font-size:12.5px;height:32px}
+  .card .p{font-size:13.5px}
+  .detail{grid-template-columns:1fr;gap:4px;font-size:12.5px}
+  .float{bottom:10px;gap:10px;padding:9px 10px 9px 12px;border-radius:18px}
+  .float .t{font-size:19px}.float .s{font-size:11px}
+  .float .go{padding:9px 10px;font-size:12px}
+  .ring{width:36px;height:36px}
+  .sheet{padding:16px 14px 22px;max-height:92vh}
+  .li{gap:10px;align-items:flex-start}.li .ic{width:30px;height:30px}
+  .li .pr{font-size:13px}
+  .tot b{font-size:20px}
+}
+@media(hover:none){.card:hover{transform:none}}
 .tower{position:sticky;top:18px;align-self:start;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px}
 .tower h3{margin:2px 0 10px;font-size:13px;color:var(--mut);font-weight:500;text-transform:uppercase;letter-spacing:1px}
 .slot{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:10px;cursor:pointer;font-size:13px}
